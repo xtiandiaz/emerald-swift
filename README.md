@@ -1,3 +1,3 @@
 # Emerald
 
-A description of this package.
+Berilio's game framework for SwiftUI.
