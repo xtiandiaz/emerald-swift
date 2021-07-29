@@ -7,26 +7,28 @@
 
 import SwiftUI
 
-struct SizePreferenceKey: PreferenceKey {
+public struct SizePreferenceKey: PreferenceKey {
     
-    static var defaultValue: CGSize = .zero
+    public static var defaultValue: CGSize = .zero
 
-    static func reduce(value: inout CGSize, nextValue: () -> CGSize) {
+    public static func reduce(value: inout CGSize, nextValue: () -> CGSize) {
         value = nextValue()
     }
 }
 
-struct SizeModifier: ViewModifier {
+public struct SizeModifier: ViewModifier {
+
+    public func body(content: Content) -> some View {
+        content.background(sizeView)
+    }
+    
+    // MARK: Private
     
     private var sizeView: some View {
         GeometryReader {
             geometry in
             Color.clear.preference(key: SizePreferenceKey.self, value: geometry.size)
         }
-    }
-
-    func body(content: Content) -> some View {
-        content.background(sizeView)
     }
 }
 
