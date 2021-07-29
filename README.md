@@ -1,3 +1,3 @@
 # Emerald
 
-Berilio's game framework for SwiftUI.
+Berilio's game framework for SpriteKit and SwiftUI.
