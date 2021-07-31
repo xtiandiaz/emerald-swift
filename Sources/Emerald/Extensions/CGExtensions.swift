@@ -63,7 +63,18 @@ public extension CGPoint {
 
 public extension CGSize {
     
+    var center: CGPoint {
+        CGPoint(x: width * 0.5, y: height * 0.5)
+    }
+    
     static func * (lhs: CGSize, rhs: CGFloat) -> CGSize {
         CGSize(width: lhs.width * rhs, height: lhs.height * rhs)
+    }
+}
+
+public extension CGRect {
+    
+    var center: CGPoint {
+        CGPoint(x: minX + width * 0.5, y: minY + height * 0.5)
     }
 }
