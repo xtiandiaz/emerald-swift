@@ -7,6 +7,29 @@
 
 import CoreGraphics
 
+public extension CGFloat {
+    
+    /// 2pt
+    static let xxs: CGFloat = 2
+    /// 4pt
+    static let xs: CGFloat = 4
+    /// 8pt
+    static let s: CGFloat = 8
+    /// 12pt
+    static let ms: CGFloat = 12
+    /// 16pt
+    static let m: CGFloat = 16
+    /// 20pt
+    static let ml: CGFloat = 20
+    /// 24pt
+    static let l: CGFloat = 24
+    /// 32pt
+    static let xl: CGFloat = 32
+    /// 48pt
+    static let xxl: CGFloat = 48
+    /// 64pt
+    static let xxxl: CGFloat = 64
+}
 public extension CGPoint {
     
     static var up: CGPoint {
