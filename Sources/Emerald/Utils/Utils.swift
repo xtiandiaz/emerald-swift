@@ -12,3 +12,12 @@ public func with<T>(_ object: T?, _ closure: (T) -> Void) {
         closure(object)
     }
 }
+
+public extension NSObjectProtocol {
+    
+    @discardableResult
+    func configure(_ closure: (Self) -> Void) -> Self {
+        closure(self)
+        return self
+    }
+}
