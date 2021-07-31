@@ -30,7 +30,22 @@ public extension CGFloat {
     /// 64pt
     static let xxxl: CGFloat = 64
 }
+
+public typealias Vector = CGPoint
+
 public extension CGPoint {
+    
+    init(xy: CGFloat) {
+        self.init(x: xy, y: xy)
+    }
+    
+    init(x: CGFloat) {
+        self.init(x: x, y: 0)
+    }
+    
+    init(y: CGFloat) {
+        self.init(x: 0, y: y)
+    }
     
     static var up: CGPoint {
         CGPoint(x: 0, y: 1)
