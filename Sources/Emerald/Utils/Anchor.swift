@@ -21,7 +21,11 @@ public enum Anchor {
         case .top: return CGPoint(x: rect.center.x, y: rect.maxY)
         case .topLeft: return CGPoint(x: rect.minX, y: rect.maxY)
         case .topRight: return CGPoint(x: rect.maxX, y: rect.maxY)
-        default: return .zero
+        case .right: return CGPoint(x: rect.minX, y: rect.center.y)
+        case .bottom: return CGPoint(x: rect.center.x, y: rect.minY)
+        case .bottomLeft: return CGPoint(x: rect.minX, y: rect.minY)
+        case .bottomRight: return CGPoint(x: rect.maxX, y: rect.minY)
+        case .left: return CGPoint(x: rect.maxX, y: rect.center.y)
         }
     }
 }
