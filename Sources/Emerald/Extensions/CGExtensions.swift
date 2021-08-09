@@ -43,7 +43,15 @@ public extension CGPoint {
         self.init(x: x, y: 0)
     }
     
+    init(x: Int) {
+        self.init(x: x, y: 0)
+    }
+    
     init(y: CGFloat) {
+        self.init(x: 0, y: y)
+    }
+    
+    init(y: Int) {
         self.init(x: 0, y: y)
     }
     
