@@ -13,7 +13,12 @@ public func with<T>(_ object: T?, _ closure: (T) -> Void) {
     }
 }
 
-public extension NSObjectProtocol {
+public protocol Configurable {
+    associatedtype T = Self
+    func configure(_ closure: (T) -> Void) -> T
+}
+
+public extension Configurable {
     
     @discardableResult
     func configure(_ closure: (Self) -> Void) -> Self {
@@ -21,3 +26,5 @@ public extension NSObjectProtocol {
         return self
     }
 }
+
+extension NSObject: Configurable {}
