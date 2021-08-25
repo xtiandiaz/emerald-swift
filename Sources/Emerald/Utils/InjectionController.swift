@@ -15,6 +15,10 @@ final public class InjectionController {
         injectables["\(T.self)"] = injectable
     }
     
+    public func remove<T>(_ injectable: T) {
+        injectables["\(T.self)"] = nil
+    }
+    
     public func resolve<T>(_ type: T.Type) throws -> T {
         let key = "\(type)"
         
