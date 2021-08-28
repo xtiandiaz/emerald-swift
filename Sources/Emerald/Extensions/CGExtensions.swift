@@ -6,6 +6,7 @@
 //
 
 import CoreGraphics
+import simd.vector_types
 
 public extension CGFloat {
     
@@ -55,6 +56,10 @@ public extension CGPoint {
         self.init(x: 0, y: y)
     }
     
+    static var one: CGPoint {
+        CGPoint(xy: 1)
+    }
+    
     static var up: CGPoint {
         CGPoint(x: 0, y: 1)
     }
@@ -79,15 +84,39 @@ public extension CGPoint {
         CGPoint(x: lhs.x - rhs.x, y: lhs.y - rhs.y)
     }
     
+    static func * (lhs: CGPoint, rhs: CGPoint) -> CGPoint {
+        CGPoint(x: lhs.x * rhs.x, y: lhs.y * rhs.y)
+    }
+    
     static func * (lhs: CGPoint, rhs: CGFloat) -> CGPoint {
         CGPoint(x: lhs.x * rhs, y: lhs.y * rhs)
+    }
+    
+    func vector_float2() -> vector_float2 {
+        simd.vector_float2(Float(x), Float(y))
     }
 }
 
 public extension CGSize {
     
+    init(length: CGFloat) {
+        self.init(width: length, height: length)
+    }
+    
     var center: CGPoint {
         CGPoint(x: width * 0.5, y: height * 0.5)
+    }
+    
+    var aspectRatio: CGFloat {
+        width / height
+    }
+    
+    var inverseAspectRatio: CGFloat {
+        height / width
+    }
+    
+    static func + (lhs: CGSize, rhs: CGSize) -> CGSize {
+        CGSize(width: lhs.width + rhs.width, height: lhs.height + rhs.height)
     }
     
     static func * (lhs: CGSize, rhs: CGFloat) -> CGSize {
