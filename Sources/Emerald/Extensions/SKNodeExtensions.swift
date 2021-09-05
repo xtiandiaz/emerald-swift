@@ -7,14 +7,12 @@
 
 import SpriteKit
 
-open class Node: SKNode {
+public extension SKSpriteNode {
     
-    public override init() {
-        super.init()
-    }
-    
-    @available(*, unavailable)
-    public required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    convenience init(gradient: Gradient, size: CGSize) {
+        self.init(
+            texture: SKTexture(image: UIImage.gradient(gradient, size: size)),
+            size: size
+        )
     }
 }
