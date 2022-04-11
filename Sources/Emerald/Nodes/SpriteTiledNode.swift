@@ -7,7 +7,7 @@
 
 import SpriteKit
 
-public class SpriteTiledNode: SKSpriteNode {
+open class SpriteTiledNode: SKSpriteNode {
     
     public var offset: CGPoint = .zero {
         didSet {
@@ -36,7 +36,7 @@ public class SpriteTiledNode: SKSpriteNode {
     }
     
     @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
