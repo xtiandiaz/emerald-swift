@@ -7,6 +7,14 @@
 
 import SpriteKit
 
+public extension SKNode {
+    
+    var isVisible: Bool {
+        get { !isHidden }
+        set { isHidden = !newValue }
+    }
+}
+
 public extension SKSpriteNode {
     
     convenience init(gradient: Gradient, size: CGSize) {
