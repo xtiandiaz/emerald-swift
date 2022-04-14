@@ -9,6 +9,18 @@ import SpriteKit
 
 open class Node: SKNode {
     
+    public var width: CGFloat {
+        frame.width
+    }
+    
+    public var height: CGFloat {
+        frame.height
+    }
+    
+    public var size: CGSize {
+        frame.size
+    }
+    
     public override init() {
         super.init()
     }

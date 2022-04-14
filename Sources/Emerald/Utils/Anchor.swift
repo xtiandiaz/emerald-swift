@@ -18,14 +18,26 @@ public enum Anchor {
     public var point: CGPoint {
         switch self {
         case .center: return CGPoint(xy: 0.5)
-        case .top: return CGPoint(x: 0.5)
-        case .topLeft: return .zero
-        case .topRight: return CGPoint(x: 1)
+        case .top: return CGPoint(x: 0.5, y: 1)
+        case .topLeft: return CGPoint(y: 1)
+        case .topRight: return .one
         case .left: return CGPoint(y: 0.5)
-        case .bottom: return CGPoint(x: 0.5, y: 1)
-        case .bottomLeft: return CGPoint(y: 1)
-        case .bottomRight: return .one
+        case .bottom: return CGPoint(x: 0.5)
+        case .bottomLeft: return .zero
+        case .bottomRight: return CGPoint(x: 1)
         case .right: return CGPoint(x: 1, y: 0.5)
+        }
+    }
+    
+    public var uiPoint: CGPoint {
+        switch self {
+        case .bottom: return Anchor.top.point
+        case .bottomLeft: return Anchor.topLeft.point
+        case .bottomRight: return Anchor.topRight.point
+        case .top: return Anchor.bottom.point
+        case .topLeft: return Anchor.bottomLeft.point
+        case .topRight: return Anchor.bottomRight.point
+        default: return point
         }
     }
     
