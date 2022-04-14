@@ -1,6 +1,6 @@
 //
 //  Inject.swift
-//  Sokomatch
+//  Emerald
 //
 //  Created by Cristian Díaz on 28.2.2021.
 //  Copyright © 2021 Berilio. All rights reserved.

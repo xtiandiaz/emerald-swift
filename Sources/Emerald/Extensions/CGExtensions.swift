@@ -36,26 +36,6 @@ public typealias Vector = CGPoint
 
 public extension CGPoint {
     
-    init(xy: CGFloat) {
-        self.init(x: xy, y: xy)
-    }
-    
-    init(x: CGFloat) {
-        self.init(x: x, y: 0)
-    }
-    
-    init(x: Int) {
-        self.init(x: x, y: 0)
-    }
-    
-    init(y: CGFloat) {
-        self.init(x: 0, y: y)
-    }
-    
-    init(y: Int) {
-        self.init(x: 0, y: y)
-    }
-    
     static var one: CGPoint {
         CGPoint(xy: 1)
     }
@@ -74,6 +54,26 @@ public extension CGPoint {
     
     static var left: CGPoint {
         CGPoint(x: -1, y: 0)
+    }
+    
+    init(xy: CGFloat) {
+        self.init(x: xy, y: xy)
+    }
+    
+    init(x: CGFloat) {
+        self.init(x: x, y: 0)
+    }
+    
+    init(x: Int) {
+        self.init(x: x, y: 0)
+    }
+    
+    init(y: CGFloat) {
+        self.init(x: 0, y: y)
+    }
+    
+    init(y: Int) {
+        self.init(x: 0, y: y)
     }
     
     static func + (lhs: CGPoint, rhs: CGPoint) -> CGPoint {
@@ -99,8 +99,12 @@ public extension CGPoint {
 
 public extension CGSize {
     
-    init(length: CGFloat) {
-        self.init(width: length, height: length)
+    static var zero: CGSize {
+        CGSize(length: 0)
+    }
+    
+    static var one: CGSize {
+        CGSize(length: 1)
     }
     
     var center: CGPoint {
@@ -113,6 +117,18 @@ public extension CGSize {
     
     var inverseAspectRatio: CGFloat {
         height / width
+    }
+    
+    init(length: CGFloat) {
+        self.init(width: length, height: length)
+    }
+    
+    init(width: CGFloat) {
+        self.init(width: width, height: 1)
+    }
+    
+    init(height: CGFloat) {
+        self.init(width: 1, height: height)
     }
     
     static func + (lhs: CGSize, rhs: CGSize) -> CGSize {
