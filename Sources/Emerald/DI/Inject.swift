@@ -16,9 +16,7 @@ public struct Inject<T> {
         set { }
     }
     
+    private lazy var value = try! InjectionContainer.shared.resolve(T.self)
+    
     public init() {}
-    
-    // MARK: Private
-    
-    private lazy var value = try! InjectionController.shared.resolve(T.self)
 }
