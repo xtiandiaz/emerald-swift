@@ -25,7 +25,6 @@ public struct Location: Equatable, Hashable {
         case .right: self.x += steps
         case .down: self.y -= steps
         case .left: self.x -= steps
-        default: break
         }
     }
     
@@ -35,7 +34,6 @@ public struct Location: Equatable, Hashable {
         case .right: return Location(x: self.x + steps, y: self.y)
         case .down: return Location(x: self.x, y: self.y - steps)
         case .left: return Location(x: self.x - steps, y: self.y)
-        default: return self
         }
     }
 }
