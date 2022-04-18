@@ -13,6 +13,16 @@ public extension SKNode {
         get { !isHidden }
         set { isHidden = !newValue }
     }
+    
+    func run(_ action: SKAction, withKey key: String, completion: @escaping () -> Void) {
+        run(
+            SKAction.sequence([
+                action,
+                SKAction.run(completion)
+            ]),
+            withKey: key
+        )
+    }
 }
 
 public extension SKSpriteNode {
