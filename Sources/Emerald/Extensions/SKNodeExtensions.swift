@@ -16,10 +16,7 @@ public extension SKNode {
     
     func run(_ action: SKAction, withKey key: String, completion: @escaping () -> Void) {
         run(
-            SKAction.sequence([
-                action,
-                SKAction.run(completion)
-            ]),
+            SKAction.sequence([ action, SKAction.run(completion) ]),
             withKey: key
         )
     }
