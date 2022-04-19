@@ -13,11 +13,26 @@ public struct TextUtils {
     public static func attributedText(
         _ text: String,
         size: CGFloat,
+        weight: UIFont.Weight,
+        color: UIColor,
+        paragraphStyle: NSParagraphStyle? = nil
+    ) -> NSAttributedString {
+        attributedText(
+            text,
+            font: UIFont.systemFont(ofSize: size, weight: weight),
+            color: color,
+            paragraphStyle: paragraphStyle
+        )
+    }
+    
+    public static func attributedText(
+        _ text: String,
+        font: UIFont,
         color: UIColor,
         paragraphStyle: NSParagraphStyle? = nil
     ) -> NSAttributedString {
         var attributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.systemFont(ofSize: size, weight: .heavy),
+            .font: font,
             .foregroundColor: color,
         ]
         
