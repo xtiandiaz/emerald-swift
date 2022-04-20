@@ -56,22 +56,4 @@ public extension SKAction {
             count: times
         )
     }
-    
-    private func flipScaleActions(for direction: Direction, duration: CGFloat) -> (SKAction, SKAction) {
-        (
-            { () -> SKAction in
-                switch direction {
-                case .right, .left:
-                    return SKAction.scaleX(to: 0, y: 1, duration: duration / 2)
-                case .up, .down:
-                    return SKAction.scaleX(to: 1, y: 0, duration: duration / 2)
-                }
-            }().configure {
-                $0.timingMode = .easeIn
-            },
-            SKAction.scaleX(to: 1, y: 1, duration: duration / 2).configure {
-                $0.timingMode = .easeOut
-            }
-        )
-    }
 }

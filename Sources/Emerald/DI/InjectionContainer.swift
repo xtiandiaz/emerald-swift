@@ -1,5 +1,5 @@
 //
-//  InjectionController.swift
+//  InjectionContainer.swift
 //  Emerald
 //
 //  Created by Cristian Díaz on 1.8.2021.
@@ -41,8 +41,8 @@ public final class InjectionContainer {
     }
     
     public func install<T1, T2>(
-        _ b1: @escaping () -> T1,
-        _ b2: @escaping () -> T2,
+        _ b1: @autoclosure @escaping () -> T1,
+        _ b2: @autoclosure @escaping () -> T2,
         withTag tag: String? = nil
     ) {
         install(b1, T1.self, tag)
@@ -115,13 +115,13 @@ public final class InjectionContainer {
         _ b7: @autoclosure @escaping () -> T7,
         withTag tag: String? = nil
     ) {
-        install(b1, withTag: tag)
-        install(b2, withTag: tag)
-        install(b3, withTag: tag)
-        install(b4, withTag: tag)
-        install(b5, withTag: tag)
-        install(b6, withTag: tag)
-        install(b7, withTag: tag)
+        install(b1, T1.self, tag)
+        install(b2, T2.self, tag)
+        install(b3, T3.self, tag)
+        install(b4, T4.self, tag)
+        install(b5, T5.self, tag)
+        install(b6, T6.self, tag)
+        install(b7, T7.self, tag)
     }
     
     public func install<T1, T2, T3, T4, T5, T6, T7, T8>(
@@ -135,14 +135,14 @@ public final class InjectionContainer {
         _ b8: @autoclosure @escaping () -> T8,
         withTag tag: String? = nil
     ) {
-        install(b1, withTag: tag)
-        install(b2, withTag: tag)
-        install(b3, withTag: tag)
-        install(b4, withTag: tag)
-        install(b5, withTag: tag)
-        install(b6, withTag: tag)
-        install(b7, withTag: tag)
-        install(b8, withTag: tag)
+        install(b1, T1.self, tag)
+        install(b2, T2.self, tag)
+        install(b3, T3.self, tag)
+        install(b4, T4.self, tag)
+        install(b5, T5.self, tag)
+        install(b6, T6.self, tag)
+        install(b7, T7.self, tag)
+        install(b8, T8.self, tag)
     }
     
     public func install<T1, T2, T3, T4, T5, T6, T7, T8, T9>(
@@ -157,15 +157,15 @@ public final class InjectionContainer {
         _ b9: @autoclosure @escaping () -> T9,
         withTag tag: String? = nil
     ) {
-        install(b1, withTag: tag)
-        install(b2, withTag: tag)
-        install(b3, withTag: tag)
-        install(b4, withTag: tag)
-        install(b5, withTag: tag)
-        install(b6, withTag: tag)
-        install(b7, withTag: tag)
-        install(b8, withTag: tag)
-        install(b9, withTag: tag)
+        install(b1, T1.self, tag)
+        install(b2, T2.self, tag)
+        install(b3, T3.self, tag)
+        install(b4, T4.self, tag)
+        install(b5, T5.self, tag)
+        install(b6, T6.self, tag)
+        install(b7, T7.self, tag)
+        install(b8, T8.self, tag)
+        install(b9, T9.self, tag)
     }
     
     public func install<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(
@@ -181,16 +181,16 @@ public final class InjectionContainer {
         _ b10: @autoclosure @escaping () -> T10,
         withTag tag: String? = nil
     ) {
-        install(b1, withTag: tag)
-        install(b2, withTag: tag)
-        install(b3, withTag: tag)
-        install(b4, withTag: tag)
-        install(b5, withTag: tag)
-        install(b6, withTag: tag)
-        install(b7, withTag: tag)
-        install(b8, withTag: tag)
-        install(b9, withTag: tag)
-        install(b10, withTag: tag)
+        install(b1, T1.self, tag)
+        install(b2, T2.self, tag)
+        install(b3, T3.self, tag)
+        install(b4, T4.self, tag)
+        install(b5, T5.self, tag)
+        install(b6, T6.self, tag)
+        install(b7, T7.self, tag)
+        install(b8, T8.self, tag)
+        install(b9, T9.self, tag)
+        install(b10, T10.self, tag)
     }
     
     public func resolve<T>(_ type: T.Type) throws -> T {
