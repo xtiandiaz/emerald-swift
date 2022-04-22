@@ -32,7 +32,7 @@ public extension CGFloat {
     static let xxxl: CGFloat = 64
 }
 
-public typealias Vector = CGPoint
+public typealias Vector2 = CGPoint
 
 public extension CGPoint {
     
@@ -74,6 +74,10 @@ public extension CGPoint {
     
     init(y: Int) {
         self.init(x: 0, y: y)
+    }
+    
+    func distanceSquared(to: CGPoint) -> CGFloat {
+        (to.x - x) * (to.x - x) + (to.y - y) * (to.y - y)
     }
     
     static func + (lhs: CGPoint, rhs: CGPoint) -> CGPoint {
