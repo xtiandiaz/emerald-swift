@@ -16,7 +16,7 @@ public protocol FireableNode: Node {
     var chargeTime: TimeInterval { get }
     var vectorThresholdToInvalidateFire: Vector2 { get }
     
-    var onFired: AnyPublisher<Shot, Never> { get }
+    var uponFire: AnyPublisher<Shot, Never> { get }
     
     func charge()
     func fire()
