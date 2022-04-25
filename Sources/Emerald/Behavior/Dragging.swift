@@ -23,7 +23,7 @@ extension Draggable {
     public func pick() -> Draggable? {
         self
     }
-
+    
     public func drag(to location: CGPoint) {
         position = {
             switch dragAxis {
@@ -57,10 +57,11 @@ public class Dragging<T: Draggable>: NodeBehavior<T> {
         
         node.uponTouchesMoved
             .sink { [unowned self] in
-                if let location = $0.first?.location(in: node), let pick = pick {
-                    pick.drag(to: location + pickOffset)
+                if let touch = $0.first, let pick = pick {
+                    pick.drag(to: touch.location(in: node) + pickOffset)
                 }
-            }.store(in: &subscriptions)
+            }
+            .store(in: &subscriptions)
         
         node.uponTouchesEnded
             .sink { [unowned self] _ in

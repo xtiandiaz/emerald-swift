@@ -9,7 +9,7 @@ import Combine
 import Foundation
 import SpriteKit
 
-open class Scene: SKScene, Runnable, Subscribable, Identifiable {
+open class Scene: SKScene, Runnable, Identifiable {
     
     public let id = UUID()
     public private(set) var isRunning = false
@@ -59,14 +59,16 @@ open class Scene: SKScene, Runnable, Subscribable, Identifiable {
         isRunning = false
     }
     
-    open func unsubscribe() {
+    open func removeDependencies() {
+    }
+    
+    // MARK: - Private
+    
+    private func unsubscribe() {
         subscriptions.forEach {
             $0.cancel()
         }
         
         subscriptions.removeAll()
-    }
-    
-    open func removeDependencies() {
     }
 }
