@@ -6,18 +6,20 @@ import PackageDescription
 let package = Package(
     name: "Emerald",
     platforms: [
-        .iOS(.v13)
+        .iOS(.v14)
     ],
     products: [
         .library(
             name: "Emerald",
             targets: ["Emerald"]),
     ],
-    dependencies: [],
+    dependencies: [
+        .package(name: "Beryllium", path: "../Beryllium")
+    ],
     targets: [
         .target(
             name: "Emerald",
-            dependencies: [],
+            dependencies: ["Beryllium"],
             resources: [
                 .process("Resources")
             ]
