@@ -5,108 +5,168 @@
 //  Created by Cristian Diaz on 25.4.2022.
 //
 
+import Beryllium
 import Combine
 import Foundation
 import SpriteKit
 
+public protocol Chargeable: AnyObject {
+    
+    var charge: Double { get set }
+    
+    var chargeInterval: TimeInterval { get }
+    var chargeAmount: Double { get }
+    var chargeCap: Double { get }
+}
+
 public protocol Fireable: Node {
     
-    var canFire: Bool { get }
-    var vectorThresholdToInvalidateFire: Vector? { get }
-    var chargeTime: TimeInterval { get }
+    associatedtype Load: Chargeable
     
-    func charge()
-    func fire(toward direction: Vector)
-    func cancel()
+    var vectorThresholdToInvalidateFire: Vector? { get }
+    
+    func load() -> Load?
+    func fire(load: Load, toward direction: Vector)
+    func unload(load: Load)
+    
+    func onCharged(toLevel level: Double)
 }
 
 public class Firing<T: Fireable>: NodeBehavior<T> {
-    
-    deinit {
-        cancel()
-    }
     
     public override func start() {
         super.start()
         
         node.isUserInteractionEnabled = true
+        
+        stateMachine.start()
+    }
+    
+    public override func stop() {
+        super.stop()
+        
+        stateMachine.stop()
     }
     
     public override func subscribe(_ subscriptions: inout Set<AnyCancellable>) {
-        node.uponTouchesBegan
-            .sink { [unowned self] in
-                if node.canFire, let location = $0.first?.location(in: node) {
-                    chargeOffset = node.position - location
-                    charge()
-                }
+        node.uponTouchBegan
+            .sink { [unowned self] _ in
+                stateMachine.sendEvent(.charge)
             }
             .store(in: &subscriptions)
         
-        if let squaredDistanceToInvalidateFire = node.vectorThresholdToInvalidateFire?
-            .distanceSquared(to: .zero) {
-            node.uponTouchesMoved
-                .sink { [unowned self] in
-                    if state != .idle,
-                       let location = $0.first?.location(in: node),
-                       node.position.distanceSquared(to: location + chargeOffset) > squaredDistanceToInvalidateFire {
-                        cancel()
-                    }
-                }
-                .store(in: &subscriptions)
-        }
+//        if let squaredDistanceToInvalidateFire =
+//            node.vectorThresholdToInvalidateFire?.distanceSquared(to: .zero) {
+//            node.uponTouchMoved
+//                .sink { [unowned stateMachine] _ in
+//                    stateMachine.sendEvent(.cancel)
+//                }
+//                .store(in: &subscriptions)
+//        }
         
-        node.uponTouchesEnded
-            .sink { [unowned self] in
-                if let touch = $0.first {
-                    switch state {
-                    case .charged:
-                        node.fire(
-                            toward: node.position.direction(toward: touch.location(in: node) + chargeOffset)
-                        )
-                        
-                    case .charging:
-                        cancel()
-                        
-                    default:
-                        break
-                    }
-                }
+        node.uponTouchEnded
+            .sink { [unowned stateMachine] _ in
+                stateMachine.sendEvent(.fire)
             }
             .store(in: &subscriptions)
-    }
-    
-    public func cancel() {
-        guard state != .idle else {
-            return
-        }
-        
-        chargeTimer?.invalidate()
-        node.cancel()
-        
-        state = .idle
     }
     
     // MARK: - Private
     
     private enum State {
+
+        case idle, charging
+    }
+
+    private enum Event: String {
         
-        case idle,
-             charging,
-             charged
+        case charge, fire, cancel
     }
     
-    private var state: State = .idle
-    private var chargeTimer: Timer?
-    private var chargeOffset: CGPoint = .zero
+    private lazy var stateMachine = EventDrivenFSM<State, Event>(initialState: .idle).configure {
+        $0.addState(.idle) { [unowned self] in
+            charger = nil
+        }
+        .onEvent(.charge) { [unowned self] in
+            load = node.load()
+            return .charging
+        }
     
-    private func charge() {
-        state = .charging
+        $0.addState(.charging) { [unowned self] in
+            charger = Charger(chargeable: load)
+            charger?.start()
+        } onExit: { [unowned self] in
+            charger = nil
+        }
+        .onEvent(.fire) { [unowned self] in
+            if let load = load {
+                node.fire(load: load, toward: .zero)
+            }
+            
+            return .idle
+        }
+        .onEvent(.cancel) { .idle }
+    }
+
+    private var load: T.Load?
+    private var charger: Charger?
+}
+
+private class Charger: Runnable {
+    
+    private(set) var isRunning = false
+    
+    init?(chargeable: Chargeable?) {
+        guard let chargeable = chargeable else {
+            return nil
+        }
+
+        self.chargeable = chargeable
+    }
+    
+    deinit {
+        print("ditched Charger")
+    }
+    
+    func start() {
+        guard !isRunning else {
+            return
+        }
         
-        node.charge()
+        defer {
+            isRunning = true
+        }
         
-        chargeTimer = .scheduledTimer(withTimeInterval: node.chargeTime, repeats: false) {
-            [weak self] _ in
-            self?.state = .charged
+        subscription = stride(
+            from: chargeable.chargeAmount,
+            through: chargeable.chargeCap,
+            by: chargeable.chargeAmount
+        )
+        .publisher
+        .flatMap(maxPublishers: .max(1)) { [unowned self] in
+            Just($0).delay(for: .seconds(chargeable.chargeInterval), scheduler: RunLoop.main)
+        }
+        .sink { _ in
+            print("Done charging!")
+        } receiveValue: { [unowned self] in
+            chargeable.charge = $0
+            print("charging... \($0)")
         }
     }
+    
+    func stop() {
+        guard isRunning else {
+            return
+        }
+        
+        subscription?.cancel()
+        
+        isRunning = false
+    }
+    
+    // MARK: - Private
+    
+    private let chargeable: Chargeable
+    
+    private var subscription: AnyCancellable?
 }

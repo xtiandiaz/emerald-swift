@@ -23,6 +23,18 @@ open class Node: SKNode {
         .share()
         .eraseToAnyPublisher()
     
+    public var uponTouchBegan: AnyPublisher<UITouch, Never> {
+        uponTouchesBegan.compactMap { $0.first }.eraseToAnyPublisher()
+    }
+    
+    public var uponTouchMoved: AnyPublisher<UITouch, Never> {
+        uponTouchesMoved.compactMap { $0.first }.eraseToAnyPublisher()
+    }
+    
+    public var uponTouchEnded: AnyPublisher<UITouch, Never> {
+        uponTouchesEnded.compactMap { $0.first }.eraseToAnyPublisher()
+    }
+    
     public var width: CGFloat {
         frame.width
     }

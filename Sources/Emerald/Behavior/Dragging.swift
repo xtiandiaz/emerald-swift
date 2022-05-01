@@ -5,6 +5,7 @@
 //  Created by Cristian Diaz on 23.4.2022.
 //
 
+import Beryllium
 import Combine
 import Foundation
 import SpriteKit
