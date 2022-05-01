@@ -10,13 +10,18 @@ import Combine
 import Foundation
 import SpriteKit
 
+public enum ChargeableMode {
+    
+    case atIntervals(duration: TimeInterval, amount: Double),
+         dragging(axis: Axis, step: Double, amount: Double)
+}
+
 public protocol Chargeable: AnyObject {
     
     var charge: Double { get set }
-    
-    var chargeInterval: TimeInterval { get }
-    var chargeAmount: Double { get }
     var chargeCap: Double { get }
+    var chargingMode: ChargeableMode { get }
+    var position: CGPoint { get }
 }
 
 public protocol Fireable: Node {
@@ -27,7 +32,7 @@ public protocol Fireable: Node {
     
     func load() -> Load?
     func fire(load: Load, toward direction: Vector)
-    func unload(load: Load)
+    func cancel(load: Load?)
     
     func onCharged(toLevel level: Double)
 }
@@ -85,6 +90,7 @@ public class Firing<T: Fireable>: NodeBehavior<T> {
     
     private lazy var stateMachine = EventDrivenFSM<State, Event>(initialState: .idle).configure {
         $0.addState(.idle) { [unowned self] in
+            load = nil
             charger = nil
         }
         .onEvent(.charge) { [unowned self] in
@@ -102,10 +108,12 @@ public class Firing<T: Fireable>: NodeBehavior<T> {
             if let load = load {
                 node.fire(load: load, toward: .zero)
             }
-            
             return .idle
         }
-        .onEvent(.cancel) { .idle }
+        .onEvent(.cancel) { [unowned self] in
+            node.cancel(load: load)
+            return .idle
+        }
     }
 
     private var load: T.Load?
@@ -133,24 +141,18 @@ private class Charger: Runnable {
             return
         }
         
-        defer {
-            isRunning = true
-        }
+        startWithMode()
         
-        subscription = stride(
-            from: chargeable.chargeAmount,
-            through: chargeable.chargeCap,
-            by: chargeable.chargeAmount
-        )
-        .publisher
-        .flatMap(maxPublishers: .max(1)) { [unowned self] in
-            Just($0).delay(for: .seconds(chargeable.chargeInterval), scheduler: RunLoop.main)
-        }
-        .sink { _ in
-            print("Done charging!")
-        } receiveValue: { [unowned self] in
-            chargeable.charge = $0
-            print("charging... \($0)")
+        isRunning = true
+    }
+    
+    func update() {
+        switch chargeable.chargingMode {
+        case .dragging(let axis, let step, let amount):
+            break
+            
+        default:
+            break
         }
     }
     
@@ -167,6 +169,26 @@ private class Charger: Runnable {
     // MARK: - Private
     
     private let chargeable: Chargeable
-    
     private var subscription: AnyCancellable?
+    private var startPosition: CGPoint = .zero
+    
+    private func startWithMode() {
+        switch chargeable.chargingMode {
+        case .atIntervals(let duration, let amount):
+            subscription = stride(from: amount, through: chargeable.chargeCap, by: amount)
+                .publisher
+                .flatMap(maxPublishers: .max(1)) {
+                    Just($0).delay(for: .seconds(duration), scheduler: RunLoop.main)
+                }
+                .sink { _ in
+                    print("Done charging!")
+                } receiveValue: { [unowned self] in
+                    chargeable.charge = $0
+                    print("charging... \($0)")
+                }
+            
+        case .dragging:
+            startPosition = chargeable.position
+        }
+    }
 }
