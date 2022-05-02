@@ -10,35 +10,24 @@ import Combine
 import Foundation
 import SpriteKit
 
+public protocol PickableAndDroppable: Node {
+    
+    func pick()
+    func drop()
+}
+
 public protocol Draggable: Node {
     
     var dragAxis: Axis { get }
     
-    func pick() -> Draggable?
-    func drag(to location: CGPoint)
+    func pick() -> PickableAndDroppable?
+    func onDragged(by offset: CGSize)
     func drop()
-}
-
-extension Draggable {
-    
-    public func pick() -> Draggable? {
-        self
-    }
-    
-    public func drag(to location: CGPoint) {
-        position = {
-            switch dragAxis {
-            case .x: return CGPoint(x: location.x, y: position.y)
-            case .y: return CGPoint(x: position.x, y: location.y)
-            default: return location
-            }
-        }()
-    }
 }
 
 public class Dragging<T: Draggable>: NodeBehavior<T> {
     
-    @Publish public private(set) var pick: Draggable?
+    @Publish public private(set) var pick: PickableAndDroppable?
     
     public override func start() {
         super.start()
@@ -46,33 +35,52 @@ public class Dragging<T: Draggable>: NodeBehavior<T> {
         node.isUserInteractionEnabled = true
     }
     
-    public override func subscribe(_ subscriptions: inout Set<AnyCancellable>) {
-        node.uponTouchesBegan
+    // MARK: - Internal
+    
+    override func subscribe(_ subscriptions: inout Set<AnyCancellable>) {
+        node.uponTouchBegan
             .sink { [unowned self] in
-                if let touch = $0.first, pick.isNil, let pick = node.pick() {
-                    pickOffset = pick.position - touch.location(in: pick)
+                if pick.isNil, let pick = node.pick() {
+                    pickPosition = pick.position
+                    pickLocation = $0.location(in: node)
                     self.pick = pick
                 }
             }
             .store(in: &subscriptions)
         
-        node.uponTouchesMoved
+        node.uponTouchMoved
             .sink { [unowned self] in
-                if let touch = $0.first, let pick = pick {
-                    pick.drag(to: touch.location(in: node) + pickOffset)
+                guard let pick = pick else {
+                    return
                 }
+                
+                let nextLocation = $0.location(in: node)
+                let nextPosition =  pickPosition - pickLocation + nextLocation
+                
+                pick.position = {
+                    switch node.dragAxis {
+                    case .x: return CGPoint(x: nextPosition.x, y: pick.position.y)
+                    case .y: return CGPoint(x: pick.position.x, y: nextPosition.y)
+                    default: return nextPosition
+                    }
+                }()
+                
+                node.onDragged(by: (nextLocation - pickLocation).asOffset())
             }
             .store(in: &subscriptions)
         
-        node.uponTouchesEnded
+        node.uponTouchEnded
             .sink { [unowned self] _ in
                 pick?.drop()
                 pick = nil
+                
+                node.drop()
             }
             .store(in: &subscriptions)
     }
     
     // MARK: - Private
     
-    private var pickOffset: CGPoint = .zero
+    private var pickPosition: CGPoint = .zero
+    private var pickLocation: CGPoint = .zero
 }

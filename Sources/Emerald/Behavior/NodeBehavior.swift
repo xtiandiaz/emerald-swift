@@ -29,7 +29,9 @@ public class NodeBehavior<Behavior: Node> {
         unsubscribe()
     }
     
-    public func subscribe(_ subscriptions: inout Set<AnyCancellable>) {
+    // MARK: - Internal
+    
+    func subscribe(_ subscriptions: inout Set<AnyCancellable>) {
     }
         
     // MARK: - Private

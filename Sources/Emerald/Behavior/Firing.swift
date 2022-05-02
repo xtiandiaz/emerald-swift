@@ -16,19 +16,18 @@ public enum ChargeableMode {
          dragging(axis: Axis, step: Double, amount: Double)
 }
 
-public protocol Chargeable: AnyObject {
+public protocol Chargeable: Node {
     
     var charge: Double { get set }
     var chargeCap: Double { get }
     var chargingMode: ChargeableMode { get }
-    var position: CGPoint { get }
 }
 
 public protocol Fireable: Node {
     
     associatedtype Load: Chargeable
     
-    var vectorThresholdToInvalidateFire: Vector? { get }
+    var loadDelay: TimeInterval { get }
     
     func load() -> Load?
     func fire(load: Load, toward direction: Vector)
@@ -53,25 +52,33 @@ public class Firing<T: Fireable>: NodeBehavior<T> {
         stateMachine.stop()
     }
     
-    public override func subscribe(_ subscriptions: inout Set<AnyCancellable>) {
+    public func cancel() {
+        if !isCancelled {
+            stateMachine.sendEvent(.cancel)
+        }
+        
+        isCancelled = true
+    }
+    
+    // MARK: - Internal
+    
+    override func subscribe(_ subscriptions: inout Set<AnyCancellable>) {
         node.uponTouchBegan
+            .debounce(for: .seconds(node.loadDelay), scheduler: RunLoop.main)
             .sink { [unowned self] _ in
-                stateMachine.sendEvent(.charge)
+                if !isCancelled {
+                    stateMachine.sendEvent(.charge)
+                }
             }
             .store(in: &subscriptions)
         
-//        if let squaredDistanceToInvalidateFire =
-//            node.vectorThresholdToInvalidateFire?.distanceSquared(to: .zero) {
-//            node.uponTouchMoved
-//                .sink { [unowned stateMachine] _ in
-//                    stateMachine.sendEvent(.cancel)
-//                }
-//                .store(in: &subscriptions)
-//        }
-        
         node.uponTouchEnded
-            .sink { [unowned stateMachine] _ in
-                stateMachine.sendEvent(.fire)
+            .sink { [unowned self] _ in
+                if !isCancelled {
+                    stateMachine.sendEvent(.fire)
+                }
+                
+                isCancelled = false
             }
             .store(in: &subscriptions)
     }
@@ -88,14 +95,22 @@ public class Firing<T: Fireable>: NodeBehavior<T> {
         case charge, fire, cancel
     }
     
+    private var load: T.Load?
+    private var charger: Charger?
+    private var isCancelled = false
+    
     private lazy var stateMachine = EventDrivenFSM<State, Event>(initialState: .idle).configure {
         $0.addState(.idle) { [unowned self] in
             load = nil
             charger = nil
         }
         .onEvent(.charge) { [unowned self] in
-            load = node.load()
-            return .charging
+            if let load = node.load() {
+                self.load = load
+                return .charging
+            }
+            
+            return .idle
         }
     
         $0.addState(.charging) { [unowned self] in
@@ -108,16 +123,15 @@ public class Firing<T: Fireable>: NodeBehavior<T> {
             if let load = load {
                 node.fire(load: load, toward: .zero)
             }
+            
             return .idle
         }
         .onEvent(.cancel) { [unowned self] in
             node.cancel(load: load)
+            
             return .idle
         }
     }
-
-    private var load: T.Load?
-    private var charger: Charger?
 }
 
 private class Charger: Runnable {

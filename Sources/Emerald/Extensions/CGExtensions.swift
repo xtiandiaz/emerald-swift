@@ -80,6 +80,14 @@ public extension CGPoint {
         (to.x - x) * (to.x - x) + (to.y - y) * (to.y - y)
     }
     
+    func distance(to: CGPoint) -> CGFloat {
+        sqrt(distanceSquared(to: to))
+    }
+    
+    func offset(to: CGPoint) -> CGSize {
+        CGSize(width: to.x - x, height: to.y - y)
+    }
+    
     func direction(toward target: CGPoint) -> Vector {
         let vector = Vector(x: target.x - x, y: target.y - y)
         let max = max(abs(vector.x), abs(vector.y))
@@ -105,6 +113,10 @@ public extension CGPoint {
     
     static func * (lhs: CGPoint, rhs: CGFloat) -> CGPoint {
         CGPoint(x: lhs.x * rhs, y: lhs.y * rhs)
+    }
+    
+    func asOffset() -> CGSize {
+        CGSize(width: x, height: y)
     }
     
     func vector_float2() -> vector_float2 {
@@ -134,6 +146,14 @@ public extension CGSize {
         height / width
     }
     
+    var magnitude: CGFloat {
+        asPoint().distance(to: .zero)
+    }
+    
+    var magnitudeSquared: CGFloat {
+        asPoint().distanceSquared(to: .zero)
+    }
+    
     init(length: CGFloat) {
         self.init(width: length, height: length)
     }
@@ -150,8 +170,16 @@ public extension CGSize {
         CGSize(width: lhs.width + rhs.width, height: lhs.height + rhs.height)
     }
     
+    static func - (lhs: CGSize, rhs: CGSize) -> CGSize {
+        CGSize(width: lhs.width - rhs.width, height: lhs.height - rhs.height)
+    }
+    
     static func * (lhs: CGSize, rhs: CGFloat) -> CGSize {
         CGSize(width: lhs.width * rhs, height: lhs.height * rhs)
+    }
+    
+    func asPoint() -> CGPoint {
+        CGPoint(x: width, y: height)
     }
 }
 

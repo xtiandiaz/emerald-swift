@@ -20,6 +20,20 @@ public extension SKNode {
             withKey: key
         )
     }
+    
+    func runAsync(_ action: SKAction, key: String) async {
+        await withUnsafeContinuation { continuation in
+            run(action, withKey: key) {
+                continuation.resume(returning: ())
+            }
+        }
+    }
+    
+    func runTask(forAction action: SKAction, key: String) -> Task<Void, Never> {
+        Task {
+            await runAsync(action, key: key)
+        }
+    }
 }
 
 public extension SKSpriteNode {
