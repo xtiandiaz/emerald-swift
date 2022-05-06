@@ -49,16 +49,11 @@ open class Node: SKNode {
     
     public override init() {
         super.init()
-        
-        subscribe(&subscriptions)
     }
     
     @available(*, unavailable)
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    open func subscribe(_ subscriptions: inout Set<AnyCancellable>) {
     }
     
     open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -74,8 +69,6 @@ open class Node: SKNode {
     }
     
     // MARK: - Private
-    
-    private var subscriptions = Set<AnyCancellable>()
     
     private let touchesBeganSubject = PassthroughSubject<Set<UITouch>, Never>()
     private let touchesMovedSubject = PassthroughSubject<Set<UITouch>, Never>()

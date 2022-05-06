@@ -161,13 +161,13 @@ private class Charger: Runnable {
     }
     
     func update() {
-        switch chargeable.chargingMode {
-        case .dragging(let axis, let step, let amount):
-            break
-            
-        default:
-            break
-        }
+//        switch chargeable.chargingMode {
+//        case .dragging(let axis, let step, let amount):
+//            break
+//            
+//        default:
+//            break
+//        }
     }
     
     func stop() {
