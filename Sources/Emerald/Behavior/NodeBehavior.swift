@@ -10,9 +10,11 @@ import Combine
 import Foundation
 import SpriteKit
 
-open class NodeBehavior<T: Node>: Configurable {
+open class NodeBehavior<T: Node>: Runnable, Configurable {
 
     public unowned let node: T
+    
+    public private(set) var isRunning = false
 
     public init(node: T) {
         self.node = node
@@ -23,11 +25,26 @@ open class NodeBehavior<T: Node>: Configurable {
     }
 
     open func start() {
+        guard !isRunning else {
+            return
+        }
+        
         subscribe(&subscriptions)
+        
+        isRunning = true
     }
-
+    
     open func stop() {
+        guard isRunning else {
+            return
+        }
+        
         unsubscribe()
+        
+        isRunning = false
+    }
+    
+    open func cancel() {
     }
     
     open func subscribe(_ subscriptions: inout Set<AnyCancellable>) {

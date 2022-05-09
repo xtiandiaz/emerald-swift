@@ -8,7 +8,7 @@
 import Foundation
 import SpriteKit
 
-public protocol Draggable: PickableAndDroppable {
+public protocol Draggable: Node {
     
     var dragAxis: Axis { get }
     
