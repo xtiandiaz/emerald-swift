@@ -11,29 +11,17 @@ import SpriteKit
 
 open class Node: SKNode {
     
-    public private(set) lazy var uponTouchesBegan: AnyPublisher<Set<UITouch>, Never> = touchesBeganSubject
+    public private(set) lazy var touchBeganPublisher: AnyPublisher<UITouch, Never> = touchBeganSubject
         .share()
         .eraseToAnyPublisher()
     
-    public private(set) lazy var uponTouchesMoved: AnyPublisher<Set<UITouch>, Never> = touchesMovedSubject
+    public private(set) lazy var touchMovedPublisher: AnyPublisher<UITouch, Never> = touchMovedSubject
         .share()
         .eraseToAnyPublisher()
     
-    public private(set) lazy var uponTouchesEnded: AnyPublisher<Set<UITouch>, Never> = touchesEndedSubject
+    public private(set) lazy var touchEndedPublisher: AnyPublisher<UITouch, Never> = touchEndedSubject
         .share()
         .eraseToAnyPublisher()
-    
-    public var uponTouchBegan: AnyPublisher<UITouch, Never> {
-        uponTouchesBegan.compactMap { $0.first }.eraseToAnyPublisher()
-    }
-    
-    public var uponTouchMoved: AnyPublisher<UITouch, Never> {
-        uponTouchesMoved.compactMap { $0.first }.eraseToAnyPublisher()
-    }
-    
-    public var uponTouchEnded: AnyPublisher<UITouch, Never> {
-        uponTouchesEnded.compactMap { $0.first }.eraseToAnyPublisher()
-    }
     
     public var width: CGFloat {
         frame.width
@@ -57,20 +45,37 @@ open class Node: SKNode {
     }
     
     open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        touchesBeganSubject.send(touches)
+        if let touch = touches.first {
+            latestTouchLocation = touch.location(in: self)
+            touchBeganSubject.send(touch)
+        }
     }
     
     open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        touchesMovedSubject.send(touches)
+        guard let touch = touches.first, touch.phase == .moved else {
+            return
+        }
+        
+        let location = touch.location(in: self)
+        
+        if latestTouchLocation != location {
+            latestTouchLocation = location
+            touchMovedSubject.send(touch)
+        }
     }
     
     open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        touchesEndedSubject.send(touches)
+        if let touch = touches.first {
+            latestTouchLocation = touch.location(in: self)
+            touchEndedSubject.send(touch)
+        }
     }
     
     // MARK: - Private
     
-    private let touchesBeganSubject = PassthroughSubject<Set<UITouch>, Never>()
-    private let touchesMovedSubject = PassthroughSubject<Set<UITouch>, Never>()
-    private let touchesEndedSubject = PassthroughSubject<Set<UITouch>, Never>()
+    private var latestTouchLocation: CGPoint?
+    
+    private lazy var touchBeganSubject = PassthroughSubject<UITouch, Never>()
+    private lazy var touchMovedSubject = PassthroughSubject<UITouch, Never>()
+    private lazy var touchEndedSubject = PassthroughSubject<UITouch, Never>()
 }

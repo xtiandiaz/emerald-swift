@@ -62,8 +62,8 @@ public class Firing<T: Fireable>: NodeBehavior<T> {
     
     // MARK: - Internal
     
-    override func subscribe(_ subscriptions: inout Set<AnyCancellable>) {
-        node.uponTouchBegan
+    public override func subscribe(_ subscriptions: inout Set<AnyCancellable>) {
+        node.touchBeganPublisher
             .debounce(for: .seconds(node.loadDelay), scheduler: RunLoop.main)
             .sink { [unowned self] _ in
                 if !isCancelled {
@@ -72,7 +72,7 @@ public class Firing<T: Fireable>: NodeBehavior<T> {
             }
             .store(in: &subscriptions)
         
-        node.uponTouchEnded
+        node.touchEndedPublisher
             .sink { [unowned self] _ in
                 if !isCancelled {
                     stateMachine.sendEvent(.fire)
