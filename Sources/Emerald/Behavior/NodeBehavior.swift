@@ -5,15 +5,16 @@
 //  Created by Cristian Diaz on 23.4.2022.
 //
 
+import Beryllium
 import Combine
 import Foundation
 import SpriteKit
 
-public class NodeBehavior<Behavior: Node> {
+open class NodeBehavior<T: Node>: Configurable {
 
-    public unowned let node: Behavior
+    public unowned let node: T
 
-    public init(node: Behavior) {
+    public init(node: T) {
         self.node = node
     }
     
@@ -21,17 +22,15 @@ public class NodeBehavior<Behavior: Node> {
         stop()
     }
 
-    public func start() {
+    open func start() {
         subscribe(&subscriptions)
     }
 
-    public func stop() {
+    open func stop() {
         unsubscribe()
     }
     
-    // MARK: - Internal
-    
-    func subscribe(_ subscriptions: inout Set<AnyCancellable>) {
+    open func subscribe(_ subscriptions: inout Set<AnyCancellable>) {
     }
         
     // MARK: - Private
