@@ -34,6 +34,10 @@ public extension CGFloat {
 
 public typealias Vector = CGPoint
 
+public func abs(_ point: CGPoint) -> CGPoint {
+    CGPoint(x: abs(point.x), y: abs(point.y))
+}
+
 public extension CGPoint {
     
     static var one: CGPoint {
@@ -88,15 +92,29 @@ public extension CGPoint {
         CGSize(width: to.x - x, height: to.y - y)
     }
     
-    func direction(toward target: CGPoint) -> Vector {
-        let vector = Vector(x: target.x - x, y: target.y - y)
+    func vector(toward target: CGPoint) -> Vector {
+        Vector(x: target.x - x, y: target.y - y)
+    }
+    
+    func vectorNormalized(toward target: CGPoint) -> Vector {
+        let vector = vector(toward: target)
         let max = max(abs(vector.x), abs(vector.y))
         
-        if max == 0 {
-            return .zero
+        return max == 0 ? .zero : Vector(x: vector.x / max, y: vector.y / max)
+    }
+    
+    func direction(toward target: CGPoint) -> Direction? {
+        let vector  = Vector(x: target.x - x, y: target.y - y)
+        
+        guard vector != .zero else {
+            return nil
         }
         
-        return Vector(x: vector.x / max, y: vector.y / max)
+        let absVector = abs(vector)
+        
+        return absVector.x > absVector.y
+            ? vector.x > 0 ? .right : .left
+            : vector.y > 0 ? .up : .down
     }
     
     static func + (lhs: CGPoint, rhs: CGPoint) -> CGPoint {
