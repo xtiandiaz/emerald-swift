@@ -144,10 +144,6 @@ public extension CGPoint {
 
 public extension CGSize {
     
-    static var zero: CGSize {
-        CGSize(length: 0)
-    }
-    
     static var one: CGSize {
         CGSize(length: 1)
     }
