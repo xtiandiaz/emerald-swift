@@ -14,4 +14,5 @@ public protocol Fireable: Node {
     
     func charge()
     func fire()
+    func cancel()
 }
