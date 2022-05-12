@@ -34,6 +34,12 @@ public extension SKNode {
             await runAsync(action, withKey: key)
         }
     }
+    
+    func addChildren(_ children: SKNode...) {
+        children.forEach {
+            addChild($0)
+        }
+    }
 }
 
 public extension SKSpriteNode {

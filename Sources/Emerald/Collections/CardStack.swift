@@ -28,11 +28,20 @@ public class CardStack: CardCollection {
         cards.removeLast()
     }
     
-    public func arrange() {
+    public func remove(_ card: Card) -> Card? {
+        if let index = firstIndex(of: card) {
+            return remove(at: index)
+        }
+        
+        return nil
     }
     
-    public func allows(_ card: Card) -> Bool {
-        true
+    public func remove(at index: Int) -> Card? {
+        cards.remove(at: index)
+    }
+    
+    public func firstIndex(of card: Card) -> Int? {
+        cards.firstIndex { card == $0 }
     }
     
     // MARK: - Private

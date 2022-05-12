@@ -20,6 +20,31 @@ open class CardAreaNode<Collection: CardCollection>: Node {
     }
     
     open func arrange() {
+    }
+}
+
+open class StackAreaNode: CardAreaNode<CardStack> {
+    
+    public init() {
+        super.init(collection: CardStack())
+    }
+    
+    public func push(_ node: CardNode) {
+        collection.push(node)
         
+        addChild(node)
+    }
+    
+    public func pop() -> CardNode? {
+        if let node = collection.pop() as? CardNode {
+            node.removeFromParent()
+            return node
+        }
+        
+        return nil
+    }
+    
+    public func peek() -> CardNode? {
+        collection.first as? CardNode
     }
 }
