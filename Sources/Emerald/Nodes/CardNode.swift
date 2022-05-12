@@ -36,16 +36,21 @@ open class DraggableCardNode: CardNode, Draggable {
     public override init(value: Int) {
         super.init(value: value)
         
-        dragging.start()
+//        dragging.start()
     }
     
     open func pick() {
-        print("-- Picked --")
+        onPicked?()
     }
     
     open func drop() {
-        print("-- Dropped --")
+        onDropped?()
     }
+    
+    // MARK: - Internal
+    
+    var onPicked: (() -> Void)?
+    var onDropped: (() -> Void)?
     
     // MARK: - Private
     

@@ -15,6 +15,6 @@ public protocol Card {
     var isLocked: Bool { get set }
 }
 
-func == (lhs: Card, rhs: Card) -> Bool {
-    lhs.id == rhs.id
+func == (lhs: Card, rhs: Card?) -> Bool {
+    lhs.id == rhs?.id
 }
