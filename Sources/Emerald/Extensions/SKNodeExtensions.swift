@@ -21,7 +21,7 @@ public extension SKNode {
         )
     }
     
-    func runAsync(_ action: SKAction, key: String) async {
+    func runAsync(_ action: SKAction, withKey key: String) async {
         await withUnsafeContinuation { continuation in
             run(action, withKey: key) {
                 continuation.resume(returning: ())
@@ -29,9 +29,9 @@ public extension SKNode {
         }
     }
     
-    func runTask(forAction action: SKAction, key: String) -> Task<Void, Never> {
+    func runTask(forAction action: SKAction, withKey key: String) -> Task<Void, Never> {
         Task {
-            await runAsync(action, key: key)
+            await runAsync(action, withKey: key)
         }
     }
 }
