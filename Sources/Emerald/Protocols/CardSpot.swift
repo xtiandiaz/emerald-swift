@@ -16,7 +16,9 @@ public protocol CardSpot: Node {
     func pick() -> CardNode?
     func drop(_ cardNode: CardNode)
     
+    func accepts<T: Card>(card: T) -> Bool
     func arrange()
+    func highlight()
     
     func contains(point: CGPoint, fromNode node: SKNode) -> Bool
 }

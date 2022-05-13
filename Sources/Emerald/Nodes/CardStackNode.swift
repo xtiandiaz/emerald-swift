@@ -12,12 +12,25 @@ open class CardStackNode: Node, CardSpot {
     
     public let id = UUID()
     
+    open func arrange() {
+        for node in stack {
+            node.position = .zero
+        }
+    }
+    
+    open func highlight() {
+    }
+    
     public func pick() -> CardNode? {
         pop()
     }
     
     public func drop(_ cardNode: CardNode) {
         push(cardNode)
+    }
+    
+    public func accepts<T: Card>(card: T) -> Bool {
+        return true
     }
     
     public func peek() -> CardNode? {
@@ -38,12 +51,6 @@ open class CardStackNode: Node, CardSpot {
         }
         
         return stack.pop()
-    }
-    
-    public func arrange() {
-        for node in stack {
-            node.position = .zero
-        }
     }
     
     // MARK: - Private
