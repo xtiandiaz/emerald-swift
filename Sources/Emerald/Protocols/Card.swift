@@ -7,14 +7,14 @@
 
 import Foundation
 
-public protocol Card {
+public protocol Card: Token {
     
-    var id: UUID { get }
     var value: Int { get set }
-    
-    var isLocked: Bool { get set }
 }
 
-func == (lhs: Card, rhs: Card?) -> Bool {
-    lhs.id == rhs?.id
+extension Card {
+    
+    public var type: TokenType {
+        .card
+    }
 }

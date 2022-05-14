@@ -11,6 +11,8 @@ import SpriteKit
 
 open class Node: SKNode {
     
+    public let id = UUID()
+    
     public private(set) var isInvalidated = false
     
     public private(set) lazy var touchBeganPublisher: AnyPublisher<UITouch, Never> = touchBeganSubject
@@ -90,4 +92,8 @@ open class Node: SKNode {
     private lazy var touchBeganSubject = PassthroughSubject<UITouch, Never>()
     private lazy var touchMovedSubject = PassthroughSubject<UITouch, Never>()
     private lazy var touchEndedSubject = PassthroughSubject<UITouch, Never>()
+}
+
+func != (lhs: Node, rhs: Node) -> Bool {
+    lhs.id != rhs.id
 }
