@@ -15,6 +15,8 @@ public enum TokenType {
 public protocol Token: Node {
     
     var type: TokenType { get }
+    
+    var isInvalidated: Bool { get }
 }
 
 extension Token {

@@ -24,13 +24,17 @@ open class DragBoard: Node, Board {
     }
     
     public func addSpace(_ space: Space) {
-        guard !contains(space: space) else {
-            return
+        if !spaces.contains(space) {
+            spaces.append(space)
+            addChild(space)
         }
-        
-        spaces.append(space)
-        
-        addChild(space)
+    }
+    
+    public func bridge(_ other: DragBoard) {
+        if !bridgedBoards.contains(other), other != self {
+            bridgedBoards.append(other)
+            other.bridge(self)
+        }
     }
     
     public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -46,7 +50,7 @@ open class DragBoard: Node, Board {
         
         pick = (token: token, offset: touch.location(in: space), space: space)
 
-        setSpacesHighlighted(true)
+        setSpacesHighlighted(true, for: pick!)
     }
     
     public override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -70,11 +74,13 @@ open class DragBoard: Node, Board {
         
         if let destination = space(for: pick.token, at: location) {
             destination.place(token: pick.token)
+        } else if let bridgedDestination = bridgedSpace(for: pick.token, at: location) {
+            bridgedDestination.place(token: pick.token)
         } else {
             pick.space.place(token: pick.token)
         }
         
-        setSpacesHighlighted(false)
+        setSpacesHighlighted(false, for: pick)
         
         self.pick = nil
     }
@@ -84,6 +90,7 @@ open class DragBoard: Node, Board {
     private typealias Pick = (token: Token, offset: CGPoint, space: Space)
 
     private var pick: Pick?
+    private var bridgedBoards = [DragBoard]()
     
     private func space(for token: Token, at location: CGPoint) -> Space? {
         if let space = space(at: location), space.accepts(token: token) {
@@ -97,15 +104,20 @@ open class DragBoard: Node, Board {
         spaces.first { $0.contains(location) }
     }
     
-    private func setSpacesHighlighted(_ highlighted: Bool) {
-        guard let pick = pick else {
-            return
+    private func bridgedSpace(for token: Token, at location: CGPoint) -> Space? {
+        bridgedBoards.compactMap {
+            $0.space(for: token, at: $0.convert(location, from: self))
+        }
+        .first
+    }
+    
+    private func setSpacesHighlighted(_ highlighted: Bool, for pick: Pick) {
+        let setHighlighted = { (space: Space) -> Void in
+            space.setHighlighted(space.accepts(token: pick.token) && highlighted)
         }
         
-        spaces
-            .filter { $0 != pick.space }
-            .forEach {
-                $0.setHighlighted($0.accepts(token: pick.token) && highlighted)
-            }
+        spaces.filter { $0 != pick.space }.forEach(setHighlighted)
+        
+        bridgedBoards.flatMap { $0.spaces }.forEach(setHighlighted)
     }
 }

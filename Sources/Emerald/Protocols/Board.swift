@@ -14,11 +14,5 @@ public protocol Board: Node {
     var isLocked: Bool { get set }
     
     func addSpace(_ space: Space)
-}
-
-extension Board {
-    
-    func contains(space: Space) -> Bool {
-        spaces.firstIndex { space == $0 } != nil
-    }
+    func bridge(_ other: Self)
 }

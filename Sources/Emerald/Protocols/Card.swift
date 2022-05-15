@@ -7,9 +7,16 @@
 
 import Foundation
 
+public enum CardSide {
+    
+    case front,
+         back
+}
+
 public protocol Card: Token {
     
     var value: Int { get set }
+    var side: CardSide { get }
 }
 
 extension Card {

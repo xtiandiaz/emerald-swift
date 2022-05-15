@@ -94,6 +94,13 @@ open class Node: SKNode {
     private lazy var touchEndedSubject = PassthroughSubject<UITouch, Never>()
 }
 
+extension Collection where Element: Node {
+    
+    public func contains(_ element: Element) -> Bool {
+        firstIndex { element == $0 } != nil
+    }
+}
+
 func != (lhs: Node, rhs: Node) -> Bool {
     lhs.id != rhs.id
 }
