@@ -9,33 +9,12 @@ import Beryllium
 import Foundation
 import SpriteKit
 
-public protocol CardCollection: Collection where Element: Card {
-    
-    mutating func insert(_ item: Element)
-    mutating func remove(at location: CGPoint) -> Element?
-}
-
-extension Stack: CardCollection where Element: Card {
-    
-    public mutating func insert(_ item: Element) {
-        push(item)
-    }
-    
-    public mutating func remove(at location: CGPoint) -> Element? {
-        pop()
-    }
-}
-
 open class CardCollectionSpace<T: CardCollection>: Node, CardSpace {
     
     public var isLocked = false
 
     open func pickCard(at location: CGPoint) -> T.Element? {
-        defer {
-            arrange()
-        }
-        
-        return collection.remove(at: location)
+        collection.remove(at: location)
     }
     
     open func accepts(card: T.Element) -> Bool {
@@ -53,6 +32,12 @@ open class CardCollectionSpace<T: CardCollection>: Node, CardSpace {
     }
     
     open func arrange() {
+        for (index, item) in collection.enumerated() {
+            arrange(item: item, at: index, in: collection.count)
+        }
+    }
+    
+    open func arrange(item: T.Element, at index: Int, in count: Int) {
         fatalError("Not implemented")
     }
     
@@ -76,6 +61,10 @@ open class CardCollectionSpace<T: CardCollection>: Node, CardSpace {
 
 open class CardStackSpace<T: Card>: CardCollectionSpace<Stack<T>> {
     
+    open var layout: CardStackLayout {
+        .default
+    }
+    
     public init() {
         super.init(collection: Stack<T>())
     }
@@ -84,9 +73,16 @@ open class CardStackSpace<T: Card>: CardCollectionSpace<Stack<T>> {
         collection.peek()
     }
     
-    open override func arrange() {
-        for card in collection {
-            card.position = .zero
-        }
+    open override func arrange(item: T, at index: Int, in count: Int) {
+        item.zPosition = CGFloat(count - index - 1)
+        
+        item.runIfValid(
+            .move(
+                to: .up * CGFloat(index) * layout.offset.asPoint(),
+                duration: 0.1,
+                timingMode: .easeOut
+            ),
+            withKey: "move"
+        )
     }
 }

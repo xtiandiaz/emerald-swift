@@ -9,11 +9,11 @@ import CoreGraphics
 
 public enum Anchor {
     
-    case center
-    case top, topLeft, topRight
-    case left
-    case bottom, bottomLeft, bottomRight
-    case right
+    case center,
+         top, topLeft, topRight,
+         left,
+         bottom, bottomLeft, bottomRight,
+         right
     
     public var point: CGPoint {
         switch self {

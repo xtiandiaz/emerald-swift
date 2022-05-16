@@ -133,6 +133,10 @@ public extension CGPoint {
         CGPoint(x: lhs.x * rhs, y: lhs.y * rhs)
     }
     
+    static func * (lhs: CGPoint, rhs: Int) -> CGPoint {
+        lhs * CGFloat(rhs)
+    }
+    
     func asOffset() -> CGSize {
         CGSize(width: x, height: y)
     }

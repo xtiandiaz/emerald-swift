@@ -20,8 +20,6 @@ public protocol Space: Node {
     
     func arrange()
     
-//    func supportsOptions(forToken token: Token) -> Bool
-    
     func setHighlighted(_ highlighted: Bool)
 }
 
@@ -33,9 +31,6 @@ public protocol CardSpace: Space {
     
     func accepts(card: CardType) -> Bool
     func place(card: CardType) -> Bool
-    
-//    func supportsOptions(forCard card: CardType) -> Bool
-//    func apply(card: CardType)
 }
 
 extension CardSpace {

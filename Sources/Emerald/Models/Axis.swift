@@ -9,5 +9,7 @@ import Foundation
 
 public enum Axis {
     
-    case x, y, xy
+    case x,
+         y,
+         xy
 }

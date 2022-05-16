@@ -5,6 +5,7 @@
 //  Created by Cristian Diaz on 14.5.2022.
 //
 
+import Beryllium
 import Combine
 import Foundation
 import SpriteKit
@@ -57,9 +58,12 @@ open class DragBoard: Node, Board {
         else {
             return
         }
-
-        token.move(toParent: self)
-        token.setSelected(true)
+        
+        with(token) {
+            $0.move(toParent: self)
+            $0.zPosition = 100
+            $0.setSelected(true)
+        }
         
         pick = (token: token, offset: touch.location(in: space), space: space)
 
@@ -100,6 +104,7 @@ open class DragBoard: Node, Board {
         setSpacesHighlighted(false, for: pick)
         
         pick.token.setSelected(false)
+        pick.space.arrange()
         
         self.pick = nil
     }

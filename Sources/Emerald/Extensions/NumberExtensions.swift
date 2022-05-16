@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreGraphics
 
 extension Int {
     
@@ -15,6 +16,10 @@ extension Int {
             next = a
         }
         return next
+    }
+    
+    public static func / (lhs: Int, rhs: CGFloat) -> CGFloat {
+        CGFloat(lhs) / rhs
     }
 }
 

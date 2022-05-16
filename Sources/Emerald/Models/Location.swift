@@ -1,5 +1,5 @@
 //
-//  Location.swift
+//  GridLocation.swift
 //  Emerald
 //
 //  Created by Cristian Díaz on 22.11.2020.
@@ -7,9 +7,9 @@
 
 import Foundation
 
-public struct Location: Equatable, Hashable {
+public struct GridLocation: Equatable, Hashable {
     
-    public static let zero = Location(x: 0, y: 0)
+    public static let zero = GridLocation(x: 0, y: 0)
     
     public var x: Int
     public var y: Int
@@ -28,12 +28,12 @@ public struct Location: Equatable, Hashable {
         }
     }
     
-    public func shifted(toward direction: Direction, by steps: Int = 1) -> Location {
+    public func shifted(toward direction: Direction, by steps: Int = 1) -> GridLocation {
         switch direction {
-        case .up: return Location(x: self.x, y: self.y + steps)
-        case .right: return Location(x: self.x + steps, y: self.y)
-        case .down: return Location(x: self.x, y: self.y - steps)
-        case .left: return Location(x: self.x - steps, y: self.y)
+        case .up: return GridLocation(x: self.x, y: self.y + steps)
+        case .right: return GridLocation(x: self.x + steps, y: self.y)
+        case .down: return GridLocation(x: self.x, y: self.y - steps)
+        case .left: return GridLocation(x: self.x - steps, y: self.y)
         }
     }
 }
