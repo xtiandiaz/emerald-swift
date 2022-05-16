@@ -86,9 +86,9 @@ extension Node {
     
     // MARK: - Private
     
-    private var maxOffset: CGFloat { 15 }
+    private var maxOffset: CGFloat { 10 }
     private var tapTimeout: TimeInterval { 0.35 }
     private var swipeTimeout: TimeInterval { 0.35 }
     private var swipeDistanceThreshold: CGFloat { 20 }
-    private var longPressThreshold: TimeInterval { 0.75 }
+    private var longPressThreshold: TimeInterval { 0.5 }
 }

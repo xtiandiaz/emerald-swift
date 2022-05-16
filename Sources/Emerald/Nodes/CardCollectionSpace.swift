@@ -56,6 +56,10 @@ open class CardCollectionSpace<T: CardCollection>: Node, CardSpace {
         fatalError("Not implemented")
     }
     
+    open func showOptions() {
+        fatalError("Not implemented")
+    }
+    
     open func setHighlighted(_ highlighted: Bool) {
     }
     
@@ -74,6 +78,10 @@ open class CardStackSpace<T: Card>: CardCollectionSpace<Stack<T>> {
     
     public init() {
         super.init(collection: Stack<T>())
+    }
+    
+    public func peek() -> T? {
+        collection.peek()
     }
     
     open override func arrange() {

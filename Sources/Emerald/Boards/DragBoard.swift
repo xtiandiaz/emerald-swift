@@ -5,6 +5,7 @@
 //  Created by Cristian Diaz on 14.5.2022.
 //
 
+import Combine
 import Foundation
 import SpriteKit
 
@@ -21,6 +22,15 @@ open class DragBoard: Node, Board {
         super.init()
         
         isLocked = false
+        
+        longPressPublisher
+            .compactMap { [unowned self] _ in pick?.token }
+            .filter { $0.supportsOptions }
+            .sink { [unowned self] token in
+                cancel()
+                token.showOptions()
+            }
+            .store(in: &subscriptions)
     }
     
     public func addSpace(_ space: Space) {
@@ -38,6 +48,8 @@ open class DragBoard: Node, Board {
     }
     
     public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        
         guard
             let touch = touches.first,
             let space = space(at: touch.location(in: self)),
@@ -55,6 +67,8 @@ open class DragBoard: Node, Board {
     }
     
     public override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesMoved(touches, with: event)
+        
         guard
             let pick = pick,
             let location = touches.first?.location(in: self)
@@ -66,6 +80,8 @@ open class DragBoard: Node, Board {
     }
     
     public override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
+        
         guard
             let location = touches.first?.location(in: self),
             let pick = pick
@@ -94,6 +110,7 @@ open class DragBoard: Node, Board {
 
     private var pick: Pick?
     private var bridgedBoards = [DragBoard]()
+    private var subscriptions = Set<AnyCancellable>()
     
     private func space(for token: Token, at location: CGPoint) -> Space? {
         if let space = space(at: location), space.accepts(token: token) {
@@ -122,5 +139,17 @@ open class DragBoard: Node, Board {
         spaces.filter { $0 != pick.space }.forEach(setHighlighted)
         
         bridgedBoards.flatMap { $0.spaces }.forEach(setHighlighted)
+    }
+    
+    private func cancel() {
+        guard let pick = pick else {
+            return
+        }
+        
+        pick.space.place(token: pick.token)
+        
+        setSpacesHighlighted(false, for: pick)
+        
+        self.pick = nil
     }
 }
