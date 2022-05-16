@@ -47,6 +47,7 @@ open class DragBoard: Node, Board {
         }
 
         token.move(toParent: self)
+        token.setSelected(true)
         
         pick = (token: token, offset: touch.location(in: space), space: space)
 
@@ -81,6 +82,8 @@ open class DragBoard: Node, Board {
         }
         
         setSpacesHighlighted(false, for: pick)
+        
+        pick.token.setSelected(false)
         
         self.pick = nil
     }
