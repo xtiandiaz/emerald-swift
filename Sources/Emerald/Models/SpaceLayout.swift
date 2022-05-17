@@ -14,7 +14,7 @@ public protocol SpaceLayout {
 public struct CardStackLayout: SpaceLayout {
     
     public static let `default` = CardStackLayout(
-        offset: .one * .xl,
+        offset: CGSize(height: .xl),
         dimmingMode: .darkening
     )
     

@@ -19,7 +19,13 @@ open class DragBoard: Node, Board {
         set { isUserInteractionEnabled = !newValue }
     }
     
-    public override init() {
+    public override var frame: CGRect {
+        _frame
+    }
+    
+    public init(frame: CGRect) {
+        _frame = frame
+        
         super.init()
         
         isLocked = false
@@ -109,13 +115,27 @@ open class DragBoard: Node, Board {
         self.pick = nil
     }
     
+    public func setVisible(_ visible: Bool, withColor color: UIColor) {
+        if !visible {
+            debugNode.removeFromParent()
+        } else if debugNode.parent.isNil {
+            addChild(debugNode.configure {
+                $0.fillColor = color
+            })
+        }
+    }
+    
     // MARK: - Private
 
     private typealias Pick = (token: Token, offset: CGPoint, space: Space)
+    
+    private let _frame: CGRect
 
     private var pick: Pick?
     private var bridgedBoards = [DragBoard]()
     private var subscriptions = Set<AnyCancellable>()
+    
+    private lazy var debugNode = SKShapeNode(rect: frame)
     
     private func space(for token: Token, at location: CGPoint) -> Space? {
         if let space = space(at: location), space.accepts(token: token) {

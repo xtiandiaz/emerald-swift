@@ -117,6 +117,12 @@ public extension CGPoint {
             : vector.y > 0 ? .up : .down
     }
     
+    func points(count: Int, offset: CGSize) -> [CGPoint] {
+        (0..<count).map { [offsetPoint = offset.asPoint()] in
+            CGPoint(x: x + offsetPoint.x * $0, y: y + offsetPoint.y * $0)
+        }
+    }
+    
     static func + (lhs: CGPoint, rhs: CGPoint) -> CGPoint {
         CGPoint(x: lhs.x + rhs.x, y: lhs.y + rhs.y)
     }
@@ -209,5 +215,9 @@ public extension CGRect {
     
     var center: CGPoint {
         CGPoint(x: minX + width * 0.5, y: minY + height * 0.5)
+    }
+    
+    init(size: CGSize) {
+        self.init(origin: .zero, size: size)
     }
 }

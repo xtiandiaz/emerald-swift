@@ -30,6 +30,7 @@ public protocol CardSpace: Space {
     func pickCard(at location: CGPoint) -> CardType?
     
     func accepts(card: CardType) -> Bool
+    @discardableResult
     func place(card: CardType) -> Bool
 }
 
