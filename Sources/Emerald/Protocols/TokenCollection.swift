@@ -12,7 +12,10 @@ import SpriteKit
 public protocol TokenCollection: Collection where Element: Token {
     
     mutating func insert(_ item: Element)
+    
+    mutating func remove(at index: Index) -> Element
     mutating func remove(at location: CGPoint) -> Element?
+    mutating func removeAll(where shouldBeRemoved: (Element) -> Bool)
 }
 
 public protocol CardCollection: TokenCollection where Element: Card {

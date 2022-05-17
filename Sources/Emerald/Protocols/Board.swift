@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SpriteKit
 
 public protocol Board: Node {
     

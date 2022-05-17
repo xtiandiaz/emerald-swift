@@ -75,10 +75,7 @@ extension Node {
                 }
             }
             .filter { [unowned self] in
-                let currentLocation = $1.location(in: self)
-                
-                return $0.location.distance(to: currentLocation) < maxOffset
-                    && contains(currentLocation)
+                $0.location.distance(to: $1.location(in: self)) < maxOffset
             }
             .map { $0.0 }
             .eraseToAnyPublisher()

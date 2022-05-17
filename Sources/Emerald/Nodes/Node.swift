@@ -13,8 +13,6 @@ open class Node: SKNode {
     
     public let id = UUID()
     
-    public private(set) var isInvalidated = false
-    
     public private(set) lazy var touchBeganPublisher: AnyPublisher<UITouch, Never> = touchBeganSubject
         .share()
         .eraseToAnyPublisher()
@@ -48,10 +46,6 @@ open class Node: SKNode {
         fatalError("init(coder:) has not been implemented")
     }
     
-    open func invalidate() {
-        isInvalidated = true
-    }
-    
     open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let touch = touches.first {
             latestTouchLocation = touch.location(in: self)
@@ -76,12 +70,6 @@ open class Node: SKNode {
         if let touch = touches.first {
             latestTouchLocation = touch.location(in: self)
             touchEndedSubject.send(touch)
-        }
-    }
-    
-    public func runIfValid(_ action: SKAction, withKey key: String) {
-        if !isInvalidated {
-            run(action, withKey: key)
         }
     }
     

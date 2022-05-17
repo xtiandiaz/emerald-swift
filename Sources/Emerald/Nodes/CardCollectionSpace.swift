@@ -17,18 +17,14 @@ open class CardCollectionSpace<T: CardCollection>: Node, CardSpace {
         collection.remove(at: location)
     }
     
-    open func accepts(card: T.Element) -> Bool {
+    open func canPlace(card: T.Element) -> Bool {
         true
     }
     
-    @discardableResult
-    open func place(card: T.Element) -> Bool {
-        card.move(toParent: self)
-        
-        collection.insert(card)
-        arrange()
-        
-        return true
+    open func place(card: T.Element) {
+        if canPlace(card: card) {
+            insert(card: card)
+        }
     }
     
     open func arrange() {
@@ -41,11 +37,26 @@ open class CardCollectionSpace<T: CardCollection>: Node, CardSpace {
         fatalError("Not implemented")
     }
     
-    open func showOptions() {
-        fatalError("Not implemented")
+    open func setHighlighted(_ highlighted: Bool) {
     }
     
-    open func setHighlighted(_ highlighted: Bool) {
+    public func insert(card: T.Element) {
+        card.move(toParent: self)
+        
+        collection.insert(card)
+        arrange()
+    }
+    
+    public func remove(_ item: T.Element) -> T.Element? {
+        if let index = collection.firstIndex(of: item) {
+            return collection.remove(at: index)
+        }
+        
+        return nil
+    }
+    
+    public func removeAll(where shouldBeRemoved: (T.Element) -> Bool) {
+        collection.removeAll(where: shouldBeRemoved)
     }
     
     // MARK: - Internal
@@ -61,11 +72,11 @@ open class CardCollectionSpace<T: CardCollection>: Node, CardSpace {
 
 open class CardStackSpace<T: Card>: CardCollectionSpace<Stack<T>> {
     
-    open var layout: CardStackLayout {
-        .default
-    }
+    public let layout: CardStackLayout
     
-    public init() {
+    public init(layout: CardStackLayout = .default) {
+        self.layout = layout
+        
         super.init(collection: Stack<T>())
     }
     

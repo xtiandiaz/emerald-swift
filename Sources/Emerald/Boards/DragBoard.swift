@@ -138,7 +138,7 @@ open class DragBoard: Node, Board {
     private lazy var debugNode = SKShapeNode(rect: frame)
     
     private func space(for token: Token, at location: CGPoint) -> Space? {
-        if let space = space(at: location), space.accepts(token: token) {
+        if let space = space(at: location), space.canPlace(token: token) {
             return space
         }
         
@@ -158,7 +158,7 @@ open class DragBoard: Node, Board {
     
     private func setSpacesHighlighted(_ highlighted: Bool, for pick: Pick) {
         let setHighlighted = { (space: Space) -> Void in
-            space.setHighlighted(space.accepts(token: pick.token) && highlighted)
+            space.setHighlighted(space.canPlace(token: pick.token) && highlighted)
         }
         
         spaces.filter { $0 != pick.space }.forEach(setHighlighted)

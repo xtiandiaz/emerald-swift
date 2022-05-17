@@ -18,14 +18,21 @@ public protocol Token: Node {
     var type: TokenType { get }
     
     var supportsOptions: Bool { get }
+    var isDisposable: Bool { get }
     var isInvalidated: Bool { get }
     
     func setSelected(_ selected: Bool)
     
     func showOptions()
+    
+    func invalidate()
 }
 
 extension Token {
+    
+    public var isDisposable: Bool {
+        false
+    }
     
     public func runIfValid(_ action: SKAction, withKey key: String) {
         if !isInvalidated {
