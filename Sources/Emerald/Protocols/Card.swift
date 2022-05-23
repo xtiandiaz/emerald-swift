@@ -16,8 +16,6 @@ public enum CardSide {
 
 public protocol Card: Token {
     
-    static var size: CGSize { get }
-    
     var value: Int { get set }
     var side: CardSide { get }
 }

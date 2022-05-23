@@ -10,26 +10,22 @@ import simd.vector_types
 
 public extension CGFloat {
     
-    /// 2pt
-    static let xxs: CGFloat = 2
     /// 4pt
     static let xs: CGFloat = 4
     /// 8pt
     static let s: CGFloat = 8
-    /// 12pt
-    static let ms: CGFloat = 12
     /// 16pt
-    static let m: CGFloat = 16
-    /// 20pt
-    static let ml: CGFloat = 20
+    static let ms: CGFloat = 16
     /// 24pt
-    static let l: CGFloat = 24
+    static let m: CGFloat = 24
+    /// 28pt
+    static let ml: CGFloat = 28
     /// 32pt
-    static let xl: CGFloat = 32
+    static let l: CGFloat = 32
     /// 48pt
-    static let xxl: CGFloat = 48
+    static let xl: CGFloat = 48
     /// 64pt
-    static let xxxl: CGFloat = 64
+    static let xxl: CGFloat = 64
 }
 
 public typealias Vector = CGPoint
