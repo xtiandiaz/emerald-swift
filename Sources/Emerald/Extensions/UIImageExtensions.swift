@@ -15,8 +15,8 @@ public extension UIImage {
         CAGradientLayer().configure {
             $0.colors = gradient.colors.map { $0.cgColor }
             $0.locations = gradient.locations.map { NSNumber(value: $0) }
-            $0.startPoint = gradient.start.uiPoint
-            $0.endPoint = gradient.end.uiPoint
+            $0.startPoint = gradient.start.uiViewportCoordinates
+            $0.endPoint = gradient.end.uiViewportCoordinates
             $0.frame = CGRect(origin: .zero, size: size)
         }.render(in: UIGraphicsGetCurrentContext()!)
         
