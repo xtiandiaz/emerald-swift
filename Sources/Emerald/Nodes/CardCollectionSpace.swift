@@ -12,6 +12,10 @@ import SpriteKit
 open class CardCollectionSpace<T: CardCollection>: Node, CardSpace {
     
     public var isLocked = false
+    
+    public var isEmpty: Bool {
+        collection.isEmpty
+    }
 
     open func pickCard(at location: CGPoint) -> T.Element? {
         collection.remove(at: location)
@@ -21,7 +25,7 @@ open class CardCollectionSpace<T: CardCollection>: Node, CardSpace {
         true
     }
     
-    open func place(card: T.Element) {
+    open func place(card: T.Element, from source: CardCollectionSpace) {
         if canPlace(card: card) {
             insert(card: card)
         }
@@ -82,6 +86,10 @@ open class CardStackSpace<T: Card>: CardCollectionSpace<Stack<T>> {
     
     public func peek() -> T? {
         collection.peek()
+    }
+    
+    public func pop() -> T? {
+        collection.pop()
     }
     
     open override func arrange(item: T, at index: Int, in count: Int) {

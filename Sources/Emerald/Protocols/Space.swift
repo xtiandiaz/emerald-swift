@@ -11,11 +11,12 @@ import SpriteKit
 public protocol Space: Node {
     
     var isLocked: Bool { get set }
+    var isEmpty: Bool { get }
     
     func pickToken(at location: CGPoint) -> Token?
     
     func canPlace(token: Token) -> Bool
-    func place(token: Token)
+    func place(token: Token, from source: Space)
     
     func arrange()
     
@@ -29,7 +30,7 @@ public protocol CardSpace: Space {
     func pickCard(at location: CGPoint) -> CardType?
     
     func canPlace(card: CardType) -> Bool
-    func place(card: CardType)
+    func place(card: CardType, from source: Self)
     
     func insert(card: CardType)
 }
@@ -48,9 +49,9 @@ extension CardSpace {
         return false
     }
     
-    public func place(token: Token) {
-        if let card: CardType = token.asCard() {
-            place(card: card)
+    public func place(token: Token, from source: Space) {
+        if let card: CardType = token.asCard(), let space = source as? Self {
+            place(card: card, from: space)
         }
     }
 }

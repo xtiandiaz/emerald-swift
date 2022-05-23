@@ -100,11 +100,11 @@ open class DragBoard: Node, Board {
         }
         
         if let destination = space(for: pick.token, at: location) {
-            destination.place(token: pick.token)
+            destination.place(token: pick.token, from: pick.space)
         } else if let bridgedDestination = bridgedSpace(for: pick.token, at: location) {
-            bridgedDestination.place(token: pick.token)
+            bridgedDestination.place(token: pick.token, from: pick.space)
         } else {
-            pick.space.place(token: pick.token)
+            pick.space.place(token: pick.token, from: pick.space)
         }
         
         setSpacesHighlighted(false, for: pick)
@@ -171,7 +171,7 @@ open class DragBoard: Node, Board {
             return
         }
         
-        pick.space.place(token: pick.token)
+        pick.space.place(token: pick.token, from: pick.space)
         
         setSpacesHighlighted(false, for: pick)
         
