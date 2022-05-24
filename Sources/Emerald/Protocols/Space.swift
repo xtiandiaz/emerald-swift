@@ -15,8 +15,10 @@ public protocol Space: Node {
     
     func pickToken(at location: CGPoint) -> Token?
     
-    func canPlace(token: Token) -> Bool
-    func place(token: Token, from source: Space)
+    func accepts(token: Token) -> Bool
+    func move(forToken token: Token) -> TokenMove?
+    
+    func place(token: Token)
     
     func arrange()
     
@@ -29,10 +31,10 @@ public protocol CardSpace: Space {
     
     func pickCard(at location: CGPoint) -> CardType?
     
-    func canPlace(card: CardType) -> Bool
-    func place(card: CardType, from source: Self)
+    func accepts(card: CardType) -> Bool
+    func move(forCard: CardType) -> TokenMove?
     
-    func insert(card: CardType)
+    func place(card: CardType)
 }
 
 extension CardSpace {
@@ -41,17 +43,25 @@ extension CardSpace {
         pickCard(at: location)
     }
     
-    public func canPlace(token: Token) -> Bool {
+    public func accepts(token: Token) -> Bool {
         if let card: CardType = token.asCard() {
-            return canPlace(card: card)
+            return accepts(card: card)
         }
         
         return false
     }
     
-    public func place(token: Token, from source: Space) {
-        if let card: CardType = token.asCard(), let space = source as? Self {
-            place(card: card, from: space)
+    public func move(forToken token: Token) -> TokenMove? {
+        if let card: CardType = token.asCard() {
+            return move(forCard: card)
+        }
+        
+        return nil
+    }
+    
+    public func place(token: Token) {
+        if let card: CardType = token.asCard() {
+            return place(card: card)
         }
     }
 }

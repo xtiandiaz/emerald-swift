@@ -21,9 +21,9 @@ public protocol Token: Node {
     var isDisposable: Bool { get }
     var isInvalidated: Bool { get }
     
-    func setSelected(_ selected: Bool)
-    
     func showOptions()
+    
+    func setSelected(_ selected: Bool)
     
     func invalidate()
 }

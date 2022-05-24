@@ -21,14 +21,12 @@ open class CardCollectionSpace<T: CardCollection>: Node, CardSpace {
         collection.remove(at: location)
     }
     
-    open func canPlace(card: T.Element) -> Bool {
+    open func accepts(card: T.Element) -> Bool {
         true
     }
     
-    open func place(card: T.Element, from source: CardCollectionSpace) {
-        if canPlace(card: card) {
-            insert(card: card)
-        }
+    open func move(forCard card: T.Element) -> TokenMove? {
+        .place
     }
     
     open func arrange() {
@@ -44,7 +42,7 @@ open class CardCollectionSpace<T: CardCollection>: Node, CardSpace {
     open func setHighlighted(_ highlighted: Bool) {
     }
     
-    public func insert(card: T.Element) {
+    public func place(card: T.Element) {
         card.move(toParent: self)
         
         collection.insert(card)
@@ -90,6 +88,26 @@ open class CardStackSpace<T: Card>: CardCollectionSpace<Stack<T>> {
     
     public func pop() -> T? {
         collection.pop()
+    }
+    
+    open override func accepts(card: T) -> Bool {
+        if let peek = peek() {
+            return card.canSwap(with: peek) || card.canInteract(with: peek)
+        }
+        
+        return super.accepts(card: card)
+    }
+    
+    open override func move(forCard card: T) -> TokenMove? {
+        if let peek = peek() {
+            if card.canSwap(with: peek) {
+                return .swap(with: pop()!)
+            } else if card.canInteract(with: peek) {
+                return .interact(with: pop()!)
+            }
+        }
+        
+        return super.move(forCard: card)
     }
     
     open override func arrange(item: T, at index: Int, in count: Int) {

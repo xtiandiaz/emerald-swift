@@ -99,12 +99,21 @@ open class DragBoard: Node, Board {
             return
         }
         
-        if let destination = space(for: pick.token, at: location) {
-            destination.place(token: pick.token, from: pick.space)
-        } else if let bridgedDestination = bridgedSpace(for: pick.token, at: location) {
-            bridgedDestination.place(token: pick.token, from: pick.space)
+        if
+            let destination = destination(for: pick.token, at: location),
+            let move = destination.move(forToken: pick.token)
+        {
+            switch move {
+            case .place:
+                destination.place(token: pick.token)
+            case .swap(let other):
+                pick.space.place(token: other)
+                destination.place(token: pick.token)
+            case .interact(let other):
+                destination.place(token: pick.token)
+            }
         } else {
-            pick.space.place(token: pick.token, from: pick.space)
+            pick.space.place(token: pick.token)
         }
         
         setSpacesHighlighted(false, for: pick)
@@ -137,16 +146,22 @@ open class DragBoard: Node, Board {
     
     private lazy var debugNode = SKShapeNode(rect: frame)
     
+    private func destination(for token: Token, at location: CGPoint) -> Space? {
+        if let destination = space(for: token, at: location) {
+            return destination
+        } else if let bridgedDestination = bridgedSpace(for: token, at: location) {
+            return bridgedDestination
+        } else {
+            return nil
+        }
+    }
+    
     private func space(for token: Token, at location: CGPoint) -> Space? {
-        if let space = space(at: location), space.canPlace(token: token) {
+        if let space = space(at: location), space.accepts(token: token) {
             return space
         }
         
         return nil
-    }
-    
-    private func space(at location: CGPoint) -> Space? {
-        spaces.first { $0.contains(location) }
     }
     
     private func bridgedSpace(for token: Token, at location: CGPoint) -> Space? {
@@ -156,9 +171,13 @@ open class DragBoard: Node, Board {
         .first
     }
     
+    private func space(at location: CGPoint) -> Space? {
+        spaces.first { $0.contains(location) }
+    }
+    
     private func setSpacesHighlighted(_ highlighted: Bool, for pick: Pick) {
         let setHighlighted = { (space: Space) -> Void in
-            space.setHighlighted(space.canPlace(token: pick.token) && highlighted)
+            space.setHighlighted(space.accepts(token: pick.token) && highlighted)
         }
         
         spaces.filter { $0 != pick.space }.forEach(setHighlighted)
@@ -171,7 +190,7 @@ open class DragBoard: Node, Board {
             return
         }
         
-        pick.space.place(token: pick.token, from: pick.space)
+        pick.space.place(token: pick.token)
         
         setSpacesHighlighted(false, for: pick)
         

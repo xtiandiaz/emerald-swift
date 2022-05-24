@@ -18,6 +18,9 @@ public protocol Card: Token {
     
     var value: Int { get set }
     var side: CardSide { get }
+    
+    func canSwap(with other: Self) -> Bool
+    func canInteract(with other: Self) -> Bool
 }
 
 extension Card {
