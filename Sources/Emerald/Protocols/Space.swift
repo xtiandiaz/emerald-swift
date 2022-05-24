@@ -8,7 +8,7 @@
 import Foundation
 import SpriteKit
 
-public protocol Space: Node {
+public protocol Space: Node, Highlightable {
     
     var isLocked: Bool { get set }
     var isEmpty: Bool { get }
@@ -16,13 +16,11 @@ public protocol Space: Node {
     func pickToken(at location: CGPoint) -> Token?
     
     func accepts(token: Token) -> Bool
-    func move(forToken token: Token) -> TokenMove?
     
-    func place(token: Token)
+    @discardableResult
+    func place(token: Token) -> Token?
     
     func arrange()
-    
-    func setHighlighted(_ highlighted: Bool)
 }
 
 public protocol CardSpace: Space {
@@ -32,9 +30,8 @@ public protocol CardSpace: Space {
     func pickCard(at location: CGPoint) -> CardType?
     
     func accepts(card: CardType) -> Bool
-    func move(forCard: CardType) -> TokenMove?
     
-    func place(card: CardType)
+    func place(card: CardType) -> CardType?
 }
 
 extension CardSpace {
@@ -51,17 +48,11 @@ extension CardSpace {
         return false
     }
     
-    public func move(forToken token: Token) -> TokenMove? {
-        if let card: CardType = token.asCard() {
-            return move(forCard: card)
-        }
-        
-        return nil
-    }
-    
-    public func place(token: Token) {
+    public func place(token: Token) -> Token? {
         if let card: CardType = token.asCard() {
             return place(card: card)
         }
+        
+        return nil
     }
 }

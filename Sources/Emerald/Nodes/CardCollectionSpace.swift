@@ -22,11 +22,7 @@ open class CardCollectionSpace<T: CardCollection>: Node, CardSpace {
     }
     
     open func accepts(card: T.Element) -> Bool {
-        true
-    }
-    
-    open func move(forCard card: T.Element) -> TokenMove? {
-        .place
+        false
     }
     
     open func arrange() {
@@ -39,14 +35,22 @@ open class CardCollectionSpace<T: CardCollection>: Node, CardSpace {
         fatalError("Not implemented")
     }
     
-    open func setHighlighted(_ highlighted: Bool) {
-    }
-    
-    public func place(card: T.Element) {
+    @discardableResult
+    open func place(card: T.Element) -> T.Element? {
+        guard accepts(card: card) else {
+            return card
+        }
+        
         card.move(toParent: self)
         
         collection.insert(card)
         arrange()
+        
+        return nil
+    }
+    
+    open func setHighlighted(_ highlighted: Bool) {
+        fatalError("Not implemented")
     }
     
     public func remove(_ item: T.Element) -> T.Element? {
@@ -90,24 +94,15 @@ open class CardStackSpace<T: Card>: CardCollectionSpace<Stack<T>> {
         collection.pop()
     }
     
-    open override func accepts(card: T) -> Bool {
-        if let peek = peek() {
-            return card.canSwap(with: peek) || card.canInteract(with: peek)
+    @discardableResult
+    open override func place(card: T) -> T? {
+        if let peek = peek(), card.canSwap(with: peek) {
+            let swap = pop()
+            super.place(card: card)
+            return swap
         }
         
-        return super.accepts(card: card)
-    }
-    
-    open override func move(forCard card: T) -> TokenMove? {
-        if let peek = peek() {
-            if card.canSwap(with: peek) {
-                return .swap(with: pop()!)
-            } else if card.canInteract(with: peek) {
-                return .interact(with: pop()!)
-            }
-        }
-        
-        return super.move(forCard: card)
+        return super.place(card: card)
     }
     
     open override func arrange(item: T, at index: Int, in count: Int) {

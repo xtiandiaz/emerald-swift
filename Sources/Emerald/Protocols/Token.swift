@@ -23,9 +23,9 @@ public protocol Token: Node {
     
     func showOptions()
     
-    func setSelected(_ selected: Bool)
-    
     func invalidate()
+    
+    func canSwap(with other: Token) -> Bool
 }
 
 extension Token {

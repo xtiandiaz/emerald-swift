@@ -8,13 +8,11 @@
 import Foundation
 import SpriteKit
 
-public protocol Draggable: Node {
+public protocol Draggable: Selectable {
     
     var dragAxis: Axis { get }
     
-    func pick()
     func drag(to location: CGPoint)
-    func drop()
 }
 
 extension Draggable {

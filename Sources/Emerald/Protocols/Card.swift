@@ -20,12 +20,19 @@ public protocol Card: Token {
     var side: CardSide { get }
     
     func canSwap(with other: Self) -> Bool
-    func canInteract(with other: Self) -> Bool
 }
 
 extension Card {
     
     public var type: TokenType {
         .card
+    }
+    
+    public func canSwap(with other: Token) -> Bool {
+        if let card: Self = other.asCard() {
+            return canSwap(with: card)
+        }
+        
+        return false
     }
 }

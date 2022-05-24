@@ -60,7 +60,7 @@ open class DragBoard: Node, Board {
         guard
             let touch = touches.first,
             let space = space(at: touch.location(in: self)),
-            let token = space.pickToken(at: touch.location(in: space))
+            let token = space.pickToken(at: touch.location(in: space)) as? Token & Draggable
         else {
             return
         }
@@ -86,7 +86,7 @@ open class DragBoard: Node, Board {
             return
         }
 
-        pick.token.position = location - pick.offset
+        pick.token.drag(to: location - pick.offset)
     }
     
     public override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -99,18 +99,13 @@ open class DragBoard: Node, Board {
             return
         }
         
-        if
-            let destination = destination(for: pick.token, at: location),
-            let move = destination.move(forToken: pick.token)
-        {
-            switch move {
-            case .place:
-                destination.place(token: pick.token)
-            case .swap(let other):
-                pick.space.place(token: other)
-                destination.place(token: pick.token)
-            case .interact(let other):
-                destination.place(token: pick.token)
+        if let destination = destination(for: pick.token, at: location) {
+            if let yield = destination.place(token: pick.token) {
+                if yield.isInvalidated {
+                    disposer.disposeOf(token: yield)
+                } else {
+                    pick.space.place(token: yield)
+                }
             }
         } else {
             pick.space.place(token: pick.token)
@@ -136,9 +131,10 @@ open class DragBoard: Node, Board {
     
     // MARK: - Private
 
-    private typealias Pick = (token: Token, offset: CGPoint, space: Space)
+    private typealias Pick = (token: Token & Draggable, offset: CGPoint, space: Space)
     
     private let _frame: CGRect
+    private let disposer = TokenDisposer()
 
     private var pick: Pick?
     private var bridgedBoards = [DragBoard]()
