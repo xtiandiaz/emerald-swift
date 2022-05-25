@@ -25,12 +25,18 @@ public protocol Token: Node {
     func showOptions()
     
     func invalidate()
+    
+    func disposalAction() -> SKAction
 }
 
 extension Token {
     
     public var isDisposable: Bool {
         false
+    }
+    
+    public func disposalAction() -> SKAction {
+        .fadeOut(withDuration: 0.25)
     }
     
     public func runIfValid(_ action: SKAction, withKey key: String) {

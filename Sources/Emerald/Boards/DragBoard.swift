@@ -12,9 +12,7 @@ import SpriteKit
 
 open class DragBoard: Node, Board {
     
-    private(set) public var spaces = [AnySpace]()
-    
-    public var disposer = TokenDisposer()
+    public private(set) var spaces = [AnySpace]()
     
     public var isLocked: Bool {
         get { !isUserInteractionEnabled }
@@ -23,6 +21,10 @@ open class DragBoard: Node, Board {
     
     public override var frame: CGRect {
         _frame
+    }
+    
+    public var uponMessage: AnyPublisher<BoardMessage, Never> {
+        broadcaster.eraseToAnyPublisher()
     }
     
     public init(frame: CGRect) {
@@ -104,7 +106,7 @@ open class DragBoard: Node, Board {
         if let destination = destination(for: pick.token, at: location) {
             if let yield = destination.place(token: pick.token) {
                 if yield.isInvalidated {
-                    disposer.disposeOf(token: yield)
+                    disposeOf(yield)
                 } else {
                     pick.space.place(token: yield)
                 }
@@ -138,6 +140,8 @@ open class DragBoard: Node, Board {
     private typealias Pick = (token: Token & Draggable, offset: CGPoint, space: AnySpace)
     
     private let _frame: CGRect
+    private let broadcaster = MessageBroadcaster<BoardMessage>()
+    private let disposer = TokenDisposer()
 
     private var pick: Pick?
     private var bridgedBoards = [DragBoard]()
@@ -197,7 +201,12 @@ open class DragBoard: Node, Board {
     }
     
     private func purge(_ space: AnySpace) {
-        space.purge().forEach(disposer.disposeOf)
+        space.purge().forEach(disposeOf)
         space.arrange()
+    }
+    
+    private func disposeOf(_ token: Token) {
+        disposer.disposeOf(token: token)
+        broadcaster.send(.tokenDisposedOf(token))
     }
 }
