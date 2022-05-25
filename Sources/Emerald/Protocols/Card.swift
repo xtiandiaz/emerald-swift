@@ -14,15 +14,10 @@ public enum CardSide {
          back
 }
 
-public protocol Card: Token {
+public protocol Card: Token, Swappable, Mutable {
     
     var value: Int { get set }
     var side: CardSide { get }
-    
-    func canSwap(with other: Self) -> Bool
-    
-    func canMutate(with other: Self) -> Bool
-    func mutate(with other: Self)
 }
 
 extension Card {
