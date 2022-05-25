@@ -12,7 +12,7 @@ import SpriteKit
 
 open class DragBoard: Node, Board {
     
-    private(set) public var spaces = [Space]()
+    private(set) public var spaces = [AnySpace]()
     
     public var disposer = TokenDisposer()
     
@@ -42,7 +42,7 @@ open class DragBoard: Node, Board {
             .store(in: &subscriptions)
     }
     
-    public func addSpace(_ space: Space) {
+    public func addSpace(_ space: AnySpace) {
         if !spaces.contains(space) {
             spaces.append(space)
             addChild(space)
@@ -135,7 +135,7 @@ open class DragBoard: Node, Board {
     
     // MARK: - Private
 
-    private typealias Pick = (token: Token & Draggable, offset: CGPoint, space: Space)
+    private typealias Pick = (token: Token & Draggable, offset: CGPoint, space: AnySpace)
     
     private let _frame: CGRect
 
@@ -145,7 +145,7 @@ open class DragBoard: Node, Board {
     
     private lazy var debugNode = SKShapeNode(rect: frame)
     
-    private func destination(for token: Token, at location: CGPoint) -> Space? {
+    private func destination(for token: Token, at location: CGPoint) -> AnySpace? {
         if let destination = space(for: token, at: location) {
             return destination
         } else if let bridgedDestination = bridgedSpace(for: token, at: location) {
@@ -155,7 +155,7 @@ open class DragBoard: Node, Board {
         }
     }
     
-    private func space(for token: Token, at location: CGPoint) -> Space? {
+    private func space(for token: Token, at location: CGPoint) -> AnySpace? {
         if let space = space(at: location), space.canPlace(token: token) {
             return space
         }
@@ -163,19 +163,19 @@ open class DragBoard: Node, Board {
         return nil
     }
     
-    private func bridgedSpace(for token: Token, at location: CGPoint) -> Space? {
+    private func bridgedSpace(for token: Token, at location: CGPoint) -> AnySpace? {
         bridgedBoards.compactMap {
             $0.space(for: token, at: $0.convert(location, from: self))
         }
         .first
     }
     
-    private func space(at location: CGPoint) -> Space? {
+    private func space(at location: CGPoint) -> AnySpace? {
         spaces.first { $0.contains(location) }
     }
     
     private func setSpacesHighlighted(_ highlighted: Bool, for pick: Pick) {
-        let setHighlighted = { (space: Space) -> Void in
+        let setHighlighted = { (space: AnySpace) -> Void in
             space.setHighlighted(space.canPlace(token: pick.token) && highlighted)
         }
         
@@ -196,7 +196,7 @@ open class DragBoard: Node, Board {
         self.pick = nil
     }
     
-    private func purge(_ space: Space) {
+    private func purge(_ space: AnySpace) {
         space.purge().forEach(disposer.disposeOf)
         space.arrange()
     }

@@ -25,12 +25,4 @@ extension Card {
     public var type: TokenType {
         .card
     }
-    
-    public func canSwap(with other: Token) -> Bool {
-        if let card: Self = other.asCard() {
-            return canSwap(with: card)
-        }
-        
-        return false
-    }
 }

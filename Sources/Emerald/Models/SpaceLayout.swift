@@ -8,12 +8,9 @@
 import Foundation
 import SpriteKit
 
-public protocol SpaceLayout {
-}
-
-public struct CardStackLayout: SpaceLayout {
+public struct StackSpaceLayout {
     
-    public static let `default` = CardStackLayout(
+    public static let `default` = StackSpaceLayout(
         offset: CGSize(height: .xl),
         dimmingMode: .darkening
     )

@@ -1,5 +1,5 @@
 //
-//  CardCollectionSpace.swift
+//  CollectionSpace.swift
 //  Emerald
 //
 //  Created by Cristian Diaz on 14.5.2022.
@@ -9,19 +9,21 @@ import Beryllium
 import Foundation
 import SpriteKit
 
-open class CardCollectionSpace<T: CardCollection>: Node, CardSpace {
-    
-    public var isLocked = false
+open class CollectionSpace<T: TokenCollection>: Node, Space {
     
     public var isEmpty: Bool {
         collection.isEmpty
     }
 
-    open func pickCard(at location: CGPoint) -> T.Element? {
-        collection.remove(at: location)
+    open func pickToken(at location: CGPoint) -> T.Element? {
+        if let token = collection.remove(at: location), !token.isLocked {
+            return token
+        }
+        
+        return nil
     }
     
-    open func canPlace(card: T.Element) -> Bool {
+    open func canPlace(token: T.Element) -> Bool {
         false
     }
     
@@ -36,14 +38,14 @@ open class CardCollectionSpace<T: CardCollection>: Node, CardSpace {
     }
     
     @discardableResult
-    open func place(card: T.Element) -> T.Element? {
-        guard canPlace(card: card) else {
-            return card
+    open func place(token: T.Element) -> T.Element? {
+        guard canPlace(token: token) else {
+            return token
         }
         
-        card.move(toParent: self)
+        token.move(toParent: self)
         
-        collection.insert(card)
+        collection.insert(token)
         arrange()
         
         return nil
@@ -81,11 +83,11 @@ open class CardCollectionSpace<T: CardCollection>: Node, CardSpace {
     }
 }
 
-open class CardStackSpace<T: Card>: CardCollectionSpace<Stack<T>> {
+open class StackSpace<T: Token & Swappable & Mutable>: CollectionSpace<Stack<T>> {
     
-    public let layout: CardStackLayout
+    public let layout: StackSpaceLayout
     
-    public init(layout: CardStackLayout = .default) {
+    public init(layout: StackSpaceLayout = .default) {
         self.layout = layout
         
         super.init(collection: Stack<T>())
@@ -99,28 +101,28 @@ open class CardStackSpace<T: Card>: CardCollectionSpace<Stack<T>> {
         collection.pop()
     }
     
-    open override func canPlace(card: T) -> Bool {
+    open override func canPlace(token: T) -> Bool {
         if let peek = peek() {
-            return peek.canSwap(with: card) || peek.canMutate(with: card) || super.canPlace(card: card)
+            return peek.canSwap(with: token) || peek.canMutate(with: token) || super.canPlace(token: token)
         }
         
-        return super.canPlace(card: card)
+        return super.canPlace(token: token)
     }
     
     @discardableResult
-    open override func place(card: T) -> T? {
+    open override func place(token: T) -> T? {
         if let peek = peek() {
-            if peek.canSwap(with: card) {
+            if peek.canSwap(with: token) {
                 let swap = pop()
-                super.place(card: card)
+                super.place(token: token)
                 return swap
-            } else if peek.canMutate(with: card) {
-                peek.mutate(with: card)
-                return card
+            } else if peek.canMutate(with: token) {
+                peek.mutate(with: token)
+                return token
             }
         }
         
-        return super.place(card: card)
+        return super.place(token: token)
     }
     
     open override func arrange(item: T, at index: Int, in count: Int) {

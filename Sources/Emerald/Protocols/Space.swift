@@ -8,9 +8,8 @@
 import Foundation
 import SpriteKit
 
-public protocol Space: Node, Highlightable {
+public protocol AnySpace: Node, Highlightable {
     
-    var isLocked: Bool { get set }
     var isEmpty: Bool { get }
     
     func pickToken(at location: CGPoint) -> Token?
@@ -24,33 +23,34 @@ public protocol Space: Node, Highlightable {
     func purge() -> [Token]
 }
 
-public protocol CardSpace: Space {
+public protocol Space: AnySpace {
     
-    associatedtype CardType: Card
+    associatedtype TokenType: Token
     
-    func pickCard(at location: CGPoint) -> CardType?
+    func pickToken(at location: CGPoint) -> TokenType?
     
-    func canPlace(card: CardType) -> Bool
-    func place(card: CardType) -> CardType?
+    func canPlace(token: TokenType) -> Bool
+    @discardableResult
+    func place(token: TokenType) -> TokenType?
 }
 
-extension CardSpace {
+extension Space {
     
     public func pickToken(at location: CGPoint) -> Token? {
-        pickCard(at: location)
+        pickToken(at: location)
     }
     
     public func canPlace(token: Token) -> Bool {
-        if let card: CardType = token.asCard() {
-            return canPlace(card: card)
+        if let concreteToken: TokenType = token as? TokenType {
+            return canPlace(token: concreteToken)
         }
         
         return false
     }
     
     public func place(token: Token) -> Token? {
-        if let card: CardType = token.asCard() {
-            return place(card: card)
+        if let concreteToken: TokenType = token as? TokenType {
+            return place(token: concreteToken)
         }
         
         return nil

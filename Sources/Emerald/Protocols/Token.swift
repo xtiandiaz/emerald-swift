@@ -18,14 +18,13 @@ public protocol Token: Node {
     var type: TokenType { get }
     
     var supportsOptions: Bool { get }
+    var isLocked: Bool { get }
     var isDisposable: Bool { get }
     var isInvalidated: Bool { get }
     
     func showOptions()
     
     func invalidate()
-    
-    func canSwap(with other: Token) -> Bool
 }
 
 extension Token {
@@ -38,11 +37,5 @@ extension Token {
         if !isInvalidated {
             run(action, withKey: key)
         }
-    }
-    
-    // MARK: - Internal
-    
-    func asCard<T: Card>() -> T? {
-        type == .card ? self as? T : nil
     }
 }
