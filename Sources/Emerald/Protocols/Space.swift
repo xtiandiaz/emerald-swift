@@ -15,12 +15,13 @@ public protocol Space: Node, Highlightable {
     
     func pickToken(at location: CGPoint) -> Token?
     
-    func accepts(token: Token) -> Bool
-    
+    func canPlace(token: Token) -> Bool
     @discardableResult
     func place(token: Token) -> Token?
     
     func arrange()
+    
+    func purge() -> [Token]
 }
 
 public protocol CardSpace: Space {
@@ -29,8 +30,7 @@ public protocol CardSpace: Space {
     
     func pickCard(at location: CGPoint) -> CardType?
     
-    func accepts(card: CardType) -> Bool
-    
+    func canPlace(card: CardType) -> Bool
     func place(card: CardType) -> CardType?
 }
 
@@ -40,9 +40,9 @@ extension CardSpace {
         pickCard(at: location)
     }
     
-    public func accepts(token: Token) -> Bool {
+    public func canPlace(token: Token) -> Bool {
         if let card: CardType = token.asCard() {
-            return accepts(card: card)
+            return canPlace(card: card)
         }
         
         return false

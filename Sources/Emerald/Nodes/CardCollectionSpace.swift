@@ -21,7 +21,7 @@ open class CardCollectionSpace<T: CardCollection>: Node, CardSpace {
         collection.remove(at: location)
     }
     
-    open func accepts(card: T.Element) -> Bool {
+    open func canPlace(card: T.Element) -> Bool {
         false
     }
     
@@ -37,7 +37,7 @@ open class CardCollectionSpace<T: CardCollection>: Node, CardSpace {
     
     @discardableResult
     open func place(card: T.Element) -> T.Element? {
-        guard accepts(card: card) else {
+        guard canPlace(card: card) else {
             return card
         }
         
@@ -50,7 +50,6 @@ open class CardCollectionSpace<T: CardCollection>: Node, CardSpace {
     }
     
     open func setHighlighted(_ highlighted: Bool) {
-        fatalError("Not implemented")
     }
     
     public func remove(_ item: T.Element) -> T.Element? {
@@ -63,6 +62,12 @@ open class CardCollectionSpace<T: CardCollection>: Node, CardSpace {
     
     public func removeAll(where shouldBeRemoved: (T.Element) -> Bool) {
         collection.removeAll(where: shouldBeRemoved)
+    }
+    
+    public func purge() -> [Token] {
+        let allInvalidated = collection.filter { $0.isInvalidated }
+        removeAll { $0.isInvalidated }
+        return allInvalidated
     }
     
     // MARK: - Internal
@@ -94,12 +99,25 @@ open class CardStackSpace<T: Card>: CardCollectionSpace<Stack<T>> {
         collection.pop()
     }
     
+    open override func canPlace(card: T) -> Bool {
+        if let peek = peek() {
+            return peek.canSwap(with: card) || peek.canMutate(with: card) || super.canPlace(card: card)
+        }
+        
+        return super.canPlace(card: card)
+    }
+    
     @discardableResult
     open override func place(card: T) -> T? {
-        if let peek = peek(), card.canSwap(with: peek) {
-            let swap = pop()
-            super.place(card: card)
-            return swap
+        if let peek = peek() {
+            if peek.canSwap(with: card) {
+                let swap = pop()
+                super.place(card: card)
+                return swap
+            } else if peek.canMutate(with: card) {
+                peek.mutate(with: card)
+                return card
+            }
         }
         
         return super.place(card: card)

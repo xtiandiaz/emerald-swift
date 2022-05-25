@@ -20,6 +20,9 @@ public protocol Card: Token {
     var side: CardSide { get }
     
     func canSwap(with other: Self) -> Bool
+    
+    func canMutate(with other: Self) -> Bool
+    func mutate(with other: Self)
 }
 
 extension Card {

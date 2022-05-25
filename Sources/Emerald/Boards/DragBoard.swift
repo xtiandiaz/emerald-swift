@@ -14,6 +14,8 @@ open class DragBoard: Node, Board {
     
     private(set) public var spaces = [Space]()
     
+    public var disposer = TokenDisposer()
+    
     public var isLocked: Bool {
         get { !isUserInteractionEnabled }
         set { isUserInteractionEnabled = !newValue }
@@ -107,6 +109,8 @@ open class DragBoard: Node, Board {
                     pick.space.place(token: yield)
                 }
             }
+            
+            purge(destination)
         } else {
             pick.space.place(token: pick.token)
         }
@@ -134,7 +138,6 @@ open class DragBoard: Node, Board {
     private typealias Pick = (token: Token & Draggable, offset: CGPoint, space: Space)
     
     private let _frame: CGRect
-    private let disposer = TokenDisposer()
 
     private var pick: Pick?
     private var bridgedBoards = [DragBoard]()
@@ -153,7 +156,7 @@ open class DragBoard: Node, Board {
     }
     
     private func space(for token: Token, at location: CGPoint) -> Space? {
-        if let space = space(at: location), space.accepts(token: token) {
+        if let space = space(at: location), space.canPlace(token: token) {
             return space
         }
         
@@ -173,7 +176,7 @@ open class DragBoard: Node, Board {
     
     private func setSpacesHighlighted(_ highlighted: Bool, for pick: Pick) {
         let setHighlighted = { (space: Space) -> Void in
-            space.setHighlighted(space.accepts(token: pick.token) && highlighted)
+            space.setHighlighted(space.canPlace(token: pick.token) && highlighted)
         }
         
         spaces.filter { $0 != pick.space }.forEach(setHighlighted)
@@ -191,5 +194,10 @@ open class DragBoard: Node, Board {
         setSpacesHighlighted(false, for: pick)
         
         self.pick = nil
+    }
+    
+    private func purge(_ space: Space) {
+        space.purge().forEach(disposer.disposeOf)
+        space.arrange()
     }
 }
