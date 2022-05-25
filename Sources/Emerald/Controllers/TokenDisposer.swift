@@ -23,7 +23,7 @@ class TokenDisposer {
     // MARK: - Private
     
     private func disposeAnimatedOf(_ token: Token) {
-        token.run(token.disposalAction(), withKey: "kill") { [unowned token] in
+        token.run(token.disposalAction(), withKey: "disposal") { [unowned token] in
             token.removeFromParent()
         }
     }

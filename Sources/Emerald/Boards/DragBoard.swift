@@ -52,8 +52,8 @@ open class DragBoard: Node, Board {
     }
     
     public func bridge(_ other: DragBoard) {
-        if !bridgedBoards.contains(other), other != self {
-            bridgedBoards.append(other)
+        if other != self, !bridgedBoards.contains(other) {
+            bridgedBoards.append(Weak(other))
             other.bridge(self)
         }
     }
@@ -144,7 +144,7 @@ open class DragBoard: Node, Board {
     private let disposer = TokenDisposer()
 
     private var pick: Pick?
-    private var bridgedBoards = [DragBoard]()
+    private var bridgedBoards = [Weak<DragBoard>]()
     private var subscriptions = Set<AnyCancellable>()
     
     private lazy var debugNode = SKShapeNode(rect: frame)
@@ -168,10 +168,11 @@ open class DragBoard: Node, Board {
     }
     
     private func bridgedSpace(for token: Token, at location: CGPoint) -> AnySpace? {
-        bridgedBoards.compactMap {
-            $0.space(for: token, at: $0.convert(location, from: self))
-        }
-        .first
+        bridgedBoards.values
+            .compactMap {
+                $0.space(for: token, at: $0.convert(location, from: self))
+            }
+            .first
     }
     
     private func space(at location: CGPoint) -> AnySpace? {
@@ -185,7 +186,7 @@ open class DragBoard: Node, Board {
         
         spaces.filter { $0 != pick.space }.forEach(setHighlighted)
         
-        bridgedBoards.flatMap { $0.spaces }.forEach(setHighlighted)
+        bridgedBoards.values.flatMap { $0.spaces }.forEach(setHighlighted)
     }
     
     private func cancel() {
