@@ -11,6 +11,10 @@ import SpriteKit
 
 open class CollectionSpace<T: TokenCollection>: Node, Space {
     
+    open var capacity: Int {
+        .max
+    }
+    
     public var isEmpty: Bool {
         collection.isEmpty
     }
@@ -23,8 +27,12 @@ open class CollectionSpace<T: TokenCollection>: Node, Space {
         return nil
     }
     
-    open func canPlace(token: T.Element) -> Bool {
+    open func accepts(token: T.Element) -> Bool {
         false
+    }
+    
+    open func canPlace(token: T.Element) -> Bool {
+        collection.count < capacity && accepts(token: token)
     }
     
     open func arrange() {
@@ -62,13 +70,9 @@ open class CollectionSpace<T: TokenCollection>: Node, Space {
         return nil
     }
     
-    public func removeAll(where shouldBeRemoved: (T.Element) -> Bool) {
-        collection.removeAll(where: shouldBeRemoved)
-    }
-    
     public func purge() -> [Token] {
         let allInvalidated = collection.filter { $0.isInvalidated }
-        removeAll { $0.isInvalidated }
+        collection.removeAll { $0.isInvalidated }
         return allInvalidated
     }
     
@@ -103,7 +107,9 @@ open class StackSpace<T: Token & Swappable & Mutable>: CollectionSpace<Stack<T>>
     
     open override func canPlace(token: T) -> Bool {
         if let peek = peek() {
-            return peek.canSwap(with: token) || peek.canMutate(with: token) || super.canPlace(token: token)
+            return peek.canSwap(with: token) ||
+                peek.canMutate(with: token) ||
+                super.canPlace(token: token)
         }
         
         return super.canPlace(token: token)

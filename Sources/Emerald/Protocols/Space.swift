@@ -10,9 +10,12 @@ import SpriteKit
 
 public protocol AnySpace: Node, Highlightable {
     
+    var capacity: Int { get }
     var isEmpty: Bool { get }
     
     func pickToken(at location: CGPoint) -> Token?
+    
+    func accepts(token: Token) -> Bool
     
     func canPlace(token: Token) -> Bool
     @discardableResult
@@ -29,6 +32,8 @@ public protocol Space: AnySpace {
     
     func pickToken(at location: CGPoint) -> TokenType?
     
+    func accepts(token: TokenType) -> Bool
+    
     func canPlace(token: TokenType) -> Bool
     @discardableResult
     func place(token: TokenType) -> TokenType?
@@ -38,6 +43,14 @@ extension Space {
     
     public func pickToken(at location: CGPoint) -> Token? {
         pickToken(at: location)
+    }
+    
+    public func accepts(token: Token) -> Bool {
+        if let concreteToken: TokenType = token as? TokenType {
+            return accepts(token: concreteToken)
+        }
+        
+        return false
     }
     
     public func canPlace(token: Token) -> Bool {
@@ -55,4 +68,8 @@ extension Space {
         
         return nil
     }
+    
+    // MARK: - Internal
+    
+    
 }
