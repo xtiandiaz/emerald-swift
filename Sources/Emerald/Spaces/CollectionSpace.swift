@@ -9,7 +9,7 @@ import Beryllium
 import Foundation
 import SpriteKit
 
-open class CollectionSpace<T: TokenCollection>: Node, Space {
+open class CollectionSpace<T: TokenCollection>: Node, ExchangeSpace where T.Element: Exchangeable {
     
     open var capacity: Int {
         .max
@@ -87,7 +87,7 @@ open class CollectionSpace<T: TokenCollection>: Node, Space {
     }
 }
 
-open class StackSpace<T: Token & Swappable & Mutable>: CollectionSpace<Stack<T>> {
+open class StackSpace<T: Token & Exchangeable>: CollectionSpace<Stack<T>> {
     
     public let layout: StackSpaceLayout
     
@@ -107,9 +107,7 @@ open class StackSpace<T: Token & Swappable & Mutable>: CollectionSpace<Stack<T>>
     
     open override func canPlace(token: T) -> Bool {
         if let peek = peek() {
-            return peek.canSwap(with: token) ||
-                peek.canMutate(with: token) ||
-                super.canPlace(token: token)
+            return canExchange(token: peek, with: token) || super.canPlace(token: token)
         }
         
         return super.canPlace(token: token)
