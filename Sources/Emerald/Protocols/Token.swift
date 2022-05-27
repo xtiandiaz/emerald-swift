@@ -17,10 +17,11 @@ public protocol AnyToken: Node {
     
     var type: TokenType { get }
     
-    var supportsOptions: Bool { get }
     var isLocked: Bool { get }
     var isDisposable: Bool { get }
     var isInvalidated: Bool { get }
+    
+    var supportsOptions: Bool { get }
     
     func showOptions()
     
