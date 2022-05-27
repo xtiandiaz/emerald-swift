@@ -13,7 +13,7 @@ public enum TokenType {
     case card
 }
 
-public protocol Token: Node {
+public protocol AnyToken: Node {
     
     var type: TokenType { get }
     
@@ -26,16 +26,28 @@ public protocol Token: Node {
     
     func invalidate()
     
-    func disposalAction() -> SKAction
+    func disposalAction() -> SKAction?
 }
 
-extension Token {
+public protocol Token: AnyToken {
+
+    func canSwap(with other: Self) -> Bool
+
+    func canMutate(with other: Self) -> Bool
+    func mutate(with other: Self)
+}
+
+extension AnyToken {
     
     public var isDisposable: Bool {
         false
     }
     
-    public func disposalAction() -> SKAction {
+    public func canBeUsedOn(space: AnySpace) -> Bool {
+        space.canPlace(token: self) || space.canSwap(with: self) || space.canMutate(with: self)
+    }
+    
+    public func disposalAction() -> SKAction? {
         .fadeOut(withDuration: 0.25)
     }
     

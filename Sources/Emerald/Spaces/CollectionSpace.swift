@@ -9,17 +9,30 @@ import Beryllium
 import Foundation
 import SpriteKit
 
-open class CollectionSpace<T: TokenCollection>: Node, ExchangeSpace where T.Element: Exchangeable {
+open class CollectionSpace<T: TokenCollection>: Node, Space {
     
     open var capacity: Int {
         .max
     }
     
+    open func accepts(token: T.Element) -> Bool {
+        false
+    }
+    
+    open func arrange(item: T.Element, at index: Int, in count: Int) {
+        fatalError("Not implemented")
+    }
+    
+    open func setHighlighted(_ highlighted: Bool) {
+    }
+    
+    // MARK: - Public
+    
     public var isEmpty: Bool {
         collection.isEmpty
     }
 
-    open func pickToken(at location: CGPoint) -> T.Element? {
+    public func pickToken(at location: CGPoint) -> T.Element? {
         if let token = collection.remove(at: location), !token.isLocked {
             return token
         }
@@ -27,50 +40,36 @@ open class CollectionSpace<T: TokenCollection>: Node, ExchangeSpace where T.Elem
         return nil
     }
     
-    open func accepts(token: T.Element) -> Bool {
+    public func canSwap(with token: T.Element) -> Bool {
         false
     }
     
-    open func canPlace(token: T.Element) -> Bool {
+    public func swap(with token: T.Element) -> T.Element? {
+        nil
+    }
+    
+    public func canMutate(with token: T.Element) -> Bool {
+        false
+    }
+    
+    public func mutate(with token: T.Element) {
+    }
+    
+    public func canPlace(token: T.Element) -> Bool {
         collection.count < capacity && accepts(token: token)
     }
     
-    open func arrange() {
+    public func place(token: T.Element) {
+        place(token: token) { collection.insert($0) }
+    }
+    
+    public func arrange() {
         for (index, item) in collection.enumerated() {
             arrange(item: item, at: index, in: collection.count)
         }
     }
     
-    open func arrange(item: T.Element, at index: Int, in count: Int) {
-        fatalError("Not implemented")
-    }
-    
-    @discardableResult
-    open func place(token: T.Element) -> T.Element? {
-        guard canPlace(token: token) else {
-            return token
-        }
-        
-        token.move(toParent: self)
-        
-        collection.insert(token)
-        arrange()
-        
-        return nil
-    }
-    
-    open func setHighlighted(_ highlighted: Bool) {
-    }
-    
-    public func remove(_ item: T.Element) -> T.Element? {
-        if let index = collection.firstIndex(of: item) {
-            return collection.remove(at: index)
-        }
-        
-        return nil
-    }
-    
-    public func purge() -> [Token] {
+    public func purge() -> [AnyToken] {
         let allInvalidated = collection.filter { $0.isInvalidated }
         collection.removeAll { $0.isInvalidated }
         return allInvalidated
@@ -87,47 +86,18 @@ open class CollectionSpace<T: TokenCollection>: Node, ExchangeSpace where T.Elem
     }
 }
 
-open class StackSpace<T: Token & Exchangeable>: CollectionSpace<Stack<T>> {
+extension CollectionSpace {
     
-    public let layout: StackSpaceLayout
-    
-    public init(layout: StackSpaceLayout = .default) {
-        self.layout = layout
-        
-        super.init(collection: Stack<T>())
-    }
-    
-    public func peek() -> T? {
-        collection.peek()
-    }
-    
-    public func pop() -> T? {
-        collection.pop()
-    }
-    
-    open override func canPlace(token: T) -> Bool {
-        if let peek = peek() {
-            return canExchange(token: peek, with: token) || super.canPlace(token: token)
+    public func remove(_ item: T.Element) -> T.Element? {
+        if let index = collection.firstIndex(of: item) {
+            return collection.remove(at: index)
         }
         
-        return super.canPlace(token: token)
+        return nil
     }
-    
-    @discardableResult
-    open override func place(token: T) -> T? {
-        if let peek = peek() {
-            if peek.canSwap(with: token) {
-                let swap = pop()
-                super.place(token: token)
-                return swap
-            } else if peek.canMutate(with: token) {
-                peek.mutate(with: token)
-                return token
-            }
-        }
-        
-        return super.place(token: token)
-    }
+}
+
+open class StackSpace<T: Token>: CollectionSpace<Stack<T>> {
     
     open override func arrange(item: T, at index: Int, in count: Int) {
         item.zPosition = CGFloat(count - index - 1)
@@ -138,7 +108,46 @@ open class StackSpace<T: Token & Exchangeable>: CollectionSpace<Stack<T>> {
                 duration: 0.1,
                 timingMode: .easeOut
             ),
-            withKey: "move"
+            withKey: "arrangement"
         )
+    }
+    
+    // MARK: - Public
+    
+    public let layout: StackSpaceLayout
+    
+    public init(layout: StackSpaceLayout = .default) {
+        self.layout = layout
+        
+        super.init(collection: Stack<T>())
+    }
+    
+    public override func canSwap(with token: T) -> Bool {
+        peek()?.canSwap(with: token) == true
+    }
+    
+    public override func swap(with token: T) -> T? {
+        let swap = pop()
+        place(token: token)
+        return swap
+    }
+    
+    public override func canMutate(with token: T) -> Bool {
+        peek()?.canMutate(with: token) == true
+    }
+    
+    public override func mutate(with token: T) {
+        peek()?.mutate(with: token)
+    }
+}
+
+extension StackSpace {
+    
+    public func peek() -> T? {
+        collection.peek()
+    }
+    
+    public func pop() -> T? {
+        collection.pop()
     }
 }

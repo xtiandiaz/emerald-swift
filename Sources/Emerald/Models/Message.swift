@@ -9,5 +9,5 @@ import Foundation
 
 public enum BoardMessage {
     
-    case tokenDisposedOf(Token)
+    case tokenDisposedOf(AnyToken)
 }

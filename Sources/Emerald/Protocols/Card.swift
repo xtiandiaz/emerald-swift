@@ -14,7 +14,7 @@ public enum CardSide {
          back
 }
 
-public protocol Card: Token, Swappable, Mutable {
+public protocol Card: Token {
     
     var value: Int { get set }
     var side: CardSide { get }

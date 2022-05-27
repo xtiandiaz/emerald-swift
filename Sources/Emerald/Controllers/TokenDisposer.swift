@@ -8,22 +8,20 @@
 import Foundation
 import SpriteKit
 
-class TokenDisposer {
+struct TokenDisposer {
     
-    func disposeIfInvalidatedOf(token: Token) {
+    func disposeIfInvalidatedOf(token: AnyToken) {
         if token.isInvalidated {
             disposeOf(token: token)
         }
     }
     
-    func disposeOf(token: Token) {
-        disposeAnimatedOf(token)
-    }
-    
-    // MARK: - Private
-    
-    private func disposeAnimatedOf(_ token: Token) {
-        token.run(token.disposalAction(), withKey: "disposal") { [unowned token] in
+    func disposeOf(token: AnyToken) {
+        if let disposalAction = token.disposalAction() {
+            token.run(disposalAction, withKey: "disposal") { [unowned token] in
+                token.removeFromParent()
+            }
+        } else {
             token.removeFromParent()
         }
     }
