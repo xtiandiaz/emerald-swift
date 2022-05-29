@@ -10,21 +10,26 @@ import SpriteKit
 
 public protocol AnySpace: Node, Highlightable {
     
-    var capacity: Int { get }
+    var tokenCapacity: Int { get }
+    var tokenCount: Int { get }
+    
     var isEmpty: Bool { get }
     
     func pickToken(at location: CGPoint) -> AnyToken?
     
     func accepts(token: AnyToken) -> Bool
     
+    func shouldForward(token: AnyToken) -> Bool
+    
     func canSwap(with token: AnyToken) -> Bool
     func swap(with token: AnyToken) -> AnyToken?
     
     func canMutate(with token: AnyToken) -> Bool
     func mutate(with token: AnyToken)
-    
+
     func canPlace(token: AnyToken) -> Bool
-    func place(token: AnyToken)
+    @discardableResult
+    func place(token: AnyToken) -> Bool
     
     func arrange()
     
@@ -39,6 +44,8 @@ public protocol Space: AnySpace {
     
     func accepts(token: TokenType) -> Bool
     
+    func shouldForward(token: TokenType) -> Bool
+    
     func canSwap(with token: TokenType) -> Bool
     func swap(with token: TokenType) -> TokenType?
     
@@ -46,7 +53,15 @@ public protocol Space: AnySpace {
     func mutate(with token: TokenType)
     
     func canPlace(token: TokenType) -> Bool
-    func place(token: TokenType)
+    @discardableResult
+    func place(token: TokenType) -> Bool
+}
+
+extension AnySpace {
+    
+    public func setHighlighted(_ highlighted: Bool, for token: AnyToken) {
+        setHighlighted(highlighted && token.canBeUsedOn(space: self))
+    }
 }
 
 extension Space {
@@ -58,6 +73,14 @@ extension Space {
     public func accepts(token: AnyToken) -> Bool {
         if let t: TokenType = token as? TokenType {
             return accepts(token: t)
+        }
+        
+        return false
+    }
+    
+    public func shouldForward(token: AnyToken) -> Bool {
+        if let t: TokenType = token as? TokenType {
+            return shouldForward(token: t)
         }
         
         return false
@@ -75,18 +98,18 @@ extension Space {
         if let t: TokenType = token as? TokenType {
             return swap(with: t)
         }
-        
+
         return nil
     }
-    
+
     public func canMutate(with token: AnyToken) -> Bool {
         if let t: TokenType = token as? TokenType {
             return canMutate(with: t)
         }
-        
+
         return false
     }
-    
+
     public func mutate(with token: AnyToken) {
         if let t: TokenType = token as? TokenType {
             mutate(with: t)
@@ -101,23 +124,26 @@ extension Space {
         return false
     }
     
-    public func place(token: AnyToken) {
+    public func place(token: AnyToken) -> Bool {
         if let t: TokenType = token as? TokenType {
             place(token: t)
+            return true
         }
+        
+        return false
     }
     
     // MARK: - Internal
     
-    func place(token: TokenType, _ storageHandler: (TokenType) -> Void) {
+    func place(token: TokenType, _ storageHandler: (TokenType) -> Void) -> Bool {
         guard canPlace(token: token) else {
-            return
+            return false
         }
         
         token.move(toParent: self)
-        
         storageHandler(token)
-        
         arrange()
+        
+        return true
     }
 }

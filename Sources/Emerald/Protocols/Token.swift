@@ -13,7 +13,7 @@ public enum TokenType {
     case card
 }
 
-public protocol AnyToken: Node {
+public protocol AnyToken: Selectable {
     
     var type: TokenType { get }
     
@@ -45,7 +45,10 @@ extension AnyToken {
     }
     
     public func canBeUsedOn(space: AnySpace) -> Bool {
-        space.canPlace(token: self) || space.canSwap(with: self) || space.canMutate(with: self)
+        space.shouldForward(token: self) ||
+        space.canSwap(with: self) ||
+        space.canMutate(with: self) ||
+        space.canPlace(token: self)
     }
     
     public func disposalAction() -> SKAction? {

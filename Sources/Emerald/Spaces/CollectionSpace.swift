@@ -11,12 +11,21 @@ import SpriteKit
 
 open class CollectionSpace<T: TokenCollection>: Node, Space {
     
-    open var capacity: Int {
+    open var tokenCapacity: Int {
         .max
     }
     
     open func accepts(token: T.Element) -> Bool {
         false
+    }
+    
+    open func shouldForward(token: T.Element) -> Bool {
+        false
+    }
+    
+    @discardableResult
+    open func place(token: T.Element) -> Bool {
+        place(token: token) { collection.insert($0) }
     }
     
     open func arrange(item: T.Element, at index: Int, in count: Int) {
@@ -27,6 +36,10 @@ open class CollectionSpace<T: TokenCollection>: Node, Space {
     }
     
     // MARK: - Public
+    
+    public var tokenCount: Int {
+        collection.count
+    }
     
     public var isEmpty: Bool {
         collection.isEmpty
@@ -56,11 +69,7 @@ open class CollectionSpace<T: TokenCollection>: Node, Space {
     }
     
     public func canPlace(token: T.Element) -> Bool {
-        collection.count < capacity && accepts(token: token)
-    }
-    
-    public func place(token: T.Element) {
-        place(token: token) { collection.insert($0) }
+        collection.count < tokenCapacity && accepts(token: token)
     }
     
     public func arrange() {
