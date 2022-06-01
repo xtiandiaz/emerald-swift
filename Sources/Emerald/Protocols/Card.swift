@@ -18,6 +18,8 @@ public protocol Card: Token {
     
     var value: Int { get set }
     var side: CardSide { get }
+    
+    func flip(toSide side: CardSide, toward direction: Direction, animated: Bool)
 }
 
 extension Card {
