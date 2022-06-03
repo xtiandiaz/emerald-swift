@@ -5,6 +5,7 @@
 //  Created by Cristian Diaz on 15.4.2022.
 //
 
+import Beryllium
 import Combine
 import Foundation
 import SpriteKit
@@ -13,7 +14,6 @@ open class Scene: SKScene, Runnable, Identifiable {
     
     public let id = UUID()
     public private(set) var isRunning = false
-    public private(set) var subscriptions = Set<AnyCancellable>()
     
     public override init() {
         super.init()
@@ -63,6 +63,8 @@ open class Scene: SKScene, Runnable, Identifiable {
     }
     
     // MARK: - Private
+    
+    private var subscriptions = Set<AnyCancellable>()
     
     private func unsubscribe() {
         subscriptions.forEach {

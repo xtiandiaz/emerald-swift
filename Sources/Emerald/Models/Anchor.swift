@@ -9,13 +9,13 @@ import CoreGraphics
 
 public enum Anchor {
     
-    case center
-    case top, topLeft, topRight
-    case left
-    case bottom, bottomLeft, bottomRight
-    case right
+    case center,
+         top, topLeft, topRight,
+         left,
+         bottom, bottomLeft, bottomRight,
+         right
     
-    public var point: CGPoint {
+    public var viewportCoordinates: CGPoint {
         switch self {
         case .center: return CGPoint(xy: 0.5)
         case .top: return CGPoint(x: 0.5, y: 1)
@@ -29,15 +29,15 @@ public enum Anchor {
         }
     }
     
-    public var uiPoint: CGPoint {
+    public var uiViewportCoordinates: CGPoint {
         switch self {
-        case .bottom: return Anchor.top.point
-        case .bottomLeft: return Anchor.topLeft.point
-        case .bottomRight: return Anchor.topRight.point
-        case .top: return Anchor.bottom.point
-        case .topLeft: return Anchor.bottomLeft.point
-        case .topRight: return Anchor.bottomRight.point
-        default: return point
+        case .bottom: return Anchor.top.viewportCoordinates
+        case .bottomLeft: return Anchor.topLeft.viewportCoordinates
+        case .bottomRight: return Anchor.topRight.viewportCoordinates
+        case .top: return Anchor.bottom.viewportCoordinates
+        case .topLeft: return Anchor.bottomLeft.viewportCoordinates
+        case .topRight: return Anchor.bottomRight.viewportCoordinates
+        default: return viewportCoordinates
         }
     }
     
