@@ -201,6 +201,10 @@ extension Board {
         }
     }
     
+    public func space(at location: CGPoint) -> AnySpace? {
+        spaces.first { $0.contains(location) }
+    }
+    
     // MARK: - Internal
     
     struct TokenDestination {
@@ -217,10 +221,6 @@ extension Board {
         }
         
         return nil
-    }
-    
-    func space(at location: CGPoint) -> AnySpace? {
-        spaces.first { $0.contains(location) }
     }
     
     func space(for token: AnyToken, at location: CGPoint) -> AnySpace? {

@@ -14,7 +14,7 @@ let package = Package(
             targets: ["Emerald"]),
     ],
     dependencies: [
-        .package(name: "Beryllium", path: "../Beryllium")
+        .package(name: "Beryllium", path: "Beryllium")
     ],
     targets: [
         .target(

@@ -12,6 +12,10 @@ import SpriteKit
 
 open class DragBoard: Board {
     
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
+    }
+    
     public override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesMoved(touches, with: event)
         

@@ -76,14 +76,6 @@ public extension CGPoint {
         self.init(x: 0, y: y)
     }
     
-    func distanceSquared(to: CGPoint) -> CGFloat {
-        (to.x - x) * (to.x - x) + (to.y - y) * (to.y - y)
-    }
-    
-    func distance(to: CGPoint) -> CGFloat {
-        sqrt(distanceSquared(to: to))
-    }
-    
     func offset(to: CGPoint) -> CGSize {
         CGSize(width: to.x - x, height: to.y - y)
     }
