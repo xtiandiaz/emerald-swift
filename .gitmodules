@@ -1,0 +1,3 @@
+[submodule "Beryllium"]
+	path = Beryllium
+	url = git@github.com:xtiandiaz/Beryllium.git
