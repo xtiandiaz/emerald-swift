@@ -12,11 +12,15 @@ import SpriteKit
 
 open class Board: Node {
     
-    open func forward(token: AnyToken) -> Bool {
+    open func forward(token: AnyToken) throws {
         fatalError("Not implemented")
     }
     
     // MARK: - Public
+    
+    public enum Error: Swift.Error {
+        case unableToForwardToken(AnyToken, at: Board)
+    }
 
     public var isLocked: Bool {
         get { !isUserInteractionEnabled }
@@ -51,6 +55,7 @@ open class Board: Node {
         guard
             let touch = touches.first,
             let space = space(at: touch.location(in: self)),
+            !space.isLocked,
             let token = space.pickToken(at: touch.location(in: space))
         else {
             return
@@ -106,10 +111,7 @@ open class Board: Node {
     let broadcaster = MessageBroadcaster<BoardMessage>()
     
     func play(token: AnyToken, at location: CGPoint) -> AnyToken? {
-        guard
-            let destination = destination(for: token, at: location),
-            !destination.space.isLocked
-        else {
+        guard let destination = destination(for: token, at: location) else {
             return token
         }
         
@@ -117,7 +119,14 @@ open class Board: Node {
     }
     
     func play(token: AnyToken, at destination: TokenDestination) -> AnyToken? {
-        if destination.space.shouldForward(token: token), destination.board.forward(token: token) {
+        if destination.space.shouldForward(token: token) {
+            do {
+                try destination.board.forward(token: token)
+            } catch {
+                print(error)
+                disposeOf(token: token)
+            }
+            
             return nil
         }
         
@@ -181,10 +190,21 @@ open class Board: Node {
 
 extension Board {
     
+    public var isDirty: Bool {
+        false
+//        spaces.firstIndex { $0.isDirty } != nil
+    }
+    
     public func bridge(_ other: Board) {
         if other != self, !bridgedBoards.contains(other) {
             bridgedBoards.append(Weak(other))
             other.bridge(self)
+        }
+    }
+    
+    public func arrange() {
+        spaces.forEach {
+            $0.arrange()
         }
     }
     

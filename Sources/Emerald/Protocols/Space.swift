@@ -29,8 +29,7 @@ public protocol AnySpace: Node, Highlightable {
     func mutate(with token: AnyToken)
 
     func canPlace(token: AnyToken) -> Bool
-    @discardableResult
-    func place(token: AnyToken) -> Bool
+    func place(token: AnyToken)
     
     func arrange()
     
@@ -54,8 +53,7 @@ public protocol Space: AnySpace {
     func mutate(with token: TokenType)
     
     func canPlace(token: TokenType) -> Bool
-    @discardableResult
-    func place(token: TokenType) -> Bool
+    func place(token: TokenType)
 }
 
 extension AnySpace {
@@ -125,26 +123,22 @@ extension Space {
         return false
     }
     
-    public func place(token: AnyToken) -> Bool {
+    public func place(token: AnyToken) {
         if let t: TokenType = token as? TokenType {
             place(token: t)
-            return true
         }
-        
-        return false
     }
     
     // MARK: - Internal
     
-    func place(token: TokenType, _ storageHandler: (TokenType) -> Void) -> Bool {
+    func place(token: TokenType, _ storageHandler: (TokenType) -> Void) {
         guard canPlace(token: token) else {
-            return false
+            return
         }
         
         token.move(toParent: self)
         storageHandler(token)
-        arrange()
         
-        return true
+        arrange()
     }
 }

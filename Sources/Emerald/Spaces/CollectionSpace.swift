@@ -27,9 +27,10 @@ open class CollectionSpace<T: TokenCollection>: Node, Space {
         false
     }
     
-    @discardableResult
-    open func place(token: T.Element) -> Bool {
-        place(token: token) { collection.insert($0) }
+    open func place(token: T.Element) {
+        place(token: token) {
+            collection.insert($0)
+        }
     }
     
     open func arrange(item: T.Element, at index: Int, in count: Int) {
