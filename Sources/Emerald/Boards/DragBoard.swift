@@ -21,12 +21,11 @@ open class DragBoard: Board {
         
         guard
             let pick = pick,
-            let token = pick.token as? AnyToken & Draggable,
             let location = touches.first?.location(in: self)
         else {
             return
         }
 
-        token.drag(to: location - pick.offset)
+        pick.token.position = location - pick.offset
     }
 }

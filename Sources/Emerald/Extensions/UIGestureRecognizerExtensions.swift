@@ -26,10 +26,10 @@ extension UISwipeGestureRecognizer.Direction {
 extension UIGestureRecognizer {
     
     public func locationInNode(_ node: SKNode) -> CGPoint? {
-        guard let view = view as? SKView, let scene = view.scene else {
-            return nil
+        if let view = view as? SKView, let scene = view.scene {
+            return node.convert(view.convert(location(in: view), to: scene), from: scene)
         }
         
-        return node.convert(view.convert(location(in: view), to: scene), from: scene)
+        return nil
     }
 }

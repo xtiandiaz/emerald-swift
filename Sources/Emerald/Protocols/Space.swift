@@ -59,8 +59,8 @@ public protocol Space: AnySpace {
 
 extension AnySpace {
     
-    public func setHighlighted(_ highlighted: Bool, for token: AnyToken) {
-        setHighlighted(highlighted && token.canBeUsedOn(space: self))
+    public func shouldHighlight(forToken token: AnyToken) -> Bool {
+        token.canBeUsedOn(space: self)
     }
 }
 

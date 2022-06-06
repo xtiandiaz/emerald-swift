@@ -13,7 +13,7 @@ import SpriteKit
 open class Board: Node {
     
     open func forward(token: AnyToken) -> Bool {
-        fatalError()
+        fatalError("Not implemented")
     }
     
     // MARK: - Public
@@ -23,12 +23,12 @@ open class Board: Node {
         set { isUserInteractionEnabled = !newValue }
     }
 
-    public override var frame: CGRect {
-        _frame
-    }
-    
     public var uponMessage: AnyPublisher<BoardMessage, Never> {
         broadcaster.eraseToAnyPublisher()
+    }
+    
+    public override var frame: CGRect {
+        _frame
     }
 
     public init(frame: CGRect) {
@@ -64,7 +64,7 @@ open class Board: Node {
             $0.setSelected(true)
         }
         
-        setSpacesHighlighted(true, for: token)
+        setSpacesHighlighted(forToken: token)
     }
     
     public override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -92,10 +92,6 @@ open class Board: Node {
         
         setSpacesHighlighted(false)
         
-        bridgedBoards.values.forEach {
-            $0.setSpacesHighlighted(false)
-        }
-        
         self.pick = nil
     }
     
@@ -118,23 +114,21 @@ open class Board: Node {
     }
     
     func play(token: AnyToken, at destination: TokenDestination) -> AnyToken? {
-        let space = destination.space
-        
-        if space.shouldForward(token: token), destination.board.forward(token: token) {
+        if destination.space.shouldForward(token: token), destination.board.forward(token: token) {
             return nil
         }
         
         defer {
-            purgeSpace(space)
+            purgeSpace(destination.space)
         }
         
-        if space.canSwap(with: token), let swap = space.swap(with: token) {
+        if destination.space.canSwap(with: token), let swap = destination.space.swap(with: token) {
             return swap
-        } else if space.canMutate(with: token) {
-            space.mutate(with: token)
+        } else if destination.space.canMutate(with: token) {
+            destination.space.mutate(with: token)
             return token
-        } else if space.canPlace(token: token) {
-            space.place(token: token)
+        } else if destination.space.canPlace(token: token) {
+            destination.space.place(token: token)
         } else {
             return token
         }
@@ -143,23 +137,23 @@ open class Board: Node {
     }
     
     func setSpacesHighlighted(_ highlighted: Bool) {
-        spaces.forEach {
-            $0.setHighlighted(highlighted)
-        }
-        
-        bridgedBoards.values
-            .flatMap { $0.spaces }
-            .forEach { $0.setHighlighted(highlighted) }
+        setSpacesHighlighted { _ in highlighted }
     }
     
-    func setSpacesHighlighted(_ highlighted: Bool, for token: AnyToken) {
+    func setSpacesHighlighted(forToken token: AnyToken) {
+        setSpacesHighlighted {
+            $0.shouldHighlight(forToken: token)
+        }
+    }
+    
+    func setSpacesHighlighted(where predicate: (AnySpace) -> Bool) {
         spaces.forEach {
-            $0.setHighlighted(highlighted, for: token)
+            $0.setHighlighted(predicate($0))
         }
         
         bridgedBoards.values
             .flatMap { $0.spaces }
-            .forEach { $0.setHighlighted(highlighted, for: token) }
+            .forEach { $0.setHighlighted(predicate($0)) }
     }
     
     func cancelMove() {
@@ -191,6 +185,10 @@ extension Board {
         }
     }
     
+    public func space(at location: CGPoint) -> AnySpace? {
+        spaces.first { $0.contains(location) }
+    }
+    
     public func setVisible(_ visible: Bool, withColor color: UIColor) {
         if !visible {
             debugNode.removeFromParent()
@@ -199,10 +197,6 @@ extension Board {
                 $0.fillColor = color
             })
         }
-    }
-    
-    public func space(at location: CGPoint) -> AnySpace? {
-        spaces.first { $0.contains(location) }
     }
     
     // MARK: - Internal
