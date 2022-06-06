@@ -11,6 +11,10 @@ import SpriteKit
 
 open class CollectionSpace<T: TokenCollection>: Node, Space {
     
+    open var isLocked: Bool {
+        false
+    }
+    
     open var tokenCapacity: Int {
         .max
     }

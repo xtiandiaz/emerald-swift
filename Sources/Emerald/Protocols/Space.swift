@@ -13,6 +13,7 @@ public protocol AnySpace: Node, Highlightable {
     var tokenCapacity: Int { get }
     var tokenCount: Int { get }
     
+    var isLocked: Bool { get }
     var isEmpty: Bool { get }
     
     func pickToken(at location: CGPoint) -> AnyToken?

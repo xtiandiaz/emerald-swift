@@ -106,7 +106,10 @@ open class Board: Node {
     let broadcaster = MessageBroadcaster<BoardMessage>()
     
     func play(token: AnyToken, at location: CGPoint) -> AnyToken? {
-        guard let destination = destination(for: token, at: location) else {
+        guard
+            let destination = destination(for: token, at: location),
+            !destination.space.isLocked
+        else {
             return token
         }
         
