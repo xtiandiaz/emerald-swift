@@ -11,13 +11,15 @@ import SpriteKit
 
 open class CollectionSpace<T: TokenCollection>: Node, Space {
     
+    open var tokenCapacity: Int {
+        .max
+    }
+    
     open var isLocked: Bool {
         false
     }
     
-    open var tokenCapacity: Int {
-        .max
-    }
+    open var isDirty = false
     
     open func accepts(token: T.Element) -> Bool {
         false
@@ -33,14 +35,37 @@ open class CollectionSpace<T: TokenCollection>: Node, Space {
         }
     }
     
+    open func arrange() {
+        guard isDirty else {
+            return
+        }
+        
+        for (index, item) in collection.enumerated() {
+            arrange(item: item, at: index, in: collection.count)
+        }
+        
+        isDirty = false
+    }
+    
     open func arrange(item: T.Element, at index: Int, in count: Int) {
-        fatalError("Not implemented")
+        item.zPosition = CGFloat(count - index - 1)
+        
+        item.runIfValid(
+            .move(
+                to: .up * CGFloat(index) * layout.offset.asPoint(),
+                duration: 0.1,
+                timingMode: .easeOut
+            ),
+            withKey: "arrangement"
+        )
     }
     
     open func setHighlighted(_ highlighted: Bool) {
     }
     
     // MARK: - Public
+    
+    public let layout: CollectionSpaceLayout
     
     public var tokenCount: Int {
         collection.count
@@ -51,6 +76,10 @@ open class CollectionSpace<T: TokenCollection>: Node, Space {
     }
 
     public func pickToken(at location: CGPoint) -> T.Element? {
+        defer {
+            isDirty = true
+        }
+        
         if let token = collection.remove(at: location), !token.isLocked {
             return token
         }
@@ -77,15 +106,14 @@ open class CollectionSpace<T: TokenCollection>: Node, Space {
         collection.count < tokenCapacity && accepts(token: token)
     }
     
-    public func arrange() {
-        for (index, item) in collection.enumerated() {
-            arrange(item: item, at: index, in: collection.count)
-        }
-    }
-    
     public func purge() -> [AnyToken] {
         let allInvalidated = collection.filter { $0.isInvalidated }
         collection.removeAll { $0.isInvalidated }
+        
+        isDirty = true
+        
+        arrange()
+        
         return allInvalidated
     }
     
@@ -93,8 +121,9 @@ open class CollectionSpace<T: TokenCollection>: Node, Space {
     
     var collection: T
     
-    init(collection: T) {
+    init(collection: T, layout: CollectionSpaceLayout = .default) {
         self.collection = collection
+        self.layout = layout
         
         super.init()
     }
@@ -113,27 +142,8 @@ extension CollectionSpace {
 
 open class StackSpace<T: Token>: CollectionSpace<Stack<T>> {
     
-    open override func arrange(item: T, at index: Int, in count: Int) {
-        item.zPosition = CGFloat(count - index - 1)
-        
-        item.runIfValid(
-            .move(
-                to: .up * CGFloat(index) * layout.offset.asPoint(),
-                duration: 0.1,
-                timingMode: .easeOut
-            ),
-            withKey: "arrangement"
-        )
-    }
-    
-    // MARK: - Public
-    
-    public let layout: StackSpaceLayout
-    
-    public init(layout: StackSpaceLayout = .default) {
-        self.layout = layout
-        
-        super.init(collection: Stack<T>())
+    public init(layout: CollectionSpaceLayout = .default) {
+        super.init(collection: Stack<T>(), layout: layout)
     }
     
     public override func canSwap(with token: T) -> Bool {
@@ -163,5 +173,41 @@ extension StackSpace {
     
     public func pop() -> T? {
         collection.pop()
+    }
+}
+
+open class QueueSpace<T: Token>: CollectionSpace<Queue<T>> {
+    
+    public init(layout: CollectionSpaceLayout = .default) {
+        super.init(collection: Queue<T>(), layout: layout)
+    }
+    
+    public override func canSwap(with token: T) -> Bool {
+        peek()?.canSwap(with: token) == true
+    }
+    
+    public override func swap(with token: T) -> T? {
+        let swap = poll()
+        place(token: token)
+        return swap
+    }
+    
+    public override func canMutate(with token: T) -> Bool {
+        peek()?.canMutate(with: token) == true
+    }
+    
+    public override func mutate(with token: T) {
+        peek()?.mutate(with: token)
+    }
+}
+
+extension QueueSpace {
+    
+    public func peek() -> T? {
+        collection.peek()
+    }
+    
+    public func poll() -> T? {
+        collection.poll()
     }
 }

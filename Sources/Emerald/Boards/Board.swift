@@ -12,6 +12,12 @@ import SpriteKit
 
 open class Board: Node {
     
+    open var isLocked = false {
+        didSet {
+            isUserInteractionEnabled = !isLocked
+        }
+    }
+    
     open func forward(token: AnyToken) throws {
         fatalError("Not implemented")
     }
@@ -20,11 +26,6 @@ open class Board: Node {
     
     public enum Error: Swift.Error {
         case unableToForwardToken(AnyToken, at: Board)
-    }
-
-    public var isLocked: Bool {
-        get { !isUserInteractionEnabled }
-        set { isUserInteractionEnabled = !newValue }
     }
 
     public var uponMessage: AnyPublisher<BoardMessage, Never> {
@@ -40,7 +41,7 @@ open class Board: Node {
 
         super.init()
 
-        isLocked = false
+        isUserInteractionEnabled = true
     }
 
     public func addSpace(_ space: AnySpace) {
@@ -190,11 +191,6 @@ open class Board: Node {
 
 extension Board {
     
-    public var isDirty: Bool {
-        false
-//        spaces.firstIndex { $0.isDirty } != nil
-    }
-    
     public func bridge(_ other: Board) {
         if other != self, !bridgedBoards.contains(other) {
             bridgedBoards.append(Weak(other))
@@ -257,7 +253,6 @@ extension Board {
     
     func purgeSpace(_ space: AnySpace) {
         space.purge().forEach(disposer.disposeOf)
-        space.arrange()
     }
     
     func disposeOf(token: AnyToken) {

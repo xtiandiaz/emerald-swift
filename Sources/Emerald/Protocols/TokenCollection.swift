@@ -18,9 +18,6 @@ public protocol TokenCollection: Collection where Element: Token {
     mutating func removeAll(where shouldBeRemoved: (Element) -> Bool)
 }
 
-public protocol CardCollection: TokenCollection where Element: Card {
-}
-
 extension Stack: TokenCollection where Element: Token {
     
     public mutating func insert(_ item: Element) {
@@ -32,5 +29,13 @@ extension Stack: TokenCollection where Element: Token {
     }
 }
 
-extension Stack: CardCollection where Element: Card {
+extension Queue: TokenCollection where Element: Token {
+    
+    public mutating func insert(_ item: Element) {
+        add(item)
+    }
+    
+    public mutating func remove(at location: CGPoint) -> Element? {
+        poll()
+    }
 }

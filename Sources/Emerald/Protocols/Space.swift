@@ -14,6 +14,7 @@ public protocol AnySpace: Node, Highlightable {
     var tokenCount: Int { get }
     
     var isLocked: Bool { get }
+    var isDirty: Bool { get set }
     var isEmpty: Bool { get }
     
     func pickToken(at location: CGPoint) -> AnyToken?
@@ -138,6 +139,8 @@ extension Space {
         
         token.move(toParent: self)
         storageHandler(token)
+        
+        isDirty = true
         
         arrange()
     }
