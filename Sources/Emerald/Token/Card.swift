@@ -2,11 +2,11 @@
 //  Card.swift
 //  Emerald
 //
-//  Created by Cristian Diaz on 12.5.2022.
+//  Created by Cristian Diaz on 23.6.2022.
 //
 
+import Beryllium
 import Foundation
-import SpriteKit
 
 public enum CardSide {
     
@@ -14,17 +14,12 @@ public enum CardSide {
          back
 }
 
-public protocol Card: Token {
+public protocol Card: AnyToken {
     
-    var value: Int { get set }
     var side: CardSide { get }
     
-    func flip(toSide side: CardSide, toward direction: Direction, animated: Bool)
-}
-
-extension Card {
+    func canInteractWith(other: Self) -> Bool
+    func interactWith(other: Self)
     
-    public var type: TokenType {
-        .card
-    }
+    func flip(toSide side: CardSide, toward direction: Direction, animated: Bool)
 }

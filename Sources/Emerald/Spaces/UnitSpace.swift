@@ -10,7 +10,7 @@ import SpriteKit
 
 //open class UnitSpace<T: Token>: Node, Space {
 //    
-//    open func accepts(token: T) -> Bool {
+//    open func canPlace(token: T) -> Bool {
 //        false
 //    }
 //    

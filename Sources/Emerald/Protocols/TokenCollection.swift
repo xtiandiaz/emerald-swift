@@ -9,31 +9,23 @@ import Beryllium
 import Foundation
 import SpriteKit
 
-public protocol TokenCollection: Collection where Element: Token {
+public protocol TokenCollection: Collection where Element: AnyToken {
     
-    mutating func insert(_ item: Element)
+    mutating func insert(_ item: Element, at index: Int)
     
-    mutating func remove(at index: Index) -> Element
     mutating func remove(at location: CGPoint) -> Element?
+    mutating func remove(at index: Index) -> Element
     mutating func removeAll(where shouldBeRemoved: (Element) -> Bool)
 }
 
-extension Stack: TokenCollection where Element: Token {
-    
-    public mutating func insert(_ item: Element) {
-        push(item)
-    }
+extension Stack: TokenCollection where Element: AnyToken {
     
     public mutating func remove(at location: CGPoint) -> Element? {
         pop()
     }
 }
 
-extension Queue: TokenCollection where Element: Token {
-    
-    public mutating func insert(_ item: Element) {
-        add(item)
-    }
+extension Queue: TokenCollection where Element: AnyToken {
     
     public mutating func remove(at location: CGPoint) -> Element? {
         poll()

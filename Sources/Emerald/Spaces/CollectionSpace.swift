@@ -9,42 +9,26 @@ import Beryllium
 import Foundation
 import SpriteKit
 
-open class CollectionSpace<T: TokenCollection>: Node, Space {
+open class CollectionSpace<T: TokenCollection>: Space<T.Element> {
     
-    open var tokenCapacity: Int {
+    open override var tokenCapacity: Int {
         .max
     }
     
-    open var isLocked: Bool {
+    open override var isLocked: Bool {
         false
     }
     
-    open var isDirty = false
-    
-    open func accepts(token: T.Element) -> Bool {
-        false
+    open override func canPlace(token: T.Element) -> Bool {
+        tokenCount < tokenCapacity
     }
     
-    open func shouldForward(token: T.Element) -> Bool {
-        false
+    open override func canInteractWith(token: T.Element, at localPosition: CGPoint) -> Bool {
+        peek(at: localPosition)?.canInteractWith(other: token) == true
     }
     
-    open func place(token: T.Element) {
-        place(token: token) {
-            collection.insert($0)
-        }
-    }
-    
-    open func arrange() {
-        guard isDirty else {
-            return
-        }
-        
-        for (index, item) in collection.enumerated() {
-            arrange(item: item, at: index, in: collection.count)
-        }
-        
-        isDirty = false
+    open override func interactWith(token: T.Element, at localPosition: CGPoint) {
+        peek(at: localPosition)?.interactWith(other: token)
     }
     
     open func arrange(item: T.Element, at index: Int, in count: Int) {
@@ -60,57 +44,27 @@ open class CollectionSpace<T: TokenCollection>: Node, Space {
         )
     }
     
-    open func setHighlighted(_ highlighted: Bool) {
-    }
-    
     // MARK: - Public
-    
+        
     public let layout: CollectionSpaceLayout
     
-    public var tokenCount: Int {
+    public override var tokenCount: Int {
         collection.count
     }
     
-    public var isEmpty: Bool {
+    public override var isEmpty: Bool {
         collection.isEmpty
     }
-
-    public func pickToken(at location: CGPoint) -> T.Element? {
-        defer {
-            isDirty = true
+    
+    public override func arrange() {
+        for (index, item) in collection.enumerated() {
+            arrange(item: item, at: index, in: collection.count)
         }
-        
-        if let token = collection.remove(at: location), !token.isLocked {
-            return token
-        }
-        
-        return nil
     }
     
-    public func canSwap(with token: T.Element) -> Bool {
-        false
-    }
-    
-    public func swap(with token: T.Element) -> T.Element? {
-        nil
-    }
-    
-    public func canMutate(with token: T.Element) -> Bool {
-        false
-    }
-    
-    public func mutate(with token: T.Element) {
-    }
-    
-    public func canPlace(token: T.Element) -> Bool {
-        collection.count < tokenCapacity && accepts(token: token)
-    }
-    
-    public func purge() -> [AnyToken] {
+    public override func purge() -> [AnyToken] {
         let allInvalidated = collection.filter { $0.isInvalidated }
         collection.removeAll { $0.isInvalidated }
-        
-        isDirty = true
         
         arrange()
         
@@ -140,28 +94,30 @@ extension CollectionSpace {
     }
 }
 
-open class StackSpace<T: Token>: CollectionSpace<Stack<T>> {
+open class StackSpace<T: AnyToken>: CollectionSpace<Stack<T>> {
+    
+    open override var isLocked: Bool {
+        peek()?.isLocked == true
+    }
+    
+    open override func place(token: T) {
+        place(token: token) { [unowned self] in
+            collection.push($0)
+        }
+    }
+    
+    // MARK: - Public
     
     public init(layout: CollectionSpaceLayout = .default) {
         super.init(collection: Stack<T>(), layout: layout)
     }
     
-    public override func canSwap(with token: T) -> Bool {
-        peek()?.canSwap(with: token) == true
+    public override func peek(at localPosition: CGPoint) -> T? {
+        peek()
     }
     
-    public override func swap(with token: T) -> T? {
-        let swap = pop()
-        place(token: token)
-        return swap
-    }
-    
-    public override func canMutate(with token: T) -> Bool {
-        peek()?.canMutate(with: token) == true
-    }
-    
-    public override func mutate(with token: T) {
-        peek()?.mutate(with: token)
+    public override func take(at localPosition: CGPoint) -> T? {
+        pop()
     }
 }
 
@@ -176,28 +132,30 @@ extension StackSpace {
     }
 }
 
-open class QueueSpace<T: Token>: CollectionSpace<Queue<T>> {
+open class QueueSpace<T: AnyToken>: CollectionSpace<Queue<T>> {
+    
+    open override var isLocked: Bool {
+        peek()?.isLocked == true
+    }
+    
+    open override func place(token: T) {
+        place(token: token) { [unowned self] in
+            collection.add($0)
+        }
+    }
+    
+    // MARK: - Public
     
     public init(layout: CollectionSpaceLayout = .default) {
         super.init(collection: Queue<T>(), layout: layout)
     }
     
-    public override func canSwap(with token: T) -> Bool {
-        peek()?.canSwap(with: token) == true
+    public override func peek(at localPosition: CGPoint) -> T? {
+        peek()
     }
     
-    public override func swap(with token: T) -> T? {
-        let swap = poll()
-        place(token: token)
-        return swap
-    }
-    
-    public override func canMutate(with token: T) -> Bool {
-        peek()?.canMutate(with: token) == true
-    }
-    
-    public override func mutate(with token: T) {
-        peek()?.mutate(with: token)
+    public override func take(at localPosition: CGPoint) -> T? {
+        poll()
     }
 }
 
