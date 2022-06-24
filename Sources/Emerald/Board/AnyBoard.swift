@@ -76,10 +76,10 @@ open class AnyBoard: Node {
             return
         }
         
-        let locationInDestination = touch.location(in: destination)
+        let positionInDestination = touch.location(in: destination)
         
-        if destination.canInteractWithAny(token: pick.token, at: locationInDestination) {
-            destination.interactWithAny(token: pick.token, at: locationInDestination)
+        if destination.canInteractWithAny(token: pick.token, at: positionInDestination) {
+            destination.interactWithAny(token: pick.token, at: positionInDestination)
             
             if !pick.token.isInvalidated {
                 pick.space.placeAny(token: pick.token)
@@ -88,6 +88,12 @@ open class AnyBoard: Node {
             }
             
             purge(space: destination)
+        } else if
+            destination.canSwapWithAny(token: pick.token, at: positionInDestination),
+            let swap = destination.takeAny(at: positionInDestination)
+        {
+            pick.space.placeAny(token: swap)
+            destination.placeAny(token: pick.token)
         } else if destination.canPlaceAny(token: pick.token) {
             destination.placeAny(token: pick.token)
         }

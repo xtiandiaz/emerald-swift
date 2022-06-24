@@ -38,12 +38,12 @@ open class Deck<T: Card> {
     
     public static func deal(
         card: T,
-        facing side: CardSide,
+        facing side: FlipSide,
         into space: Space<T>,
         fromPosition origin: CGPoint
     ) {
         card.position = origin
-        card.flip(toSide: side, toward: .right, animated: false)
+        card.flipOver(side: side, toward: .right, animated: false)
         
         space.place(token: card)
     }
@@ -56,7 +56,7 @@ open class Deck<T: Card> {
     @MainActor
     public func deal(
         count: Int?,
-        facing side: CardSide,
+        facing side: FlipSide,
         into spaces: [Space<T>],
         withOrigin origin: Anchor,
         mode: DealMode = .clustered

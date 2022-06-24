@@ -19,16 +19,20 @@ open class CollectionSpace<T: TokenCollection>: Space<T.Element> {
         false
     }
     
-    open override func canPlace(token: T.Element) -> Bool {
-        tokenCount < tokenCapacity
-    }
-    
     open override func canInteractWith(token: T.Element, at localPosition: CGPoint) -> Bool {
         peek(at: localPosition)?.canInteractWith(other: token) == true
     }
     
     open override func interactWith(token: T.Element, at localPosition: CGPoint) {
         peek(at: localPosition)?.interactWith(other: token)
+    }
+    
+    open override func canSwapWith(token: T.Element, at localPosition: CGPoint) -> Bool {
+        peek(at: localPosition)?.canSwapWith(other: token) == true
+    }
+    
+    open override func canPlace(token: T.Element) -> Bool {
+        tokenCount < tokenCapacity
     }
     
     open func arrange(item: T.Element, at index: Int, in count: Int) {
@@ -94,6 +98,8 @@ extension CollectionSpace {
     }
 }
 
+// MARK: - Stack
+
 open class StackSpace<T: AnyToken>: CollectionSpace<Stack<T>> {
     
     open override var isLocked: Bool {
@@ -131,6 +137,8 @@ extension StackSpace {
         collection.pop()
     }
 }
+
+// MARK: - Queue
 
 open class QueueSpace<T: AnyToken>: CollectionSpace<Queue<T>> {
     

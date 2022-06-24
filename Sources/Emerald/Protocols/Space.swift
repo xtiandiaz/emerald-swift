@@ -64,13 +64,18 @@ open class AnySpace: Node, Highlightable {
     func placeAny(token: AnyToken) {
         fatalError("Not implemented")
     }
+    
+    func canSwapWithAny(token: AnyToken, at localPosition: CGPoint) -> Bool {
+        fatalError("Not implemented")
+    }
 }
 
 extension AnySpace {
     
     func acceptsAny(token: AnyToken, at localPosition: CGPoint) -> Bool {
         canPlaceAny(token: token) ||
-        canInteractWithAny(token: token, at: localPosition)
+        canInteractWithAny(token: token, at: localPosition) ||
+        canSwapWithAny(token: token, at: localPosition)
     }
 }
 
@@ -85,6 +90,10 @@ open class Space<T: AnyToken>: AnySpace {
     }
     
     open func interactWith(token: T, at localPosition: CGPoint) {
+        fatalError("Not implemented")
+    }
+    
+    open func canSwapWith(token: T, at localPosition: CGPoint) -> Bool {
         fatalError("Not implemented")
     }
     
@@ -118,6 +127,10 @@ open class Space<T: AnyToken>: AnySpace {
     
     override func interactWithAny(token: AnyToken, at localPosition: CGPoint) {
         with(token as? T) { interactWith(token: $0, at: localPosition) }
+    }
+    
+    override func canSwapWithAny(token: AnyToken, at localPosition: CGPoint) -> Bool {
+        with(token as? T) { canSwapWith(token: $0, at: localPosition) } without: { false }
     }
     
     override func canPlaceAny(token: AnyToken) -> Bool {

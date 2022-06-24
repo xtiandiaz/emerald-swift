@@ -9,7 +9,7 @@ import Beryllium
 import Foundation
 import SpriteKit
 
-open class AnyToken: Node, Selectable {
+open class AnyToken: Node {
     
     open var isLocked: Bool {
         false
@@ -24,6 +24,10 @@ open class AnyToken: Node, Selectable {
     }
     
     open func interactWith(other: AnyToken) {
+        fatalError("Not implemented")
+    }
+    
+    open func canSwapWith(other: AnyToken) -> Bool {
         fatalError("Not implemented")
     }
     
