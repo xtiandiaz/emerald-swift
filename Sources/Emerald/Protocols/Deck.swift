@@ -21,12 +21,8 @@ public struct DeckCard<T> {
 
 open class Deck<T: Card> {
     
-    open func takeOne() -> T {
-        take(count: 1)[0]
-    }
-    
     open func take(count: Int) -> [T] {
-        fatalError()
+        fatalError("Not implemented")
     }
     
     // MARK: - Public
@@ -38,7 +34,6 @@ open class Deck<T: Card> {
     }
     
     public init() {
-        
     }
     
     public static func deal(
@@ -51,7 +46,11 @@ open class Deck<T: Card> {
         card.flip(toSide: side, toward: .right, animated: false)
         
         space.place(token: card)
-        
+    }
+    
+    public func takeOne() -> T? {
+        let oneArray = take(count: 1)
+        return oneArray.isEmpty ? nil : oneArray[0]
     }
     
     @MainActor
@@ -87,11 +86,11 @@ open class Deck<T: Card> {
             
             while !(fills.allSatisfy { $0.count == 0 }) {
                 for i in fills.indices {
-                    if fills[i].count == 0 {
+                    guard fills[i].count != 0, let card = takeOne() else {
                         continue
                     }
                     
-                    Self.deal(card: takeOne(), facing: side, into: fills[i].space, fromPosition: origin)
+                    Self.deal(card: card, facing: side, into: fills[i].space, fromPosition: origin)
                     
                     fills[i].count -= 1
                     

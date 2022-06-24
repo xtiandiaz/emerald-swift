@@ -12,11 +12,11 @@ import SpriteKit
 open class AnySpace: Node, Highlightable {
     
     open var tokenCount: Int {
-        fatalError()
+        fatalError("Not implemented")
     }
     
     open var tokenCapacity: Int {
-        fatalError()
+        fatalError("Not implemented")
     }
     
     open var isEmpty: Bool {
@@ -28,41 +28,41 @@ open class AnySpace: Node, Highlightable {
     }
     
     open func arrange() {
-        fatalError()
+        fatalError("Not implemented")
     }
     
     open func purge() -> [AnyToken] {
-        fatalError()
+        fatalError("Not implemented")
     }
     
     open func setHighlighted(_ highlighted: Bool) {
-        fatalError()
+        fatalError("Not implemented")
     }
     
     // MARK: - Internal
     
     func peekAny(at localPosition: CGPoint) -> AnyToken? {
-        fatalError()
+        fatalError("Not implemented")
     }
     
     func takeAny(at localPosition: CGPoint) -> AnyToken? {
-        fatalError()
+        fatalError("Not implemented")
     }
     
     func canInteractWithAny(token: AnyToken, at localPosition: CGPoint) -> Bool {
-        fatalError()
+        fatalError("Not implemented")
     }
     
     func interactWithAny(token: AnyToken, at localPosition: CGPoint) {
-        fatalError()
+        fatalError("Not implemented")
     }
     
     func canPlaceAny(token: AnyToken) -> Bool {
-        fatalError()
+        fatalError("Not implemented")
     }
     
     func placeAny(token: AnyToken) {
-        fatalError()
+        fatalError("Not implemented")
     }
 }
 
@@ -77,29 +77,29 @@ extension AnySpace {
 open class Space<T: AnyToken>: AnySpace {
     
     open func canPlace(token: T) -> Bool {
-        fatalError()
+        fatalError("Not implemented")
     }
     
     open func canInteractWith(token: T, at localPosition: CGPoint) -> Bool {
-        fatalError()
+        fatalError("Not implemented")
     }
     
     open func interactWith(token: T, at localPosition: CGPoint) {
-        fatalError()
+        fatalError("Not implemented")
     }
     
     // MARK: - Public
     
     public func peek(at localPosition: CGPoint) -> T? {
-        fatalError()
+        fatalError("Not implemented")
     }
     
     public func take(at localPosition: CGPoint) -> T? {
-        fatalError()
+        fatalError("Not implemented")
     }
     
     public func place(token: T) {
-        fatalError()
+        fatalError("Not implemented")
     }
     
     // MARK: - Internal

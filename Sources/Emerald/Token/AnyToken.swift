@@ -9,11 +9,6 @@ import Beryllium
 import Foundation
 import SpriteKit
 
-public enum TokenType {
-    
-    case card
-}
-
 open class AnyToken: Node, Selectable {
     
     open var isLocked: Bool {
@@ -25,15 +20,15 @@ open class AnyToken: Node, Selectable {
     }
     
     open func canInteractWith(other: AnyToken) -> Bool {
-        fatalError()
+        fatalError("Not implemented")
     }
     
     open func interactWith(other: AnyToken) {
-        fatalError()
+        fatalError("Not implemented")
     }
     
     open func setSelected(_ selected: Bool) {
-        fatalError()
+        fatalError("Not implemented")
     }
     
     open func disposalAction() -> SKAction? {
@@ -42,19 +37,11 @@ open class AnyToken: Node, Selectable {
     
     // MARK: - Public
     
-//    public let type: TokenType
-    
     public var isInvalidated = false
     
     public override init() {
         super.init()
     }
-    
-//    public init(type: TokenType) {
-//        self.type = type
-//
-//        super.init()
-//    }
 }
 
 extension AnyToken {
