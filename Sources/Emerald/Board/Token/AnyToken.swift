@@ -19,15 +19,15 @@ open class AnyToken: Node {
         false
     }
     
-    open func canInteractWith(other: AnyToken) -> Bool {
+    open func canInteractWithAny(other: AnyToken) -> Bool {
         fatalError("Not implemented")
     }
     
-    open func interactWith(other: AnyToken) {
+    open func interactWithAny(other: AnyToken) {
         fatalError("Not implemented")
     }
     
-    open func canSwapWith(other: AnyToken) -> Bool {
+    open func canSwapWithAny(other: AnyToken) -> Bool {
         fatalError("Not implemented")
     }
     

@@ -27,6 +27,26 @@ open class AnySpace: Node, Highlightable {
         false
     }
     
+    open func canInteractWithAny(token: AnyToken, at localPosition: CGPoint) -> Bool {
+        fatalError("Not implemented")
+    }
+    
+    open func interactWithAny(token: AnyToken, at localPosition: CGPoint) {
+        fatalError("Not implemented")
+    }
+    
+    open func canPlaceAny(token: AnyToken) -> Bool {
+        fatalError("Not implemented")
+    }
+    
+    open func placeAny(token: AnyToken) {
+        fatalError("Not implemented")
+    }
+    
+    open func canSwapWithAny(token: AnyToken, at localPosition: CGPoint) -> Bool {
+        fatalError("Not implemented")
+    }
+    
     open func arrange() {
         fatalError("Not implemented")
     }
@@ -48,26 +68,6 @@ open class AnySpace: Node, Highlightable {
     func takeAny(at localPosition: CGPoint) -> AnyToken? {
         fatalError("Not implemented")
     }
-    
-    func canInteractWithAny(token: AnyToken, at localPosition: CGPoint) -> Bool {
-        fatalError("Not implemented")
-    }
-    
-    func interactWithAny(token: AnyToken, at localPosition: CGPoint) {
-        fatalError("Not implemented")
-    }
-    
-    func canPlaceAny(token: AnyToken) -> Bool {
-        fatalError("Not implemented")
-    }
-    
-    func placeAny(token: AnyToken) {
-        fatalError("Not implemented")
-    }
-    
-    func canSwapWithAny(token: AnyToken, at localPosition: CGPoint) -> Bool {
-        fatalError("Not implemented")
-    }
 }
 
 extension AnySpace {
@@ -85,16 +85,36 @@ open class Space<T: AnyToken>: AnySpace {
         fatalError("Not implemented")
     }
     
+    open override func canInteractWithAny(token: AnyToken, at localPosition: CGPoint) -> Bool {
+        with(token as? T) { canInteractWith(token: $0, at: localPosition) } without: { false }
+    }
+    
     open func canInteractWith(token: T, at localPosition: CGPoint) -> Bool {
         fatalError("Not implemented")
+    }
+    
+    open override func interactWithAny(token: AnyToken, at localPosition: CGPoint) {
+        with(token as? T) { interactWith(token: $0, at: localPosition) }
     }
     
     open func interactWith(token: T, at localPosition: CGPoint) {
         fatalError("Not implemented")
     }
     
+    open override func canSwapWithAny(token: AnyToken, at localPosition: CGPoint) -> Bool {
+        with(token as? T) { canSwapWith(token: $0, at: localPosition) } without: { false }
+    }
+    
     open func canSwapWith(token: T, at localPosition: CGPoint) -> Bool {
         fatalError("Not implemented")
+    }
+    
+    open override func canPlaceAny(token: AnyToken) -> Bool {
+        with(token as? T) { canPlace(token: $0) } without: { false }
+    }
+    
+    open override func placeAny(token: AnyToken) {
+        with(token as? T) { place(token: $0) }
     }
     
     // MARK: - Public
@@ -119,26 +139,6 @@ open class Space<T: AnyToken>: AnySpace {
     
     override func takeAny(at localPosition: CGPoint) -> AnyToken? {
         take(at: localPosition)
-    }
-    
-    override func canInteractWithAny(token: AnyToken, at localPosition: CGPoint) -> Bool {
-        with(token as? T) { canInteractWith(token: $0, at: localPosition) } without: { false }
-    }
-    
-    override func interactWithAny(token: AnyToken, at localPosition: CGPoint) {
-        with(token as? T) { interactWith(token: $0, at: localPosition) }
-    }
-    
-    override func canSwapWithAny(token: AnyToken, at localPosition: CGPoint) -> Bool {
-        with(token as? T) { canSwapWith(token: $0, at: localPosition) } without: { false }
-    }
-    
-    override func canPlaceAny(token: AnyToken) -> Bool {
-        with(token as? T) { canPlace(token: $0) } without: { false }
-    }
-    
-    override func placeAny(token: AnyToken) {
-        with(token as? T) { place(token: $0) }
     }
     
     func place(token: T, _ storageHandler: @escaping (T) -> Void) {

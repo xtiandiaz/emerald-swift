@@ -100,7 +100,7 @@ extension CollectionSpace {
 
 // MARK: - Stack
 
-open class StackSpace<T: AnyToken>: CollectionSpace<Stack<T>> {
+open class StackSpace<T: Token>: CollectionSpace<Stack<T>> {
     
     open override var isLocked: Bool {
         peek()?.isLocked == true
@@ -140,7 +140,7 @@ extension StackSpace {
 
 // MARK: - Queue
 
-open class QueueSpace<T: AnyToken>: CollectionSpace<Queue<T>> {
+open class QueueSpace<T: Token>: CollectionSpace<Queue<T>> {
     
     open override var isLocked: Bool {
         peek()?.isLocked == true
