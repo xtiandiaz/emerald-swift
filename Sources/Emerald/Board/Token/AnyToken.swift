@@ -39,9 +39,13 @@ open class AnyToken: Node {
         .fadeOut(withDuration: 0.25)
     }
     
+    open func invalidate() {
+        isInvalidated = true
+    }
+    
     // MARK: - Public
     
-    public var isInvalidated = false
+    public private(set) var isInvalidated = false
     
     public override init() {
         super.init()
