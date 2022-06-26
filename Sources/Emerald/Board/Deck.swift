@@ -49,8 +49,8 @@ open class Deck<T: Card> {
     }
     
     public func takeOne() -> T? {
-        let oneArray = take(count: 1)
-        return oneArray.isEmpty ? nil : oneArray[0]
+        let unitArray = take(count: 1)
+        return unitArray.isEmpty ? nil : unitArray[0]
     }
     
     @MainActor

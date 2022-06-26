@@ -12,7 +12,7 @@ import SpriteKit
 
 open class AnyBoard: Node {
     
-    open func forwardAny(token: AnyToken) throws {
+    open func forwardAny(token: AnyToken) {
         fatalError("Not implemented")
     }
     
@@ -89,10 +89,10 @@ open class AnyBoard: Node {
         let positionInDestination = touch.location(in: destination.space)
         
         if destination.space.shouldForwardAny(token: pick.token) {
-            do {
-                try destination.board.forwardAny(token: pick.token)
-            } catch {
-                print(error)
+            destination.board.forwardAny(token: pick.token)
+            
+            if pick.token.parent == self {
+                assertionFailure("Failed to forward \(pick.token) to another Board!")
                 disposer.disposeOf(token: pick.token)
             }
         } else if destination.space.canInteractWithAny(token: pick.token, at: positionInDestination) {
