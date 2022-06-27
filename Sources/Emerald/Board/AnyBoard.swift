@@ -52,6 +52,7 @@ open class AnyBoard: Node {
         guard
             let touch = touches.first,
             let space = space(at: touch.location(in: self)),
+            !space.isLocked,
             let token = space.takeAny(at: touch.location(in: space))
         else {
             return
