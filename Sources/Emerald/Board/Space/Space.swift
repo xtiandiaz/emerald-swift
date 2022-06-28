@@ -79,7 +79,7 @@ open class Space<T: AnyToken>: AnySpace {
         take(at: localPosition)
     }
     
-    func place(token: T, _ storageHandler: @escaping (T) -> Void) {
+    func place(token: T, _ storageHandler: (T) -> Void) {
         guard canPlace(token: token) else {
             return
         }
@@ -88,6 +88,14 @@ open class Space<T: AnyToken>: AnySpace {
         storageHandler(token)
         
         arrange()
+    }
+    
+    func restore(token: T) {
+        fatalError("Not implemented")
+    }
+    
+    override func restoreAny(token: AnyToken) {
+        with(token as? T) { restore(token: $0) }
     }
 }
 

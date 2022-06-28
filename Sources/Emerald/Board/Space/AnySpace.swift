@@ -69,6 +69,10 @@ open class AnySpace: Node, Highlightable {
         fatalError("Not implemented")
     }
     
+    func restoreAny(token: AnyToken) {
+        fatalError("Not implemented")
+    }
+    
     func takeAny(at localPosition: CGPoint) -> AnyToken? {
         fatalError("Not implemented")
     }

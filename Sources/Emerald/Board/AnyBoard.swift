@@ -75,15 +75,20 @@ open class AnyBoard: Node {
         defer {
             pick?.token.setSelected(false)
             pick = nil
+            
             setSpacesHighlighted(false)
         }
         
-        guard let pick = pick, let touch = touches.first else {
+        guard let pick = pick else {
             return
         }
         
-        guard let destination = destination(forToken: pick.token, at: touch.location(in: self)) else {
-            pick.space.placeAny(token: pick.token)
+        guard
+            let touch = touches.first,
+            let destination = destination(forToken: pick.token, at: touch.location(in: self)),
+            destination.space != pick.space
+        else {
+            pick.space.restoreAny(token: pick.token)
             return
         }
         
@@ -94,7 +99,7 @@ open class AnyBoard: Node {
             
             if pick.token.parent == self {
                 assertionFailure("Failed to forward \(pick.token) to another Board!")
-                disposer.disposeOf(token: pick.token)
+                pick.space.restoreAny(token: pick.token)
             }
         } else if destination.space.canInteractWithAny(token: pick.token, at: positionInDestination) {
             destination.space.interactWithAny(token: pick.token, at: positionInDestination)
@@ -114,9 +119,11 @@ open class AnyBoard: Node {
             destination.space.placeAny(token: pick.token)
         } else if destination.space.canPlaceAny(token: pick.token) {
             destination.space.placeAny(token: pick.token)
+        } else {
+            pick.space.restoreAny(token: pick.token)
         }
         
-        pick.space.arrange()
+        purge(space: pick.space)
     }
     
     // MARK: - Internal

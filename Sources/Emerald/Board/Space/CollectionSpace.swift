@@ -87,17 +87,6 @@ open class CollectionSpace<T: TokenCollection>: Space<T.Element> {
     }
 }
 
-extension CollectionSpace {
-    
-    public func remove(_ item: T.Element) -> T.Element? {
-        if let index = collection.firstIndex(of: item) {
-            return collection.remove(at: index)
-        }
-        
-        return nil
-    }
-}
-
 // MARK: - Stack
 
 open class StackSpace<T: Token>: CollectionSpace<Stack<T>> {
@@ -107,7 +96,7 @@ open class StackSpace<T: Token>: CollectionSpace<Stack<T>> {
     }
     
     open override func place(token: T) {
-        place(token: token) { [unowned self] in
+        place(token: token) {
             collection.push($0)
         }
     }
@@ -124,6 +113,14 @@ open class StackSpace<T: Token>: CollectionSpace<Stack<T>> {
     
     public override func take(at localPosition: CGPoint) -> T? {
         pop()
+    }
+    
+    // MARK: - Internal
+    
+    override func restore(token: T) {
+        place(token: token) {
+            collection.insert($0, at: collection.count)
+        }
     }
 }
 
@@ -147,7 +144,7 @@ open class QueueSpace<T: Token>: CollectionSpace<Queue<T>> {
     }
     
     open override func place(token: T) {
-        place(token: token) { [unowned self] in
+        place(token: token) {
             collection.add($0)
         }
     }
@@ -164,6 +161,14 @@ open class QueueSpace<T: Token>: CollectionSpace<Queue<T>> {
     
     public override func take(at localPosition: CGPoint) -> T? {
         poll()
+    }
+    
+    // MARK: - Internal
+    
+    override func restore(token: T) {
+        place(token: token) {
+            collection.insert($0, at: 0)
+        }
     }
 }
 
