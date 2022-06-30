@@ -2,46 +2,22 @@
 //  DragBoard.swift
 //  Emerald
 //
-//  Created by Cristian Diaz on 14.5.2022.
+//  Created by Cristian Diaz on 30.6.2022.
 //
 
-import Beryllium
-import Combine
 import Foundation
 import SpriteKit
 
-open class DragBoardBase: AnyBoard {
+open class DragBoard<T: Token, S: Space<T>>: AnyDragBoard, Board {
     
-    open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesMoved(touches, with: event)
+    public typealias TokenType = T
+    public typealias SpaceType = S
+    
+    public let spaces: [S]
+    
+    public init(frame: CGRect, spaces: [S]) {
+        self.spaces = spaces
         
-        guard
-            let pick = pick,
-            let location = touches.first?.location(in: self)
-        else {
-            return
-        }
-
-        pick.token.position = location - pick.offset
+        super.init(frame: frame)
     }
 }
-
-//open class DragBoard: Board {
-//
-//    public override init(frame: CGRect) {
-//        super.init(frame: frame)
-//    }
-//
-//    public override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        super.touchesMoved(touches, with: event)
-//
-//        guard
-//            let pick = pick,
-//            let location = touches.first?.location(in: self)
-//        else {
-//            return
-//        }
-//
-//        pick.token.position = location - pick.offset
-//    }
-//}

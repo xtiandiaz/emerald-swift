@@ -69,6 +69,10 @@ open class Space<T: AnyToken>: AnySpace {
         fatalError("Not implemented")
     }
     
+    public func setTokensLocked(_ locked: Bool, where predicate: (T) -> Bool) {
+        fatalError("Not implemented")
+    }
+    
     // MARK: - Internal
     
     override func peekAny(at localPosition: CGPoint) -> AnyToken? {
@@ -96,6 +100,13 @@ open class Space<T: AnyToken>: AnySpace {
     
     override func restoreAny(token: AnyToken) {
         with(token as? T) { restore(token: $0) }
+    }
+}
+
+extension Space {
+    
+    public func setTokensLocked(_ locked: Bool) {
+        setTokensLocked(locked) { _ in true }
     }
 }
 

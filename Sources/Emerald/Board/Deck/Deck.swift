@@ -99,12 +99,4 @@ open class Deck<T: Card> {
             }
         }
     }
-    
-//    public func deal(count: Int, into spaces: [Space<T>]) {
-//        zip(spaces, (0..<spaces.count).map { _ in take(count: count) }).forEach { space, cards in
-//            cards.forEach {
-//                space.place(token: $0)
-//            }
-//        }
-//    }
 }

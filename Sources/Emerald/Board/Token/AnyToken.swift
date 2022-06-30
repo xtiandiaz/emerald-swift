@@ -11,9 +11,7 @@ import SpriteKit
 
 open class AnyToken: Node {
     
-    open var isLocked: Bool {
-        false
-    }
+    open var isLocked = false
     
     open var isDisposable: Bool {
         false

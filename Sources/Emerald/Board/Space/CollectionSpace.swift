@@ -15,10 +15,6 @@ open class CollectionSpace<T: TokenCollection>: Space<T.Element> {
         .max
     }
     
-    open override var isLocked: Bool {
-        false
-    }
-    
     open override func canInteractWith(token: T.Element, at localPosition: CGPoint) -> Bool {
         peek(at: localPosition)?.canInteractWith(other: token) == true
     }
@@ -75,6 +71,12 @@ open class CollectionSpace<T: TokenCollection>: Space<T.Element> {
         return allInvalidated
     }
     
+    public override func setTokensLocked(_ locked: Bool, where predicate: (T.Element) -> Bool) {
+        collection.filter(predicate).forEach {
+            $0.isLocked = true
+        }
+    }
+    
     // MARK: - Internal
     
     var collection: T
@@ -90,10 +92,6 @@ open class CollectionSpace<T: TokenCollection>: Space<T.Element> {
 // MARK: - Stack
 
 open class StackSpace<T: Token>: CollectionSpace<Stack<T>> {
-    
-    open override var isLocked: Bool {
-        peek()?.isLocked == true
-    }
     
     open override func place(token: T) {
         place(token: token) {
@@ -138,10 +136,6 @@ extension StackSpace {
 // MARK: - Queue
 
 open class QueueSpace<T: Token>: CollectionSpace<Queue<T>> {
-    
-    open override var isLocked: Bool {
-        peek()?.isLocked == true
-    }
     
     open override func place(token: T) {
         place(token: token) {
