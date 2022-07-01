@@ -23,10 +23,6 @@ open class CollectionSpace<T: TokenCollection>: Space<T.Element> {
         peek(at: localPosition)?.interactWith(other: token)
     }
     
-    open override func canSwapWith(token: T.Element, at localPosition: CGPoint) -> Bool {
-        peek(at: localPosition)?.canSwapWith(other: token) == true
-    }
-    
     open override func canPlace(token: T.Element) -> Bool {
         tokenCount < tokenCapacity
     }
@@ -54,6 +50,10 @@ open class CollectionSpace<T: TokenCollection>: Space<T.Element> {
     
     public override var isEmpty: Bool {
         collection.isEmpty
+    }
+    
+    public override func canSwapWith(token: T.Element, at localPosition: CGPoint) -> Bool {
+        peek(at: localPosition)?.canSwapWith(other: token) == true
     }
     
     public override func arrange() {

@@ -39,10 +39,6 @@ open class Space<T: AnyToken>: AnySpace {
         with(token as? T) { canSwapWith(token: $0, at: localPosition) } without: { false }
     }
     
-    open func canSwapWith(token: T, at localPosition: CGPoint) -> Bool {
-        fatalError("Not implemented")
-    }
-    
     open override func canPlaceAny(token: AnyToken) -> Bool {
         with(token as? T) { canPlace(token: $0) } without: { false }
     }
@@ -56,6 +52,10 @@ open class Space<T: AnyToken>: AnySpace {
     }
     
     // MARK: - Public
+    
+    public func canSwapWith(token: T, at localPosition: CGPoint) -> Bool {
+        fatalError("Not implemented")
+    }
     
     public func peek(at localPosition: CGPoint) -> T? {
         fatalError("Not implemented")

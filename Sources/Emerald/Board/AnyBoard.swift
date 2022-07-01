@@ -12,16 +12,6 @@ import SpriteKit
 
 open class AnyBoard: Node {
     
-    open func forwardAny(token: AnyToken) {
-        fatalError("Not implemented")
-    }
-    
-    // MARK: - Public
-    
-    public enum Error: Swift.Error {
-        case unableToForwardToken(AnyToken, at: AnyBoard)
-    }
-    
     public override var frame: CGRect {
         _frame
     }
@@ -95,14 +85,7 @@ open class AnyBoard: Node {
         
         let positionInDestination = touch.location(in: destination.space)
         
-        if destination.space.shouldForwardAny(token: pick.token) {
-            destination.board.forwardAny(token: pick.token)
-            
-            if pick.token.parent == self {
-                assertionFailure("Failed to forward \(pick.token) to another Board!")
-                pick.space.restoreAny(token: pick.token)
-            }
-        } else if destination.space.canInteractWithAny(token: pick.token, at: positionInDestination) {
+        if destination.space.canInteractWithAny(token: pick.token, at: positionInDestination) {
             destination.space.interactWithAny(token: pick.token, at: positionInDestination)
             
             if !pick.token.isInvalidated {
@@ -143,6 +126,10 @@ open class AnyBoard: Node {
 }
 
 extension AnyBoard {
+    
+    public var isEmpty: Bool {
+        spaces.allSatisfy { $0.isEmpty }
+    }
     
     public func space(at location: CGPoint) -> AnySpace? {
         spaces.first { $0.contains(location) }

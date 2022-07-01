@@ -15,7 +15,7 @@ open class DragBoard<T: Token, S: Space<T>>: AnyDragBoard, Board {
     
     public let spaces: [S]
     
-    public init(frame: CGRect, spaces: [S]) {
+    public init(spaces: [S], frame: CGRect) {
         self.spaces = spaces
         
         super.init(frame: frame)

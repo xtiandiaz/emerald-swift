@@ -40,9 +40,23 @@ open class Deck<T: Card> {
         card: T,
         facing side: FlipSide,
         into space: Space<T>,
-        fromPosition origin: CGPoint
+        fromOrigin origin: Anchor
     ) {
-        card.position = origin
+        deal(
+            card: card,
+            facing: side,
+            into: space,
+            fromPosition: origin.point(in: UIScreen.main.bounds)
+        )
+    }
+    
+    public static func deal(
+        card: T,
+        facing side: FlipSide,
+        into space: Space<T>,
+        fromPosition position: CGPoint
+    ) {
+        card.position = position
         card.flipOver(side: side, toward: .right, animated: false)
         
         space.place(token: card)
@@ -73,7 +87,7 @@ open class Deck<T: Card> {
                     
                     Self.deal(card: card, facing: side, into: space, fromPosition: origin)
                     
-                    try! await Task.sleep(seconds: 0.1)
+                    await Task.sleep(seconds: 0.1)
                 }
             }
         
@@ -94,7 +108,7 @@ open class Deck<T: Card> {
                     
                     fills[i].count -= 1
                     
-                    try! await Task.sleep(seconds: 0.1)
+                    await Task.sleep(seconds: 0.1)
                 }
             }
         }
