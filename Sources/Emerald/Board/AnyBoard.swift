@@ -22,6 +22,14 @@ open class AnyBoard: Node {
         super.init()
 
         isUserInteractionEnabled = true
+        
+//        addChild(SKShapeNode(rect: frame).configure {
+//            $0.fillColor = .cyan.withAlphaComponent(0.5)
+//        })
+    }
+    
+    public func add(spaces: [AnySpace]) {
+        spaces.forEach(add)
     }
     
     public func add(space: AnySpace) {
@@ -88,14 +96,10 @@ open class AnyBoard: Node {
         if destination.space.canInteractWithAny(token: pick.token, at: positionInDestination) {
             destination.space.interactWithAny(token: pick.token, at: positionInDestination)
             
-            if !pick.token.isInvalidated {
-                pick.space.placeAny(token: pick.token)
-            } else {
-                disposer.disposeOf(token: pick.token)
-            }
-            
             purge(space: destination.space)
-        } else if
+        }
+        
+        if
             destination.space.canSwapWithAny(token: pick.token, at: positionInDestination),
             let swap = destination.space.takeAny(at: positionInDestination)
         {

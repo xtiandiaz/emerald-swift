@@ -11,14 +11,6 @@ import SpriteKit
 
 open class Space<T: AnyToken>: AnySpace {
     
-    override open func shouldForwardAny(token: AnyToken) -> Bool {
-        with(token as? T) { shouldForward(token: $0) } without: { false }
-    }
-    
-    open func shouldForward(token: T) -> Bool {
-        false
-    }
-    
     open override func canInteractWithAny(token: AnyToken, at localPosition: CGPoint) -> Bool {
         with(token as? T) { canInteractWith(token: $0, at: localPosition) } without: { false }
     }

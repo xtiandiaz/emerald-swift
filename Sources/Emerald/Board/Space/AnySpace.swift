@@ -83,7 +83,6 @@ extension AnySpace {
     func acceptsAny(token: AnyToken, at localPosition: CGPoint) -> Bool {
         canPlaceAny(token: token) ||
         canInteractWithAny(token: token, at: localPosition) ||
-        canSwapWithAny(token: token, at: localPosition) ||
-        shouldForwardAny(token: token)
+        canSwapWithAny(token: token, at: localPosition)
     }
 }
