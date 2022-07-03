@@ -24,7 +24,7 @@ open class CollectionSpace<T: TokenCollection>: Space<T.Element> {
         
         item.runIfValid(
             .move(
-                to: .up * CGFloat(index) * layout.offset.asPoint(),
+                to: .up * CGFloat(index) * layout.offset.asPoint() + .up * 20,
                 duration: 0.1,
                 timingMode: .easeOut
             ),
@@ -106,11 +106,15 @@ open class StackSpace<T: Token>: CollectionSpace<Stack<T>> {
     }
     
     public override func peek(at localPosition: CGPoint) -> T? {
-        peek()
+        if let peek = peek(), peek.contains(localPosition) {
+            return peek
+        }
+        
+        return nil
     }
     
     public override func take(at localPosition: CGPoint) -> T? {
-        pop()
+        peek(at: localPosition) != nil ? pop() : nil
     }
     
     // MARK: - Internal
@@ -150,11 +154,15 @@ open class QueueSpace<T: Token>: CollectionSpace<Queue<T>> {
     }
     
     public override func peek(at localPosition: CGPoint) -> T? {
-        peek()
+        if let peek = peek(), peek.contains(localPosition) {
+            return peek
+        }
+        
+        return nil
     }
     
     public override func take(at localPosition: CGPoint) -> T? {
-        poll()
+        peek(at: localPosition) != nil ? poll() : nil
     }
     
     // MARK: - Internal
