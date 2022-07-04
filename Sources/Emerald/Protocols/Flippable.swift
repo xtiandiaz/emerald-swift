@@ -12,6 +12,12 @@ public enum FlipSide {
     
     case front,
          back
+    
+    @discardableResult
+    public mutating func toggle() -> FlipSide {
+        self = self == .front ? .back : .front
+        return self
+    }
 }
 
 public protocol Flippable {
@@ -19,4 +25,7 @@ public protocol Flippable {
     var side: FlipSide { get }
     
     func flipOver(side: FlipSide, toward direction: Direction, animated: Bool)
+    func flipOver(side: FlipSide)
+    
+    func whirl(times: Int, toward direction: Direction)
 }
