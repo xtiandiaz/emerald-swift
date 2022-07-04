@@ -12,6 +12,18 @@ import SpriteKit
 
 open class AnyDragBoard: AnyBoard {
     
+    open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        
+        if let touch = touches.first {
+            pickAt(location: touch.location(in: self))
+        }
+        
+        if let token = pick?.token {
+            token.zPosition = 100
+        }
+    }
+    
     open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesMoved(touches, with: event)
         
@@ -23,5 +35,13 @@ open class AnyDragBoard: AnyBoard {
         }
 
         pick.token.position = location - pick.offset
+    }
+    
+    public override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
+        
+        if let touch = touches.first {
+            dropAt(location: touch.location(in: self))
+        }
     }
 }

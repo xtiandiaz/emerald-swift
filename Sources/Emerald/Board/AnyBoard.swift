@@ -44,33 +44,34 @@ open class AnyBoard: Node {
         }
     }
     
-    public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesBegan(touches, with: event)
-        
+    // MARK: - Internal
+    
+    typealias Pick = (token: AnyToken, offset: CGPoint, space: AnySpace)
+    
+    private(set) var pick: Pick?
+    private(set) var bridgedBoards = [Weak<AnyBoard>]()
+    
+    final func pickAt(location: CGPoint) {
         guard
-            let touch = touches.first,
-            let space = space(at: touch.location(in: self)),
+            let space = space(at: location),
             !space.isLocked,
-            let token = space.takeAny(at: touch.location(in: space)),
+            let token = space.takeAny(at: space.convert(location, from: self)),
             !token.isLocked
         else {
             return
         }
         
-        pick = Pick(token: token, offset: touch.location(in: space), space: space)
-        
         with(token) {
             $0.move(toParent: self)
-            $0.zPosition = 100
             $0.setSelected(true)
+            
+            setSpacesHighlighted(forToken: $0)
         }
         
-        setSpacesHighlighted(forToken: token)
+        pick = Pick(token: token, offset: space.convert(location, from: self), space: space)
     }
     
-    public override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesEnded(touches, with: event)
-        
+    final func dropAt(location: CGPoint) {
         defer {
             pick?.token.setSelected(false)
             pick = nil
@@ -83,15 +84,14 @@ open class AnyBoard: Node {
         }
         
         guard
-            let touch = touches.first,
-            let destination = destination(forToken: pick.token, at: touch.location(in: self)),
+            let destination = destination(forToken: pick.token, at: location),
             destination.space != pick.space
         else {
             pick.space.restoreAny(token: pick.token)
             return
         }
         
-        let positionInDestination = touch.location(in: destination.space)
+        let positionInDestination = destination.space.convert(location, from: self)
         
         if destination.space.canInteractWithAny(token: pick.token, at: positionInDestination) {
             destination.space.interactWithAny(token: pick.token, at: positionInDestination)
@@ -113,13 +113,6 @@ open class AnyBoard: Node {
         
         purge(space: pick.space)
     }
-    
-    // MARK: - Internal
-    
-    typealias Pick = (token: AnyToken, offset: CGPoint, space: AnySpace)
-    
-    private(set) var pick: Pick?
-    private(set) var bridgedBoards = [Weak<AnyBoard>]()
     
     // MARK: - Private
     
