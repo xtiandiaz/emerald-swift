@@ -10,7 +10,6 @@ import Combine
 import Foundation
 import SpriteKit
 
-
 open class Scene: SKScene, Identifiable {
     
     open override func didMove(to view: SKView) {

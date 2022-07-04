@@ -22,10 +22,6 @@ open class AnyBoard: Node {
         super.init()
 
         isUserInteractionEnabled = true
-        
-//        addChild(SKShapeNode(rect: frame).configure {
-//            $0.fillColor = .cyan.withAlphaComponent(0.5)
-//        })
     }
     
     public func add(spaces: [AnySpace]) {
@@ -120,6 +116,8 @@ open class AnyBoard: Node {
     private let disposer = TokenDisposer()
     
     private var spaces = [AnySpace]()
+    
+    private var debugFrameNode: SKShapeNode?
 }
 
 extension AnyBoard {
@@ -130,6 +128,23 @@ extension AnyBoard {
     
     public func space(at location: CGPoint) -> AnySpace? {
         spaces.first { $0.contains(location) }
+    }
+    
+    public func setDebugFrameVisible(
+        _ visible: Bool,
+        withColor color: UIColor = .cyan.withAlphaComponent(0.5)
+    ) {
+        with(debugFrameNode ?? SKShapeNode(rect: frame).configure {
+            $0.fillColor = color
+        }) {
+            if visible, $0.parent.isNil {
+                addChild($0)
+            } else {
+                $0.removeFromParent()
+            }
+                
+            self.debugFrameNode = $0
+        }
     }
     
     // MARK: - Internal

@@ -59,15 +59,20 @@ open class UnitSpace<T: Token>: Space<T> {
     }
     
     public override func canInteractWith(token: T) -> Bool {
-        false
+        unit?.canInteractWith(other: token) == true
+    }
+    
+    public override func interactWith(token: T) {
+        unit?.interactWith(other: token)
     }
     
     public override func canSwapWith(token: T) -> Bool {
-        false
+        unit?.canSwapWith(other: token) == true
     }
     
     public override func purge() -> [AnyToken] {
         if let unit = unit, unit.isInvalidated {
+            self.unit = nil
             return [unit]
         }
         

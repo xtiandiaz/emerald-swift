@@ -19,5 +19,7 @@ open class DragBoard<T: Token, S: Space<T>>: AnyDragBoard, Board {
         self.spaces = spaces
         
         super.init(frame: frame)
+        
+        add(spaces: spaces)
     }
 }
