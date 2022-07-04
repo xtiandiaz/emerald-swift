@@ -31,11 +31,27 @@ open class AnySpace: Node, Highlightable {
         fatalError("Not implemented")
     }
     
+    open func canInteractWithAny(token: AnyToken) -> Bool {
+        fatalError("Not implemented")
+    }
+    
     open func canInteractWithAny(token: AnyToken, at localPosition: CGPoint) -> Bool {
         fatalError("Not implemented")
     }
     
+    open func interactWithAny(token: AnyToken) {
+        fatalError("Not implemented")
+    }
+    
     open func interactWithAny(token: AnyToken, at localPosition: CGPoint) {
+        fatalError("Not implemented")
+    }
+    
+    open func canSwapWithAny(token: AnyToken, at localPosition: CGPoint) -> Bool {
+        fatalError("Not implemented")
+    }
+    
+    open func canSwapWithAny(token: AnyToken) -> Bool {
         fatalError("Not implemented")
     }
     
@@ -44,10 +60,6 @@ open class AnySpace: Node, Highlightable {
     }
     
     open func placeAny(token: AnyToken) {
-        fatalError("Not implemented")
-    }
-    
-    open func canSwapWithAny(token: AnyToken, at localPosition: CGPoint) -> Bool {
         fatalError("Not implemented")
     }
     
@@ -84,5 +96,11 @@ extension AnySpace {
         canPlaceAny(token: token) ||
         canInteractWithAny(token: token, at: localPosition) ||
         canSwapWithAny(token: token, at: localPosition)
+    }
+    
+    func acceptsAny(token: AnyToken) -> Bool {
+        canPlaceAny(token: token) ||
+        canInteractWithAny(token: token) ||
+        canSwapWithAny(token: token)
     }
 }

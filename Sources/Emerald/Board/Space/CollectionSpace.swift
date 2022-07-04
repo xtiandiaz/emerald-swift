@@ -24,7 +24,7 @@ open class CollectionSpace<T: TokenCollection>: Space<T.Element> {
         
         item.runIfValid(
             .move(
-                to: .up * CGFloat(index) * layout.offset.asPoint() + .up * 20,
+                to: .up * CGFloat(index) * layout.offset.asPoint(),
                 duration: 0.1,
                 timingMode: .easeOut
             ),
@@ -42,18 +42,6 @@ open class CollectionSpace<T: TokenCollection>: Space<T.Element> {
     
     public override var isEmpty: Bool {
         collection.isEmpty
-    }
-    
-    public override func canInteractWith(token: T.Element, at localPosition: CGPoint) -> Bool {
-        peek(at: localPosition)?.canInteractWith(other: token) == true
-    }
-    
-    public override func interactWith(token: T.Element, at localPosition: CGPoint) {
-        peek(at: localPosition)?.interactWith(other: token)
-    }
-    
-    public override func canSwapWith(token: T.Element, at localPosition: CGPoint) -> Bool {
-        peek(at: localPosition)?.canSwapWith(other: token) == true
     }
     
     public override func arrange() {
@@ -117,6 +105,18 @@ open class StackSpace<T: Token>: CollectionSpace<Stack<T>> {
         peek(at: localPosition) != nil ? pop() : nil
     }
     
+    public override func canInteractWith(token: T) -> Bool {
+        peek()?.canInteractWith(other: token) == true
+    }
+    
+    public override func interactWith(token: T) {
+        peek()?.interactWith(other: token)
+    }
+    
+    public override func canSwapWith(token: T) -> Bool {
+        peek()?.canSwapWith(other: token) == true
+    }
+    
     // MARK: - Internal
     
     override func restore(token: T) {
@@ -163,6 +163,18 @@ open class QueueSpace<T: Token>: CollectionSpace<Queue<T>> {
     
     public override func take(at localPosition: CGPoint) -> T? {
         peek(at: localPosition) != nil ? poll() : nil
+    }
+    
+    public override func canInteractWith(token: T) -> Bool {
+        peek()?.canInteractWith(other: token) == true
+    }
+    
+    public override func interactWith(token: T) {
+        peek()?.interactWith(other: token)
+    }
+    
+    public override func canSwapWith(token: T) -> Bool {
+        peek()?.canSwapWith(other: token) == true
     }
     
     // MARK: - Internal

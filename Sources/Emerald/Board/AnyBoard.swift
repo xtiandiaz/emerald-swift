@@ -65,7 +65,7 @@ open class AnyBoard: Node {
             $0.setSelected(true)
         }
         
-        setSpacesHighlighted(forToken: token, at: touch.location(in: self))
+        setSpacesHighlighted(forToken: token)
     }
     
     public override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -184,9 +184,9 @@ extension AnyBoard {
         setSpacesHighlighted { _ in highlighted }
     }
     
-    func setSpacesHighlighted(forToken token: AnyToken, at boardPosition: CGPoint) {
+    func setSpacesHighlighted(forToken token: AnyToken) {
         setSpacesHighlighted {
-            $0.acceptsAny(token: token, at: convert(boardPosition, to: $0))
+            $0.acceptsAny(token: token)
         }
     }
     

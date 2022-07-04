@@ -11,7 +11,7 @@ import Foundation
 import SpriteKit
 
 
-open class Scene: SKScene, Runnable, Identifiable {
+open class Scene: SKScene, Identifiable {
     
     open override func didMove(to view: SKView) {
         super.didMove(to: view)
@@ -32,14 +32,11 @@ open class Scene: SKScene, Runnable, Identifiable {
     
     open func start() {
         subscribe(&subscriptions)
-        
-        isRunning = true
     }
     
     open func stop() {
         unsubscribe()
-        
-        isRunning = false
+        removeDependencies()
     }
     
     open func removeDependencies() {
@@ -49,7 +46,6 @@ open class Scene: SKScene, Runnable, Identifiable {
     
     public let id = UUID()
     
-    public private(set) var isRunning = false
     public private(set) lazy var gestures  = SceneGestureRecognizerManager(scene: self)
     
     public override init() {
@@ -65,12 +61,6 @@ open class Scene: SKScene, Runnable, Identifiable {
     @available(*, unavailable)
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    // MARK: - Internal
-    
-    deinit {
-        removeDependencies()
     }
     
     // MARK: - Private

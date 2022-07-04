@@ -9,22 +9,42 @@ import Beryllium
 import Foundation
 import SpriteKit
 
-open class Space<T: AnyToken>: AnySpace {
+open class Space<T: Token>: AnySpace {
+    
+    open override func canInteractWithAny(token: AnyToken) -> Bool {
+        with(token as? T) { canInteractWith(token: $0) } without: { false }
+    }
     
     open override func canInteractWithAny(token: AnyToken, at localPosition: CGPoint) -> Bool {
         with(token as? T) { canInteractWith(token: $0, at: localPosition) } without: { false }
     }
     
-    open func canInteractWith(token: T, at localPosition: CGPoint) -> Bool {
+    open func canInteractWith(token: T) -> Bool {
         fatalError("Not implemented")
+    }
+    
+    open func canInteractWith(token: T, at localPosition: CGPoint) -> Bool {
+        peek(at: localPosition)?.canInteractWith(other: token) == true
+    }
+    
+    open override func interactWithAny(token: AnyToken) {
+        with(token as? T) { interactWith(token: $0) }
     }
     
     open override func interactWithAny(token: AnyToken, at localPosition: CGPoint) {
         with(token as? T) { interactWith(token: $0, at: localPosition) }
     }
     
-    open func interactWith(token: T, at localPosition: CGPoint) {
+    open func interactWith(token: T) {
         fatalError("Not implemented")
+    }
+    
+    open func interactWith(token: T, at localPosition: CGPoint) {
+        peek(at: localPosition)?.interactWith(other: token)
+    }
+    
+    open override func canSwapWithAny(token: AnyToken) -> Bool {
+        with(token as? T) { canSwapWith(token: $0) } without: { false }
     }
     
     open override func canSwapWithAny(token: AnyToken, at localPosition: CGPoint) -> Bool {
@@ -45,8 +65,12 @@ open class Space<T: AnyToken>: AnySpace {
     
     // MARK: - Public
     
-    public func canSwapWith(token: T, at localPosition: CGPoint) -> Bool {
+    public func canSwapWith(token: T) -> Bool {
         fatalError("Not implemented")
+    }
+    
+    public func canSwapWith(token: T, at localPosition: CGPoint) -> Bool {
+        peek(at: localPosition)?.canSwapWith(other: token) == true
     }
     
     public func peek(at localPosition: CGPoint) -> T? {
@@ -86,12 +110,12 @@ open class Space<T: AnyToken>: AnySpace {
         arrange()
     }
     
-    func restore(token: T) {
-        fatalError("Not implemented")
-    }
-    
     override func restoreAny(token: AnyToken) {
         with(token as? T) { restore(token: $0) }
+    }
+    
+    func restore(token: T) {
+        fatalError("Not implemented")
     }
 }
 
