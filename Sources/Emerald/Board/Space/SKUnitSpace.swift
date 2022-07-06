@@ -1,5 +1,5 @@
 //
-//  UnitSpace.swift
+//  SKUnitSpace.swift
 //  Emerald
 //
 //  Created by Cristian Diaz on 26.5.2022.
@@ -8,7 +8,7 @@
 import Foundation
 import SpriteKit
 
-open class UnitSpace<T: Token>: Space<T> {
+open class SKUnitSpace<T: Token>: SKSpace<T> {
     
     open override func canPlace(token: T) -> Bool {
         unit.isNil

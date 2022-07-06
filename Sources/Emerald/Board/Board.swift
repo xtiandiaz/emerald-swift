@@ -10,7 +10,7 @@ import Foundation
 public protocol Board: AnyBoard {
     
     associatedtype TokenType: Token
-    associatedtype SpaceType: Space<TokenType>
+    associatedtype SpaceType: SKSpace<TokenType>
     
     var spaces: [SpaceType] { get }
 }

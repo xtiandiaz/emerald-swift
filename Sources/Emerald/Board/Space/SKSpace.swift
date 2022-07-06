@@ -1,5 +1,5 @@
 //
-//  Space.swift
+//  SKSpace.swift
 //  Emerald
 //
 //  Created by Cristian Diaz on 25.6.2022.
@@ -9,7 +9,7 @@ import Beryllium
 import Foundation
 import SpriteKit
 
-open class Space<T: Token>: AnySpace {
+open class SKSpace<T: Token>: AnySpace {
     
     open override func canInteractWithAny(token: AnyToken) -> Bool {
         with(token as? T) { canInteractWith(token: $0) } without: { false }
@@ -119,7 +119,7 @@ open class Space<T: Token>: AnySpace {
     }
 }
 
-extension Space {
+extension SKSpace {
     
     public func setTokensLocked(_ locked: Bool) {
         setTokensLocked(locked) { _ in true }

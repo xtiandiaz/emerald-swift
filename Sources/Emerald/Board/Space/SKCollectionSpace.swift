@@ -1,5 +1,5 @@
 //
-//  CollectionSpace.swift
+//  SKCollectionSpace.swift
 //  Emerald
 //
 //  Created by Cristian Diaz on 14.5.2022.
@@ -9,7 +9,7 @@ import Beryllium
 import Foundation
 import SpriteKit
 
-open class CollectionSpace<T: TokenCollection>: Space<T.Element> {
+open class SKCollectionSpace<T: TokenCollection>: SKSpace<T.Element> {
     
     open override var tokenCapacity: Int {
         .max
@@ -79,7 +79,7 @@ open class CollectionSpace<T: TokenCollection>: Space<T.Element> {
 
 // MARK: - Stack
 
-open class StackSpace<T: Token>: CollectionSpace<Stack<T>> {
+open class StackSpace<T: Token>: SKCollectionSpace<Stack<T>> {
     
     open override func place(token: T) {
         place(token: token) {
@@ -139,7 +139,7 @@ extension StackSpace {
 
 // MARK: - Queue
 
-open class QueueSpace<T: Token>: CollectionSpace<Queue<T>> {
+open class QueueSpace<T: Token>: SKCollectionSpace<Queue<T>> {
     
     open override func place(token: T) {
         place(token: token) {

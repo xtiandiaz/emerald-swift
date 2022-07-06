@@ -5,8 +5,8 @@
 //  Created by Cristian Diaz on 3.6.2022.
 //
 
+import Beryllium
 import Foundation
-import UIKit
 import SpriteKit
 
 extension UISwipeGestureRecognizer.Direction {

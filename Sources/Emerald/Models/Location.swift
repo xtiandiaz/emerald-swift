@@ -5,6 +5,7 @@
 //  Created by Cristian Díaz on 22.11.2020.
 //
 
+import Beryllium
 import Foundation
 
 public struct GridLocation: Equatable, Hashable {

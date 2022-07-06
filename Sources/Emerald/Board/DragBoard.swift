@@ -8,7 +8,7 @@
 import Foundation
 import SpriteKit
 
-open class DragBoard<T: Token, S: Space<T>>: AnyDragBoard, Board {
+open class DragBoard<T: Token, S: SKSpace<T>>: AnyDragBoard, Board {
     
     public typealias TokenType = T
     public typealias SpaceType = S

@@ -1,5 +1,5 @@
 //
-//  Deck.swift
+//  SKDeck.swift
 //  Emerald
 //
 //  Created by Cristian Diaz on 16.5.2022.
@@ -19,7 +19,7 @@ public struct DeckCard<T> {
     }
 }
 
-open class Deck<T: Card> {
+open class SKDeck<T: Card> {
     
     open func take(count: Int) -> [T] {
         fatalError("Not implemented")
@@ -39,7 +39,7 @@ open class Deck<T: Card> {
     public static func deal(
         card: T,
         facing side: FlipSide,
-        into space: Space<T>,
+        into space: SKSpace<T>,
         fromOrigin origin: Anchor
     ) {
         deal(
@@ -53,7 +53,7 @@ open class Deck<T: Card> {
     public static func deal(
         card: T,
         facing side: FlipSide,
-        into space: Space<T>,
+        into space: SKSpace<T>,
         fromPosition position: CGPoint
     ) {
         card.position = position
@@ -71,12 +71,12 @@ open class Deck<T: Card> {
     public func deal(
         count: Int?,
         facing side: FlipSide,
-        into spaces: [Space<T>],
+        into spaces: [SKSpace<T>],
         withOrigin origin: Anchor,
         mode: DealMode = .clustered
     ) async {
         let origin = origin.point(in: UIScreen.main.bounds)
-        let count = { (space: Space<T>) -> Int in
+        let count = { (space: SKSpace<T>) -> Int in
             min(count ?? .max, space.tokenCapacity - space.tokenCount)
         }
         
@@ -92,7 +92,7 @@ open class Deck<T: Card> {
             }
         
         case .interlaced:
-            typealias Fill = (count: Int, space: Space<T>)
+            typealias Fill = (count: Int, space: SKSpace<T>)
             
             var fills = spaces.map {
                 Fill(count($0), $0)
