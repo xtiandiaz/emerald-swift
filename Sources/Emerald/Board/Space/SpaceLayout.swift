@@ -8,9 +8,9 @@
 import Foundation
 import SpriteKit
 
-public struct CollectionSpaceLayout {
+public struct SKCollectionSpaceLayout {
     
-    public static let `default` = CollectionSpaceLayout(
+    public static let `default` = SKCollectionSpaceLayout(
         offset: CGSize(height: .xl),
         dimmingMode: .darkening
     )

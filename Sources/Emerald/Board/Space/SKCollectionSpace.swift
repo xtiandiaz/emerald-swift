@@ -34,7 +34,7 @@ open class SKCollectionSpace<T: TokenCollection>: SKSpace<T.Element> {
     
     // MARK: - Public
         
-    public let layout: CollectionSpaceLayout
+    public let layout: SKCollectionSpaceLayout
     
     public override var tokenCount: Int {
         collection.count
@@ -69,7 +69,7 @@ open class SKCollectionSpace<T: TokenCollection>: SKSpace<T.Element> {
     
     var collection: T
     
-    init(collection: T, layout: CollectionSpaceLayout = .default) {
+    init(collection: T, layout: SKCollectionSpaceLayout = .default) {
         self.collection = collection
         self.layout = layout
         
@@ -79,7 +79,7 @@ open class SKCollectionSpace<T: TokenCollection>: SKSpace<T.Element> {
 
 // MARK: - Stack
 
-open class StackSpace<T: Token>: SKCollectionSpace<Stack<T>> {
+open class StackSpace<T: SKToken>: SKCollectionSpace<Stack<T>> {
     
     open override func place(token: T) {
         place(token: token) {
@@ -89,7 +89,7 @@ open class StackSpace<T: Token>: SKCollectionSpace<Stack<T>> {
     
     // MARK: - Public
     
-    public init(layout: CollectionSpaceLayout = .default) {
+    public init(layout: SKCollectionSpaceLayout = .default) {
         super.init(collection: Stack<T>(), layout: layout)
     }
     
@@ -139,7 +139,7 @@ extension StackSpace {
 
 // MARK: - Queue
 
-open class QueueSpace<T: Token>: SKCollectionSpace<Queue<T>> {
+open class QueueSpace<T: SKToken>: SKCollectionSpace<Queue<T>> {
     
     open override func place(token: T) {
         place(token: token) {
@@ -149,7 +149,7 @@ open class QueueSpace<T: Token>: SKCollectionSpace<Queue<T>> {
     
     // MARK: - Public
     
-    public init(layout: CollectionSpaceLayout = .default) {
+    public init(layout: SKCollectionSpaceLayout = .default) {
         super.init(collection: Queue<T>(), layout: layout)
     }
     

@@ -9,7 +9,7 @@ import Beryllium
 import Foundation
 import SpriteKit
 
-open class SKSpace<T: Token>: AnySpace {
+open class SKSpace<T: SKToken>: AnySpace {
     
     open override func canInteractWithAny(token: AnyToken) -> Bool {
         with(token as? T) { canInteractWith(token: $0) } without: { false }

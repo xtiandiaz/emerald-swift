@@ -19,7 +19,7 @@ public struct DeckCard<T> {
     }
 }
 
-open class SKDeck<T: Card> {
+open class SKDeck<T: SKCard> {
     
     open func take(count: Int) -> [T] {
         fatalError("Not implemented")

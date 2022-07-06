@@ -1,5 +1,5 @@
 //
-//  DragBoard.swift
+//  SKDragBoard.swift
 //  Emerald
 //
 //  Created by Cristian Diaz on 30.6.2022.
@@ -8,7 +8,7 @@
 import Foundation
 import SpriteKit
 
-open class DragBoard<T: Token, S: SKSpace<T>>: AnyDragBoard, Board {
+open class SKDragBoard<T: SKToken, S: SKSpace<T>>: AnyDragBoard, SKBoard {
     
     public typealias TokenType = T
     public typealias SpaceType = S

@@ -1,5 +1,5 @@
 //
-//  Token.swift
+//  SKToken.swift
 //  Emerald
 //
 //  Created by Cristian Diaz on 25.6.2022.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol Token: AnyToken {
+public protocol SKToken: AnyToken {
     
     func canInteractWith(other: Self) -> Bool
     func interactWith(other: Self)
@@ -15,7 +15,7 @@ public protocol Token: AnyToken {
     func canSwapWith(other: Self) -> Bool
 }
 
-public protocol Card: Token, Flippable {
+public protocol SKCard: SKToken, Flippable {
     
     associatedtype CardType
     

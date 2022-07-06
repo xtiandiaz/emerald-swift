@@ -8,7 +8,7 @@
 import Foundation
 import SpriteKit
 
-open class SKUnitSpace<T: Token>: SKSpace<T> {
+open class SKUnitSpace<T: SKToken>: SKSpace<T> {
     
     open override func canPlace(token: T) -> Bool {
         unit.isNil

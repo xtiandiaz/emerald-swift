@@ -1,5 +1,5 @@
 //
-//  Board.swift
+//  SKBoard.swift
 //  Emerald
 //
 //  Created by Cristian Diaz on 30.6.2022.
@@ -7,15 +7,15 @@
 
 import Foundation
 
-public protocol Board: AnyBoard {
+public protocol SKBoard: AnyBoard {
     
-    associatedtype TokenType: Token
+    associatedtype TokenType: SKToken
     associatedtype SpaceType: SKSpace<TokenType>
     
     var spaces: [SpaceType] { get }
 }
 
-extension Board {
+extension SKBoard {
     
     public func setTokensLocked(_ locked: Bool, where predicate: (TokenType) -> Bool) {
         spaces.forEach {
