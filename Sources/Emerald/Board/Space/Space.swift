@@ -12,11 +12,11 @@ public protocol Space {
     
     associatedtype TokenModel: Token
     
+    var tokenCapacity: Int { get }
+    var tokenCount: Int { get }
+    
     func peek(at localPosition: CGPoint) -> TokenModel?
     func take(at localPosition: CGPoint) -> TokenModel?
-    
-    func canInteract(with token: TokenModel) -> Bool
-    func interact(with token: TokenModel)
     
     func canPlace(token: TokenModel) -> Bool
     func place(token: TokenModel)

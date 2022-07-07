@@ -1,5 +1,5 @@
 //
-//  TokenCollection.swift
+//  SKTokenCollection.swift
 //  Emerald
 //
 //  Created by Cristian Diaz on 16.5.2022.
@@ -9,7 +9,7 @@ import Beryllium
 import Foundation
 import SpriteKit
 
-public protocol TokenCollection: Collection where Element: SKToken {
+public protocol SKTokenCollection: Collection where Element: SKToken {
     
     mutating func insert(_ item: Element, at index: Int)
     
@@ -18,14 +18,14 @@ public protocol TokenCollection: Collection where Element: SKToken {
     mutating func removeAll(where shouldBeRemoved: (Element) -> Bool)
 }
 
-extension Stack: TokenCollection where Element: SKToken {
+extension Stack: SKTokenCollection where Element: SKToken {
     
     public mutating func remove(at location: CGPoint) -> Element? {
         pop()
     }
 }
 
-extension Queue: TokenCollection where Element: SKToken {
+extension Queue: SKTokenCollection where Element: SKToken {
     
     public mutating func remove(at location: CGPoint) -> Element? {
         poll()

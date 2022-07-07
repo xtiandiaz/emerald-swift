@@ -9,7 +9,7 @@ import Beryllium
 import Foundation
 import SpriteKit
 
-open class SKCollectionSpace<T: TokenCollection>: SKSpace<T.Element> {
+open class SKCollectionSpace<T: SKTokenCollection>: SKSpace<T.Element> {
     
     open override var tokenCapacity: Int {
         .max
