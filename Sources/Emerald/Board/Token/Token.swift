@@ -8,15 +8,8 @@
 import Foundation
 import SwiftUI
 
-public protocol Token {
+public protocol Token: Identifiable {
     
     func canInteract(with other: Self) -> Bool
     func interact(with other: Self)
-}
-
-public protocol TokenView: View {
-    
-    associatedtype Model: Token
-    
-    var token: Model { get }
 }

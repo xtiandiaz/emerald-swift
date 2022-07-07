@@ -79,7 +79,7 @@ open class SKCollectionSpace<T: SKTokenCollection>: SKSpace<T.Element> {
 
 // MARK: - Stack
 
-open class StackSpace<T: SKToken>: SKCollectionSpace<Stack<T>> {
+open class SKStackSpace<T: SKToken>: SKCollectionSpace<Stack<T>> {
     
     open override func place(token: T) {
         place(token: token) {
@@ -126,7 +126,7 @@ open class StackSpace<T: SKToken>: SKCollectionSpace<Stack<T>> {
     }
 }
 
-extension StackSpace {
+extension SKStackSpace {
     
     public func peek() -> T? {
         collection.peek()

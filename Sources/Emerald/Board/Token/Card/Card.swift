@@ -15,11 +15,3 @@ public protocol Card: Token {
     var front: FaceType { get }
     var back: FaceType { get }    
 }
-
-public protocol CardView: View {
-    
-    associatedtype Model: Card
-    
-    var card: Model { get }
-    var aspectRatio: CGSize { get }
-}

@@ -27,6 +27,14 @@ public extension CGFloat {
     static let xl: CGFloat = 48
     /// 64pt
     static let xxl: CGFloat = 64
+    
+    static func * (lhs: Int, rhs: CGFloat) -> CGFloat {
+        CGFloat(lhs) * rhs
+    }
+    
+    static func * (lhs: CGFloat, rhs: Int) -> CGFloat {
+        lhs * CGFloat(rhs)
+    }
 }
 
 public typealias Vector = CGPoint

@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-public protocol Space {
+public protocol Space: ObservableObject {
     
     associatedtype TokenModel: Token
     
@@ -20,11 +20,4 @@ public protocol Space {
     
     func canPlace(token: TokenModel) -> Bool
     func place(token: TokenModel)
-}
-
-public protocol SpaceView: View {
-    
-    associatedtype Model: Space
-    
-    var space: Model { get }
 }
