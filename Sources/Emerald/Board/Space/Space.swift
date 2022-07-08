@@ -18,6 +18,9 @@ public protocol Space: ObservableObject {
     func peek(at localPosition: CGPoint) -> TokenModel?
     func take(at localPosition: CGPoint) -> TokenModel?
     
+    func canInteract(with token: TokenModel) -> Bool
+    func interact(with token: TokenModel)
+    
     func canPlace(token: TokenModel) -> Bool
     func place(token: TokenModel)
 }

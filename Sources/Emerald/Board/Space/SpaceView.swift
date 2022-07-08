@@ -8,11 +8,13 @@
 import Foundation
 import SwiftUI
 
-public protocol CollectionSpaceView: View {
+public struct CollectionSpaceStyling {
     
-    associatedtype Model: CollectionSpace
+    public let offset: CGSize
+    public let effectMultiplier: Double
     
-    var space: Model { get }
-    
-    init(space: Model)
+    public init(offset: CGSize, effectMultiplier: Double) {
+        self.offset = offset
+        self.effectMultiplier = effectMultiplier
+    }
 }

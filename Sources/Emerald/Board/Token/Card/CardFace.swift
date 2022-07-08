@@ -8,10 +8,11 @@
 import Foundation
 import SwiftUI
 
-public protocol CardFace {
+public protocol CardFace: Identifiable {
     
     associatedtype CardType
     
+    var side: FlipSide { get }
     var type: CardType { get }
     var value: Int { get }
 }

@@ -47,57 +47,47 @@ open class StackSpace<T: Token>: CollectionSpace {
     }
     
     public func peek(at localPosition: CGPoint) -> T? {
-        collection.peek(at: localPosition)
+        collection.peek()
     }
 
     public func take(at localPosition: CGPoint) -> T? {
-        collection.take(at: localPosition)
+        collection.pop()
+    }
+    
+    public func canInteract(with token: T) -> Bool {
+        collection.peek()?.canInteract(with: token) == true
+    }
+    
+    public func interact(with token: T) {
+        collection.peek()?.interact(with: token)
     }
 }
 
+open class QueueSpace<T: Token>: CollectionSpace {
     
-//    open var tokenCapacity: Int {
-//        .max
-//    }
-//
-//    open func canPlace(token: T.Element) -> Bool {
-//        tokenCount < tokenCapacity
-//    }
-//
-//    // MARK: - Public
-//
-//    public var tokenCount: Int {
-//        collection.count
-//    }
-//
-//    public func peek(at localPosition: CGPoint) -> T.Element? {
-//        collection.peek(at: localPosition)
-//    }
-//
-//    public func take(at localPosition: CGPoint) -> T.Element? {
-//        collection.take(at: localPosition)
-//    }
-//
-//    public func canInteract(with token: T.Element) -> Bool {
-//        collection.canInteract(with: token)
-//    }
-//
-//    public func interact(with token: T.Element) {
-//        collection.interact(with: token)
-//    }
-//
-//    public func place(token: T.Element) {
-//
-//    }
-//
-//    public func enumerate() -> EnumeratedSequence<T> {
-//        collection.enumerated()
-//    }
-//
-//    // MARK: - Internal
-//
-//    private(set) var collection: T
-//
-//    init(collection: T) {
-//        self.collection = collection
-//    }
+    @Published public private(set) var collection = Queue<T>()
+    
+    open func place(token: T) {
+        if canPlace(token: token) {
+            collection.add(token)
+        }
+    }
+    
+    // MARK: - Public
+    
+    public func peek(at localPosition: CGPoint) -> T? {
+        collection.peek()
+    }
+    
+    public func take(at localPosition: CGPoint) -> T? {
+        collection.poll()
+    }
+    
+    public func canInteract(with token: T) -> Bool {
+        collection.peek()?.canInteract(with: token) == true
+    }
+    
+    public func interact(with token: T) {
+        collection.peek()?.interact(with: token)
+    }
+}

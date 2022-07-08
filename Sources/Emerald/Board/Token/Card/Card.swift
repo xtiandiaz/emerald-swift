@@ -13,5 +13,7 @@ public protocol Card: Token {
     associatedtype FaceType: CardFace
     
     var front: FaceType { get }
-    var back: FaceType { get }    
+    var back: FaceType { get }
+    
+    var side: FlipSide { get set }
 }

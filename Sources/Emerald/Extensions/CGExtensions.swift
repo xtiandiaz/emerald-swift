@@ -180,11 +180,11 @@ public extension CGSize {
     }
     
     init(width: CGFloat) {
-        self.init(width: width, height: 1)
+        self.init(width: width, height: 0)
     }
     
     init(height: CGFloat) {
-        self.init(width: 1, height: height)
+        self.init(width: 0, height: height)
     }
     
     static func + (lhs: CGSize, rhs: CGSize) -> CGSize {
@@ -197,6 +197,10 @@ public extension CGSize {
     
     static func * (lhs: CGSize, rhs: CGFloat) -> CGSize {
         CGSize(width: lhs.width * rhs, height: lhs.height * rhs)
+    }
+    
+    static func * (lhs: CGSize, rhs: Int) -> CGSize {
+        lhs * CGFloat(rhs)
     }
     
     static func / (lhs: CGSize, rhs: CGFloat) -> CGSize {

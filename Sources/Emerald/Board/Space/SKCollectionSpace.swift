@@ -139,7 +139,7 @@ extension SKStackSpace {
 
 // MARK: - Queue
 
-open class QueueSpace<T: SKToken>: SKCollectionSpace<Queue<T>> {
+open class SKQueueSpace<T: SKToken>: SKCollectionSpace<Queue<T>> {
     
     open override func place(token: T) {
         place(token: token) {
@@ -186,7 +186,7 @@ open class QueueSpace<T: SKToken>: SKCollectionSpace<Queue<T>> {
     }
 }
 
-extension QueueSpace {
+extension SKQueueSpace {
     
     public func peek() -> T? {
         collection.peek()
