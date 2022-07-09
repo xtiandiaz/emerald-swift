@@ -15,6 +15,9 @@ public protocol Space: ObservableObject {
     var tokenCapacity: Int { get }
     var tokenCount: Int { get }
     
+    var isEmpty: Bool { get }
+    var isHighlighted: Bool { get set }
+    
     func peek(at localPosition: CGPoint) -> TokenModel?
     func take(at localPosition: CGPoint) -> TokenModel?
     

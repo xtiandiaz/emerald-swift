@@ -9,14 +9,16 @@ import Beryllium
 import Foundation
 import SwiftUI
 
-public protocol CollectionSpace: Space {
+open class CollectionSpace<Collection: TokenCollection>: Space {
     
-    associatedtype Collection: TokenCollection
+    @Published public internal(set) var collection: Collection
+    @Published public var isHighlighted = false
     
-    var collection: Collection { get }
-}
-
-extension CollectionSpace {
+    open func place(token: Collection.Element) {
+        fatalError("Not implemented")
+    }
+    
+    // MARK: - Public
     
     public var tokenCapacity: Int {
         .max
@@ -26,16 +28,40 @@ extension CollectionSpace {
         collection.count
     }
     
+    public var isEmpty: Bool {
+        collection.isEmpty
+    }
+    
+    public func peek(at localPosition: CGPoint) -> Collection.Element? {
+        fatalError("Not implemented")
+    }
+    
+    public func take(at localPosition: CGPoint) -> Collection.Element? {
+        fatalError("Not implemented")
+    }
+    
+    public func canInteract(with token: Collection.Element) -> Bool {
+        fatalError("Not implemented")
+    }
+    
+    public func interact(with token: Collection.Element) {
+        fatalError("Not implemented")
+    }
+    
     public func canPlace(token: Collection.Element) -> Bool {
         tokenCount < tokenCapacity
     }
+    
+    // MARK: - Internal
+    
+    init(collection: Collection) {
+        self.collection = collection
+    }
 }
 
-open class StackSpace<T: Token>: CollectionSpace {
+open class StackSpace<T: Token>: CollectionSpace<Stack<T>> {
     
-    @Published public private(set) var collection = Stack<T>()
-    
-    open func place(token: T) {
+    open override func place(token: T) {
         if canPlace(token: token) {
             collection.push(token)
         }
@@ -44,30 +70,29 @@ open class StackSpace<T: Token>: CollectionSpace {
     // MARK: - Public
     
     public init() {
+        super.init(collection: Stack<T>())
     }
     
-    public func peek(at localPosition: CGPoint) -> T? {
+    public override func peek(at localPosition: CGPoint) -> T? {
         collection.peek()
     }
 
-    public func take(at localPosition: CGPoint) -> T? {
+    public override func take(at localPosition: CGPoint) -> T? {
         collection.pop()
     }
     
-    public func canInteract(with token: T) -> Bool {
+    public override func canInteract(with token: T) -> Bool {
         collection.peek()?.canInteract(with: token) == true
     }
     
-    public func interact(with token: T) {
+    public override func interact(with token: T) {
         collection.peek()?.interact(with: token)
     }
 }
 
-open class QueueSpace<T: Token>: CollectionSpace {
+open class QueueSpace<T: Token>: CollectionSpace<Queue<T>> {
     
-    @Published public private(set) var collection = Queue<T>()
-    
-    open func place(token: T) {
+    open override func place(token: T) {
         if canPlace(token: token) {
             collection.add(token)
         }
@@ -75,19 +100,23 @@ open class QueueSpace<T: Token>: CollectionSpace {
     
     // MARK: - Public
     
-    public func peek(at localPosition: CGPoint) -> T? {
+    public init() {
+        super.init(collection: Queue<T>())
+    }
+    
+    public override func peek(at localPosition: CGPoint) -> T? {
         collection.peek()
     }
     
-    public func take(at localPosition: CGPoint) -> T? {
+    public override func take(at localPosition: CGPoint) -> T? {
         collection.poll()
     }
     
-    public func canInteract(with token: T) -> Bool {
+    public override func canInteract(with token: T) -> Bool {
         collection.peek()?.canInteract(with: token) == true
     }
     
-    public func interact(with token: T) {
+    public override func interact(with token: T) {
         collection.peek()?.interact(with: token)
     }
 }
