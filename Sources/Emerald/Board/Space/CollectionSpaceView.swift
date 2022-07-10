@@ -34,7 +34,7 @@ public struct CollectionSpaceView<
     }
     
     public var body: some View {
-        SpaceView(isHighlighted: $space.isHighlighted) {
+        SpaceView(space: space) {
             ForEach(Array(zip(space.collection.indices, space.collection)), id: \.0) { index, token in
                 itemBuilder((index, space.collection.count, token))
             }

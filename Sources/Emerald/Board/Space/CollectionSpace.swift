@@ -20,6 +20,8 @@ open class CollectionSpace<Collection: TokenCollection>: Space {
     
     // MARK: - Public
     
+    public let id = UUID()
+    
     public var tokenCapacity: Int {
         .max
     }

@@ -8,17 +8,17 @@
 import Foundation
 import SwiftUI
 
-public struct SpaceView<Content: View, Highlight: View, Placeholder: View> : View {
+public struct SpaceView<Model: Space, Content: View, Highlight: View, Placeholder: View> : View {
     
-    @Binding public var isHighlighted: Bool
+    @ObservedObject private(set) var space: Model
     
     public init(
-        isHighlighted: Binding<Bool>,
+        space: Model,
         @ViewBuilder content contentBuilder: () -> Content,
         @ViewBuilder placeholder placeholderBuilder: () -> Placeholder,
         @ViewBuilder highlight highlightBuilder: () -> Highlight
     ) {
-        _isHighlighted = isHighlighted
+        self.space = space
         content = contentBuilder()
         placeholder = placeholderBuilder()
         highlight = highlightBuilder()
@@ -29,7 +29,7 @@ public struct SpaceView<Content: View, Highlight: View, Placeholder: View> : Vie
             placeholder
             content
             
-            if isHighlighted {
+            if space.isHighlighted {
                 highlight
                     .zIndex(.max)
             }

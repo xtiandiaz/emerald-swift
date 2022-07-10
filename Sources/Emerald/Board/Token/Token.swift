@@ -10,6 +10,8 @@ import SwiftUI
 
 public protocol Token: Identifiable, ObservableObject {
     
+    var id: UUID { get }
+    
     func canInteract(with other: Self) -> Bool
     func interact(with other: Self)
 }

@@ -8,9 +8,11 @@
 import Foundation
 import SwiftUI
 
-public protocol Space: ObservableObject {
+public protocol Space: Identifiable, ObservableObject {
     
     associatedtype TokenModel: Token
+    
+    var id: UUID { get }
     
     var tokenCapacity: Int { get }
     var tokenCount: Int { get }

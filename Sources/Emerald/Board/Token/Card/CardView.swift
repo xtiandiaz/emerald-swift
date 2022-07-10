@@ -15,7 +15,7 @@ public struct CardView<Model: Card, FrontView: View, BackView: View>: View {
     public init(
         card: Model,
         @ViewBuilder front frontBuilder: (Model.FaceType) -> FrontView,
-        @ViewBuilder back backBuilder: (Model.FaceType) -> BackView
+        @ViewBuilder back backBuilder: (Model.FaceType?) -> BackView
     ) {
         self.card = card
         front = frontBuilder(card.front)
@@ -23,22 +23,22 @@ public struct CardView<Model: Card, FrontView: View, BackView: View>: View {
     }
     
     public var body: some View {
-        ZStack {
-            front
-                .rotation3DEffect(.degrees(card.side == .front ? 0 : 90), axis: (x: 0, y: 1, z: 0))
-                .animation(
-                    .easeInOut(duration: 0.1).delay(card.side == .front ? 0.1 : 0),
-                    value: card.side
-                )
-                .id(card.front.id)
-            
-            back
-                .rotation3DEffect(.degrees(card.side == .back ? 0 : -90), axis: (x: 0, y: 1, z: 0))
-                .animation(
-                    .easeInOut(duration: 0.1).delay(card.side == .back ? 0.1 : 0),
-                    value: card.side
-                )
-                .id(card.back.id)
+        TokenView(token: card) {
+            ZStack {
+                front
+                    .rotation3DEffect(.degrees(card.side == .front ? 0 : 90), axis: (x: 0, y: 1, z: 0))
+                    .animation(
+                        .easeInOut(duration: 0.1).delay(card.side == .front ? 0.1 : 0),
+                        value: card.side
+                    )
+                
+                back
+                    .rotation3DEffect(.degrees(card.side == .back ? 0 : -90), axis: (x: 0, y: 1, z: 0))
+                    .animation(
+                        .easeInOut(duration: 0.1).delay(card.side == .back ? 0.1 : 0),
+                        value: card.side
+                    )
+            }
         }
     }
     

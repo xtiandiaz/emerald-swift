@@ -5,19 +5,31 @@
 //  Created by Cristian Diaz on 6.7.2022.
 //
 
+import Combine
 import Foundation
 import SwiftUI
 
-public protocol Board {
+open class Board<T: Space>: Identifiable, ObservableObject {
     
-    associatedtype SpaceModel: Space
+    @Published public private(set) var spaces = [T]()
     
-    var spaces: [SpaceModel] { get }
-}
-
-public protocol BoardView: View {
+    public init(spaces: [T]) {
+        self.spaces = spaces
+        
+        Publishers.MergeMany(spaces.map { $0.objectWillChange })
+            .sink { [unowned self] _ in
+                objectWillChange.send()
+            }
+            .store(in: &subscriptions)
+    }
     
-    associatedtype Model: Board
+    public func setSpacesHighlighted(_ highlighted: Bool, for token: T.TokenModel?) {
+        spaces.forEach {
+            $0.isHighlighted = highlighted
+        }
+    }
     
-    var board: Model { get }
+    // MARK: - Private
+    
+    private var subscriptions = Set<AnyCancellable>()
 }
