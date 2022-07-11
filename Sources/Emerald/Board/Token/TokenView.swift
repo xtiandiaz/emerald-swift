@@ -22,6 +22,7 @@ public struct TokenView<Model: Token, Content: View>: View {
     
     public var body: some View {
         content
+            .allowsHitTesting(!token.isLocked)
             .id(token.id)
     }
     

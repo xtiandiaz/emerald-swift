@@ -59,6 +59,22 @@ open class CollectionSpace<Collection: TokenCollection>: Space {
     init(collection: Collection) {
         self.collection = collection
     }
+    
+    func reset() {
+        fatalError("Not implemented")
+    }
+}
+
+extension CollectionSpace {
+    
+    func setTokensLocked(
+        _ locked: Bool,
+        where predicate: (Collection.Index, Collection.Element) -> Bool
+    ) {
+        collection.enumerated().forEach {
+            $1.isLocked = predicate($0, $1)
+        }
+    }
 }
 
 open class StackSpace<T: Token>: CollectionSpace<Stack<T>> {
@@ -66,6 +82,7 @@ open class StackSpace<T: Token>: CollectionSpace<Stack<T>> {
     open override func place(token: T) {
         if canPlace(token: token) {
             collection.push(token)
+            reset()
         }
     }
     
@@ -80,7 +97,8 @@ open class StackSpace<T: Token>: CollectionSpace<Stack<T>> {
     }
 
     public override func take(at localPosition: CGPoint) -> T? {
-        collection.pop()
+        defer { reset() }
+        return collection.pop()
     }
     
     public override func canInteract(with token: T) -> Bool {
@@ -90,6 +108,14 @@ open class StackSpace<T: Token>: CollectionSpace<Stack<T>> {
     public override func interact(with token: T) {
         collection.peek()?.interact(with: token)
     }
+    
+    // MARK: - Internal
+    
+    override func reset() {
+        setTokensLocked(true) { index, token in
+            index != 0
+        }
+    }
 }
 
 open class QueueSpace<T: Token>: CollectionSpace<Queue<T>> {
@@ -97,6 +123,7 @@ open class QueueSpace<T: Token>: CollectionSpace<Queue<T>> {
     open override func place(token: T) {
         if canPlace(token: token) {
             collection.add(token)
+            reset()
         }
     }
     
@@ -111,7 +138,8 @@ open class QueueSpace<T: Token>: CollectionSpace<Queue<T>> {
     }
     
     public override func take(at localPosition: CGPoint) -> T? {
-        collection.poll()
+        defer { reset() }
+        return collection.poll()
     }
     
     public override func canInteract(with token: T) -> Bool {
@@ -120,5 +148,13 @@ open class QueueSpace<T: Token>: CollectionSpace<Queue<T>> {
     
     public override func interact(with token: T) {
         collection.peek()?.interact(with: token)
+    }
+    
+    // MARK: - Internal
+    
+    override func reset() {
+        setTokensLocked(true) { index, token in
+            index != 0
+        }
     }
 }

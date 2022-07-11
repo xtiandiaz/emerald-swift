@@ -37,6 +37,7 @@ public struct CollectionSpaceView<
         SpaceView(space: space) {
             ForEach(Array(zip(space.collection.indices, space.collection)), id: \.0) { index, token in
                 itemBuilder((index, space.collection.count, token))
+                    .allowsHitTesting(!token.isLocked)
             }
         } placeholder: {
             placeholder
