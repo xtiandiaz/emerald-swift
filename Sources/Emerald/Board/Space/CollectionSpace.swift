@@ -6,85 +6,76 @@
 //
 
 import Beryllium
+import Combine
 import Foundation
 import SwiftUI
 
-open class CollectionSpace<Collection: TokenCollection>: Space {
+open class CollectionSpace<Collection: TokenCollection>: Space<Collection.Element> {
     
     @Published public internal(set) var collection: Collection
-    @Published public var isHighlighted = false
     
-    open func place(token: Collection.Element) {
-        fatalError("Not implemented")
+    open override func canPlace(token: Collection.Element) -> Bool {
+        tokenCount < tokenCapacity
     }
     
     // MARK: - Public
     
-    public let id = UUID()
-    
-    public var tokenCapacity: Int {
+    public override var tokenCapacity: Int {
         .max
     }
     
-    public var tokenCount: Int {
+    public override var tokenCount: Int {
         collection.count
     }
     
-    public var isEmpty: Bool {
+    public override var isEmpty: Bool {
         collection.isEmpty
     }
     
-    public func peek(at localPosition: CGPoint) -> Collection.Element? {
-        fatalError("Not implemented")
-    }
-    
-    public func take(at localPosition: CGPoint) -> Collection.Element? {
-        fatalError("Not implemented")
-    }
-    
-    public func canInteract(with token: Collection.Element) -> Bool {
-        fatalError("Not implemented")
-    }
-    
-    public func interact(with token: Collection.Element) {
-        fatalError("Not implemented")
-    }
-    
-    public func canPlace(token: Collection.Element) -> Bool {
-        tokenCount < tokenCapacity
+    public override func place(token: Collection.Element) {
+        guard canPlace(token: token) else {
+            return
+        }
+        
+        add(token.configure {
+            $0.onPicked = { [unowned self] in
+                onPicked?(token)
+            }
+            $0.onDropped = { [unowned self] in
+                onDropped?(token)
+            }
+        })
     }
     
     // MARK: - Internal
     
     init(collection: Collection) {
         self.collection = collection
+        
+        super.init()
+        
+        $collection.sink { [unowned self] in
+            $0.enumerated().forEach { [count = $0.count] in
+                arrange(item: $1, at: $0, in: count)
+            }
+        }.store(in: &subscriptions)
     }
     
-    func reset() {
+    func arrange(item: Collection.Element, at index: Int, in count: Int) {
+        item.sortingIndex = count - index
+        item.isLocked = index != 0
+    }
+    
+    func add(_ token: Collection.Element) {
         fatalError("Not implemented")
     }
-}
-
-extension CollectionSpace {
     
-    func setTokensLocked(
-        _ locked: Bool,
-        where predicate: (Collection.Index, Collection.Element) -> Bool
-    ) {
-        collection.enumerated().forEach {
-            $1.isLocked = predicate($0, $1)
-        }
-    }
+    // MARK: - Private
+    
+    private var subscriptions = Set<AnyCancellable>()
 }
 
 open class StackSpace<T: Token>: CollectionSpace<Stack<T>> {
-    
-    open override func place(token: T) {
-        if canPlace(token: token) {
-            collection.push(token)
-            reset()
-        }
-    }
     
     // MARK: - Public
     
@@ -97,8 +88,7 @@ open class StackSpace<T: Token>: CollectionSpace<Stack<T>> {
     }
 
     public override func take(at localPosition: CGPoint) -> T? {
-        defer { reset() }
-        return collection.pop()
+        collection.pop()
     }
     
     public override func canInteract(with token: T) -> Bool {
@@ -111,21 +101,12 @@ open class StackSpace<T: Token>: CollectionSpace<Stack<T>> {
     
     // MARK: - Internal
     
-    override func reset() {
-        setTokensLocked(true) { index, token in
-            index != 0
-        }
+    override func add(_ token: T) {
+        collection.push(token)
     }
 }
 
 open class QueueSpace<T: Token>: CollectionSpace<Queue<T>> {
-    
-    open override func place(token: T) {
-        if canPlace(token: token) {
-            collection.add(token)
-            reset()
-        }
-    }
     
     // MARK: - Public
     
@@ -138,8 +119,7 @@ open class QueueSpace<T: Token>: CollectionSpace<Queue<T>> {
     }
     
     public override func take(at localPosition: CGPoint) -> T? {
-        defer { reset() }
-        return collection.poll()
+        collection.poll()
     }
     
     public override func canInteract(with token: T) -> Bool {
@@ -152,9 +132,7 @@ open class QueueSpace<T: Token>: CollectionSpace<Queue<T>> {
     
     // MARK: - Internal
     
-    override func reset() {
-        setTokensLocked(true) { index, token in
-            index != 0
-        }
+    override func add(_ token: T) {
+        collection.add(token)
     }
 }

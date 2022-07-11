@@ -19,7 +19,7 @@ public struct CollectionSpaceView<
     
     @ObservedObject public private(set) var space: Model
     
-    public typealias ItemBuilder = ((index: Int, count: Int, token: Model.TokenModel)) -> Item
+    public typealias ItemBuilder = ((index: Int, count: Int, token: Collection.Element)) -> Item
     
     public init(
         space: Model,
@@ -37,7 +37,6 @@ public struct CollectionSpaceView<
         SpaceView(space: space) {
             ForEach(Array(zip(space.collection.indices, space.collection)), id: \.0) { index, token in
                 itemBuilder((index, space.collection.count, token))
-                    .allowsHitTesting(!token.isLocked)
             }
         } placeholder: {
             placeholder
@@ -52,4 +51,3 @@ public struct CollectionSpaceView<
     private let placeholder: Placeholder
     private let highlight: Highlight
 }
-

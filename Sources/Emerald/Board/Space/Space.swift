@@ -8,24 +8,53 @@
 import Foundation
 import SwiftUI
 
-public protocol Space: Identifiable, ObservableObject {
+open class Space<T: Token>: Identifiable, ObservableObject {
     
-    associatedtype TokenModel: Token
+    @Published public internal(set) var sortingIndex = 0
+    @Published public var isHighlighted = false
     
-    var id: UUID { get }
+    open func canInteract(with token: T) -> Bool {
+        fatalError("Not implemented")
+    }
     
-    var tokenCapacity: Int { get }
-    var tokenCount: Int { get }
+    open func interact(with token: T) {
+        fatalError("Not implemented")
+    }
     
-    var isEmpty: Bool { get }
-    var isHighlighted: Bool { get set }
+    open func canPlace(token: T) -> Bool {
+        fatalError("Not implemented")
+    }
     
-    func peek(at localPosition: CGPoint) -> TokenModel?
-    func take(at localPosition: CGPoint) -> TokenModel?
+    // MARK: - Public
     
-    func canInteract(with token: TokenModel) -> Bool
-    func interact(with token: TokenModel)
+    public let id = UUID()
     
-    func canPlace(token: TokenModel) -> Bool
-    func place(token: TokenModel)
+    public var tokenCapacity: Int {
+        fatalError("Not implemented")
+    }
+    
+    public var tokenCount: Int {
+        fatalError("Not implemented")
+    }
+    
+    public var isEmpty: Bool {
+        tokenCount == 0
+    }
+    
+    public func peek(at localPosition: CGPoint) -> T? {
+        fatalError("Not implemented")
+    }
+    
+    public func take(at localPosition: CGPoint) -> T? {
+        fatalError("Not implemented")
+    }
+    
+    public func place(token: T) {
+        fatalError("Not implemented")
+    }
+    
+    // MARK: - Internal
+    
+    var onPicked: ((T) -> Void)?
+    var onDropped: ((T) -> Void)?
 }

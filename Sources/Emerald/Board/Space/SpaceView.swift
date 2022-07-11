@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-public struct SpaceView<Model: Space, Content: View, Highlight: View, Placeholder: View> : View {
+public struct SpaceView<TokenModel: Token, Model: Space<TokenModel>, Content: View, Highlight: View, Placeholder: View> : View {
     
     @ObservedObject private(set) var space: Model
     
@@ -34,6 +34,7 @@ public struct SpaceView<Model: Space, Content: View, Highlight: View, Placeholde
                     .zIndex(.max)
             }
         }
+        .zIndex(space.sortingIndex)
     }
     
     // MARK: - Private

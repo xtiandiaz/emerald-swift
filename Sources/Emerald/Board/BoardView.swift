@@ -8,7 +8,12 @@
 import Foundation
 import SwiftUI
 
-public struct BoardView<SpaceModel: Space, Model: Board<SpaceModel>, Content: View>: View {
+public struct BoardView<
+    TokenModel: Token,
+    SpaceModel: Space<TokenModel>,
+    Model: Board<TokenModel, SpaceModel>,
+    Content: View
+> : View {
     
     @ObservedObject public private(set) var board: Model
     
