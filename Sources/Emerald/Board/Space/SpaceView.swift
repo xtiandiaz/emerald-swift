@@ -5,6 +5,7 @@
 //  Created by Cristian Diaz on 7.7.2022.
 //
 
+import Beryllium
 import Foundation
 import SwiftUI
 
@@ -35,6 +36,7 @@ public struct SpaceView<TokenModel: Token, Model: Space<TokenModel>, Content: Vi
             }
         }
         .zIndex(space.sortingIndex)
+        .anchorPreference(id: space.id, value: .bounds)
     }
     
     // MARK: - Private

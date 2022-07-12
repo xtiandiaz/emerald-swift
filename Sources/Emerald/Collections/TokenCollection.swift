@@ -9,7 +9,9 @@ import Beryllium
 import Foundation
 import SpriteKit
 
-public protocol TokenCollection: Collection where Element: Token, Index == Int {
+public protocol TokenCollection: ArrayProtocol where Element: Token, Index == Int {
+    
+    mutating func remove(_ item: Element) -> Element?
 }
 
 extension Stack: TokenCollection where Element: Token {

@@ -12,7 +12,7 @@ public struct TokenView<Model: Token, Content: View>: View {
     
     @ObservedObject private(set) var token: Model
     
-    @State private var isDragging = false
+    @GestureState private var isDragging = false
     @State private var dragOffset: CGSize = .zero
     @State private var sortingOffset = 0
     
@@ -22,6 +22,8 @@ public struct TokenView<Model: Token, Content: View>: View {
     ) {
         self.token = token
         content = contentBuilder()
+        
+        print(token)
     }
     
     public var body: some View {
@@ -29,10 +31,13 @@ public struct TokenView<Model: Token, Content: View>: View {
             .id(token.id)
             .zIndex(token.sortingIndex + sortingOffset)
             .offset(dragOffset)
+            .animation(.easeOut(duration: 0.1), value: dragOffset)
             .allowsHitTesting(!token.isLocked)
             .gesture(drag)
             .onChange(of: isDragging) {
-                $0 ? token.onPicked?() : token.onDropped?()
+                if $0 {
+                    token.onPicked?()
+                }
             }
     }
     
@@ -44,13 +49,12 @@ public struct TokenView<Model: Token, Content: View>: View {
         DragGesture(minimumDistance: 0).onChanged {
             dragOffset = $0.translation
             sortingOffset = 1000
-            isDragging = true
-        }.onEnded { _ in
-            withAnimation(.easeOut(duration: 0.1)) {
-                dragOffset = .zero
-                sortingOffset = 0
-                isDragging = false
-            }
+        }.onEnded {
+            token.onDropped?($0.translation)
+            dragOffset = .zero
+            sortingOffset = 0
+        }.updating($isDragging) { _, state, _ in
+            state = true
         }
     }
 }

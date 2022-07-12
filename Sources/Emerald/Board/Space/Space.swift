@@ -5,10 +5,11 @@
 //  Created by Cristian Diaz on 6.7.2022.
 //
 
+import Beryllium
 import Foundation
 import SwiftUI
 
-open class Space<T: Token>: Identifiable, ObservableObject {
+open class Space<T: Token>: ObservableObject, Identifiable, Equatable, Configurable {
     
     @Published public internal(set) var sortingIndex = 0
     @Published public var isHighlighted = false
@@ -41,11 +42,11 @@ open class Space<T: Token>: Identifiable, ObservableObject {
         tokenCount == 0
     }
     
-    public func peek(at localPosition: CGPoint) -> T? {
-        fatalError("Not implemented")
+    public static func == (lhs: Space, rhs: Space) -> Bool {
+        lhs.id == rhs.id
     }
     
-    public func take(at localPosition: CGPoint) -> T? {
+    public func peek() -> T? {
         fatalError("Not implemented")
     }
     
@@ -56,5 +57,9 @@ open class Space<T: Token>: Identifiable, ObservableObject {
     // MARK: - Internal
     
     var onPicked: ((T) -> Void)?
-    var onDropped: ((T) -> Void)?
+    var onDropped: ((T, CGSize) -> Void)?
+    
+    func remove(token: T) -> T? {
+        fatalError("Not implemented")
+    }
 }

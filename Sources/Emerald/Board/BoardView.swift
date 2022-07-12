@@ -5,6 +5,7 @@
 //  Created by Cristian Diaz on 10.7.2022.
 //
 
+import Beryllium
 import Foundation
 import SwiftUI
 
@@ -15,9 +16,11 @@ public struct BoardView<
     Content: View
 > : View {
     
+    public typealias ContentBuilder = ([SpaceModel]) -> Content
+    
     @ObservedObject public private(set) var board: Model
     
-    public typealias ContentBuilder = ([SpaceModel]) -> Content
+    @State private var spaceAnchors: [AnchorPreferenceValue] = []
     
     public init(
         board: Model,
@@ -28,7 +31,10 @@ public struct BoardView<
     }
     
     public var body: some View {
-        contentBuilder(board.spaces)
+        contentBuilder(Array(board.spaces.values))
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .contentShape(Rectangle())
+            .resolveLayout(for: board)
     }
     
     // MARK: - Private

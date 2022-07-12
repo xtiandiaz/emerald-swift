@@ -41,8 +41,8 @@ open class CollectionSpace<Collection: TokenCollection>: Space<Collection.Elemen
             $0.onPicked = { [unowned self] in
                 onPicked?(token)
             }
-            $0.onDropped = { [unowned self] in
-                onDropped?(token)
+            $0.onDropped = { [unowned self] offset in
+                onDropped?(token, offset)
             }
         })
     }
@@ -70,6 +70,10 @@ open class CollectionSpace<Collection: TokenCollection>: Space<Collection.Elemen
         fatalError("Not implemented")
     }
     
+    override func remove(token: Collection.Element) -> Collection.Element? {
+        collection.remove(token)
+    }
+    
     // MARK: - Private
     
     private var subscriptions = Set<AnyCancellable>()
@@ -83,12 +87,8 @@ open class StackSpace<T: Token>: CollectionSpace<Stack<T>> {
         super.init(collection: Stack<T>())
     }
     
-    public override func peek(at localPosition: CGPoint) -> T? {
+    public override func peek() -> T? {
         collection.peek()
-    }
-
-    public override func take(at localPosition: CGPoint) -> T? {
-        collection.pop()
     }
     
     public override func canInteract(with token: T) -> Bool {
@@ -114,12 +114,8 @@ open class QueueSpace<T: Token>: CollectionSpace<Queue<T>> {
         super.init(collection: Queue<T>())
     }
     
-    public override func peek(at localPosition: CGPoint) -> T? {
+    public override func peek() -> T? {
         collection.peek()
-    }
-    
-    public override func take(at localPosition: CGPoint) -> T? {
-        collection.poll()
     }
     
     public override func canInteract(with token: T) -> Bool {

@@ -5,23 +5,41 @@
 //  Created by Cristian Diaz on 6.7.2022.
 //
 
+import Beryllium
 import Combine
 import Foundation
 import SwiftUI
 
+struct SpaceFrame {
+    
+    let id: UUID
+    let rect: CGRect
+}
+
 open class Board<TokenModel: Token, SpaceModel: Space<TokenModel>>: Identifiable, ObservableObject {
     
-    @Published public private(set) var spaces = [SpaceModel]()
+    @Published public private(set) var spaces = [UUID: SpaceModel]()
+    
+    public func dropToken(_ token: TokenModel, at localPosition: CGPoint) {
+        guard
+            let frame = (spaceFrames.values.first { $0.rect.contains(localPosition) }),
+            let space = spaces[frame.id]
+        else {
+            return
+        }
+        
+        space.place(token: token)
+    }
     
     public init(spaces: [SpaceModel]) {
-        self.spaces = spaces
+        self.spaces = .init(uniqueKeysWithValues: spaces.map { ($0.id, $0) })
         
         spaces.forEach { space in
             space.onPicked = { [unowned self] in
                 handlePick(of: $0, in: space)
             }
-            space.onDropped = { [unowned self] in
-                handleDrop(of: $0, in: space)
+            space.onDropped = { [unowned self] token, offset in
+                handleDrop(of: token, in: space, withOffset: offset)
             }
         }
         
@@ -40,9 +58,13 @@ open class Board<TokenModel: Token, SpaceModel: Space<TokenModel>>: Identifiable
     
     func setSpacesHighlighted(_ highlighted: Bool, where predicate: (SpaceModel) -> Bool) {
         spaces.forEach {
-            $0.isHighlighted = highlighted && predicate($0)
+            $0.value.isHighlighted = highlighted && predicate($0.value)
         }
     }
+    
+    // MARK: - Fileprivate
+    
+    fileprivate var spaceFrames = [UUID: SpaceFrame]()
     
     // MARK: - Private
     
@@ -56,9 +78,47 @@ open class Board<TokenModel: Token, SpaceModel: Space<TokenModel>>: Identifiable
         }
     }
     
-    private func handleDrop(of token: TokenModel, in space: SpaceModel) {
-        space.sortingIndex = 0
+    private func handleDrop(of token: TokenModel, in space: SpaceModel, withOffset offset: CGSize) {
+        defer {
+            space.sortingIndex = 0
+            setSpacesHighlighted(false)
+        }
         
-        setSpacesHighlighted(false)
+        guard
+            let dropPosition = spaceFrames[space.id]?.rect.center.offset(by: offset),
+            let destination = self.space(forToken: token, at: dropPosition),
+            let token = space.remove(token: token)
+        else {
+            return
+        }
+        
+        destination.place(token: token)
+    }
+    
+    private func space(forToken token: TokenModel, at localPosition: CGPoint) -> SpaceModel? {
+        guard
+            let id = (spaceFrames.values.first { $0.rect.contains(localPosition) })?.id,
+            let space = spaces[id],
+            space.canPlace(token: token)
+        else {
+            return nil
+        }
+        
+        return space
     }
 }
+
+extension View {
+    
+    func resolveLayout<T: Token, S: Space<T>>(for board: Board<T, S>) -> some View {
+        self.backgroundPreferenceValue(AnchorPreferenceKey.self) { prefs in
+            GeometryReader { proxy -> Color in
+                prefs.compactMap { $0 }.forEach {
+                    board.spaceFrames[$0.id] = SpaceFrame(id: $0.id, rect: proxy[$0.anchor])
+                }
+                return Color.clear
+            }
+        }
+    }
+}
+

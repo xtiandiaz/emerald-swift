@@ -9,7 +9,7 @@ import Beryllium
 import Foundation
 import SwiftUI
 
-open class Token: Identifiable, ObservableObject, Configurable {
+open class Token: ObservableObject, Identifiable, Equatable, Configurable {
     
     @Published public internal(set) var sortingIndex = 0
     @Published public internal(set) var isLocked = false
@@ -22,14 +22,23 @@ open class Token: Identifiable, ObservableObject, Configurable {
         fatalError("Not implemented")
     }
     
+    open func invalidate() {
+        isInvalidated = true
+    }
+    
     // MARK: - Public
     
     public let id = UUID()
-    
+        
     public internal(set) var onPicked: (() -> Void)?
-    public internal(set) var onDropped: (() -> Void)?
+    public internal(set) var onDropped: ((CGSize) -> Void)?
+    public private(set) var isInvalidated = false
     
     public init() {
+    }
+    
+    public static func == (lhs: Token, rhs: Token) -> Bool {
+        lhs.id == rhs.id
     }
 }
 

@@ -89,6 +89,10 @@ public extension CGPoint {
         CGSize(width: to.x - x, height: to.y - y)
     }
     
+    func offset(by offset: CGSize) -> CGPoint {
+        CGPoint(x: x + offset.width, y: y + offset.height)
+    }
+    
     func vector(toward target: CGPoint) -> Vector {
         Vector(x: target.x - x, y: target.y - y)
     }
