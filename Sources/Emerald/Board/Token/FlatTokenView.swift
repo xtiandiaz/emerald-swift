@@ -10,8 +10,6 @@ import SwiftUI
 
 public struct FlatTokenView<Model: FlatToken, FrontView: View, BackView: View>: View {
     
-    @ObservedObject public private(set) var token: Model
-    
     public init(
         token: Model,
         @ViewBuilder front frontBuilder: (Model.FaceType) -> FrontView,
@@ -44,6 +42,7 @@ public struct FlatTokenView<Model: FlatToken, FrontView: View, BackView: View>: 
     
     // MARK: - Private
     
+    private let token: Model
     private let front: FrontView
     private let back: BackView
 }

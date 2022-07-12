@@ -13,25 +13,26 @@ public struct TokenView<Model: Token, Content: View>: View {
     @ObservedObject private(set) var token: Model
     
     @GestureState private var isDragging = false
-    @State private var dragOffset: CGSize = .zero
-    @State private var sortingOffset = 0
+    @GestureState private var zIndexOffset = 0
+    @State private var dragOffset: CGSize
     
     public init(
         token: Model,
         @ViewBuilder content contentBuilder: () -> Content
     ) {
         self.token = token
+        _dragOffset = .init(initialValue: token.dragOffset)
         content = contentBuilder()
         
-        print(token)
+        print(token, token.dragOffset)
     }
     
     public var body: some View {
         content
             .id(token.id)
-            .zIndex(token.sortingIndex + sortingOffset)
-            .offset(dragOffset)
-            .animation(.easeOut(duration: 0.1), value: dragOffset)
+            .zIndex(token.layout.zIndex + zIndexOffset)
+            .offset(token.layout.arrangementOffset + dragOffset)
+            .brightness(token.styling.brightness)
             .allowsHitTesting(!token.isLocked)
             .gesture(drag)
             .onChange(of: isDragging) {
@@ -39,6 +40,11 @@ public struct TokenView<Model: Token, Content: View>: View {
                     token.onPicked?()
                 }
             }
+            .onAppear {
+                dragOffset = .zero
+            }
+            .animation(.easeOut(duration: 0.1), value: token.layout.arrangementOffset)
+            .animation(.easeOut(duration: 0.1), value: dragOffset)
     }
     
     // MARK: - Private
@@ -48,13 +54,13 @@ public struct TokenView<Model: Token, Content: View>: View {
     private var drag: some Gesture {
         DragGesture(minimumDistance: 0).onChanged {
             dragOffset = $0.translation
-            sortingOffset = 1000
         }.onEnded {
             token.onDropped?($0.translation)
             dragOffset = .zero
-            sortingOffset = 0
         }.updating($isDragging) { _, state, _ in
             state = true
+        }.updating($zIndexOffset) { _, state, _ in
+            state = 1000
         }
     }
 }

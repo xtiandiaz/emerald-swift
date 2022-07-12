@@ -19,7 +19,7 @@ public struct CollectionSpaceView<
     
     @ObservedObject public private(set) var space: Model
     
-    public typealias ItemBuilder = ((index: Int, count: Int, token: Collection.Element)) -> Item
+    public typealias ItemBuilder = (Collection.Element) -> Item
     
     public init(
         space: Model,
@@ -35,13 +35,14 @@ public struct CollectionSpaceView<
     
     public var body: some View {
         SpaceView(space: space) {
-            ForEach(Array(zip(space.collection.indices, space.collection)), id: \.0) { index, token in
-                itemBuilder((index, space.collection.count, token))
+            ForEach(space.collection) {
+                itemBuilder($0)
             }
         } placeholder: {
             placeholder
         } highlight: {
             highlight
+                .transition(.opacity)
         }
     }
     

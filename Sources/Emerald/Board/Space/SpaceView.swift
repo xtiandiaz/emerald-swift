@@ -28,15 +28,18 @@ public struct SpaceView<TokenModel: Token, Model: Space<TokenModel>, Content: Vi
     public var body: some View {
         ZStack {
             placeholder
+            
             content
+                .transition(.identity)
             
             if space.isHighlighted {
                 highlight
-                    .zIndex(.max)
+                    .zIndex(space.tokenCount)
             }
         }
         .zIndex(space.sortingIndex)
         .anchorPreference(id: space.id, value: .bounds)
+        .animation(.linear(duration: 0.1), value: space.isHighlighted)
     }
     
     // MARK: - Private

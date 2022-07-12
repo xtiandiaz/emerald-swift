@@ -87,12 +87,15 @@ open class Board<TokenModel: Token, SpaceModel: Space<TokenModel>>: Identifiable
         guard
             let dropPosition = spaceFrames[space.id]?.rect.center.offset(by: offset),
             let destination = self.space(forToken: token, at: dropPosition),
+            let destinationRect = spaceFrames[destination.id]?.rect,
             let token = space.remove(token: token)
         else {
             return
         }
         
-        destination.place(token: token)
+        destination.place(token: token.configure {
+            $0.dragOffset = destinationRect.center.offset(to: dropPosition)
+        })
     }
     
     private func space(forToken token: TokenModel, at localPosition: CGPoint) -> SpaceModel? {

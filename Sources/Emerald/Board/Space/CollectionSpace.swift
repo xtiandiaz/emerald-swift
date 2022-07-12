@@ -49,21 +49,21 @@ open class CollectionSpace<Collection: TokenCollection>: Space<Collection.Elemen
     
     // MARK: - Internal
     
-    init(collection: Collection) {
+    init(
+        collection: Collection,
+        layout: SpaceLayout<Collection.Element>,
+        styling: SpaceStyling<Collection.Element>?
+    ) {
         self.collection = collection
         
-        super.init()
+        super.init(layout: layout, styling: styling)
         
         $collection.sink { [unowned self] in
             $0.enumerated().forEach { [count = $0.count] in
                 arrange(item: $1, at: $0, in: count)
+                stylize(item: $1, in: count)
             }
         }.store(in: &subscriptions)
-    }
-    
-    func arrange(item: Collection.Element, at index: Int, in count: Int) {
-        item.sortingIndex = count - index
-        item.isLocked = index != 0
     }
     
     func add(_ token: Collection.Element) {
@@ -77,14 +77,32 @@ open class CollectionSpace<Collection: TokenCollection>: Space<Collection.Elemen
     // MARK: - Private
     
     private var subscriptions = Set<AnyCancellable>()
+    
+    private func arrange(item: Collection.Element, at index: Int, in count: Int) {
+        item.layout = TokenLayout(
+            index: index,
+            zIndex: count - index,
+            arrangementOffset: layout.arrangementOffset(forIndex: index, in: count)
+        )
+    }
+    
+    private func stylize(item: Collection.Element, in count: Int) {
+        guard let styling = styling else {
+            return
+        }
+        
+        item.styling = TokenStyling(
+            brightness: styling.brightness(forToken: item, in: count)
+        )
+    }
 }
 
 open class StackSpace<T: Token>: CollectionSpace<Stack<T>> {
     
     // MARK: - Public
     
-    public init() {
-        super.init(collection: Stack<T>())
+    public init(layout: SpaceLayout<T>, styling: SpaceStyling<T>? = nil) {
+        super.init(collection: Stack<T>(), layout: layout, styling: styling)
     }
     
     public override func peek() -> T? {
@@ -110,8 +128,8 @@ open class QueueSpace<T: Token>: CollectionSpace<Queue<T>> {
     
     // MARK: - Public
     
-    public init() {
-        super.init(collection: Queue<T>())
+    public init(layout: SpaceLayout<T>, styling: SpaceStyling<T>? = nil) {
+        super.init(collection: Queue<T>(), layout: layout, styling: styling)
     }
     
     public override func peek() -> T? {

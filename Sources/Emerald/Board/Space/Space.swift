@@ -26,6 +26,10 @@ open class Space<T: Token>: ObservableObject, Identifiable, Equatable, Configura
         fatalError("Not implemented")
     }
     
+    open func arrange() {
+        fatalError("Not implemented")
+    }
+    
     // MARK: - Public
     
     public let id = UUID()
@@ -42,6 +46,11 @@ open class Space<T: Token>: ObservableObject, Identifiable, Equatable, Configura
         tokenCount == 0
     }
     
+    public init(layout: SpaceLayout<T>, styling: SpaceStyling<T>? = nil) {
+        self.layout = layout
+        self.styling = styling
+    }
+    
     public static func == (lhs: Space, rhs: Space) -> Bool {
         lhs.id == rhs.id
     }
@@ -55,6 +64,9 @@ open class Space<T: Token>: ObservableObject, Identifiable, Equatable, Configura
     }
     
     // MARK: - Internal
+    
+    let layout: SpaceLayout<T>
+    let styling: SpaceStyling<T>?
     
     var onPicked: ((T) -> Void)?
     var onDropped: ((T, CGSize) -> Void)?
