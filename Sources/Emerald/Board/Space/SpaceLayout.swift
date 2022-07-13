@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-public struct SpaceLayout<T: Token> {
+public class SpaceLayout<T: Token>: ObservableObject {
     
     public struct TokenLayoutInfo {
         
@@ -17,11 +17,14 @@ public struct SpaceLayout<T: Token> {
     }
     
     public typealias TokenArrangementOffsetCalculator = (TokenLayoutInfo) -> CGSize
+    public typealias RotationCalculator = (TokenLayoutInfo) -> Angle
     
     public init(
-        tokenArrangementOffset: @escaping TokenArrangementOffsetCalculator
+        tokenArrangementOffset: @escaping TokenArrangementOffsetCalculator,
+        rotation: RotationCalculator? = nil
     ) {
         tokenArrangementOffsetCalculator = tokenArrangementOffset
+        rotationCalculator = rotation
     }
     
     // MARK: - Internal
@@ -30,8 +33,13 @@ public struct SpaceLayout<T: Token> {
         tokenArrangementOffsetCalculator(.init(index: index, count: count))
     }
     
+    func rotation(forIndex index: Int, in count: Int) -> Angle {
+        rotationCalculator?(.init(index: index, count: count)) ?? .zero
+    }
+    
     // MARK: - Private
     
     private let tokenArrangementOffsetCalculator: TokenArrangementOffsetCalculator
+    private let rotationCalculator: RotationCalculator?
 }
 

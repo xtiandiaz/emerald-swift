@@ -10,11 +10,11 @@ import Combine
 import Foundation
 import SwiftUI
 
-open class CollectionSpace<Collection: TokenCollection>: Space<Collection.Element> {
+open class CollectionSpace<T: TokenCollection>: Space<T.Element> {
     
-    @Published public internal(set) var collection: Collection
+    @Published public internal(set) var collection: T
     
-    open override func canPlace(token: Collection.Element) -> Bool {
+    open override func canPlace(token: T.Element) -> Bool {
         tokenCount < tokenCapacity
     }
     
@@ -32,7 +32,7 @@ open class CollectionSpace<Collection: TokenCollection>: Space<Collection.Elemen
         collection.isEmpty
     }
     
-    public override func place(token: Collection.Element) {
+    public override func place(token: T.Element) {
         guard canPlace(token: token) else {
             return
         }
@@ -50,9 +50,9 @@ open class CollectionSpace<Collection: TokenCollection>: Space<Collection.Elemen
     // MARK: - Internal
     
     init(
-        collection: Collection,
-        layout: SpaceLayout<Collection.Element>,
-        styling: SpaceStyling<Collection.Element>?
+        collection: T,
+        layout: SpaceLayout<T.Element>,
+        styling: SpaceStyling<T.Element>?
     ) {
         self.collection = collection
         
@@ -62,15 +62,20 @@ open class CollectionSpace<Collection: TokenCollection>: Space<Collection.Elemen
             $0.enumerated().forEach { [count = $0.count] in
                 arrange(item: $1, at: $0, in: count)
                 stylize(item: $1, in: count)
+                configure(item: $1, in: count)
             }
         }.store(in: &subscriptions)
     }
     
-    func add(_ token: Collection.Element) {
+    func add(_ token: T.Element) {
         fatalError("Not implemented")
     }
     
-    override func remove(token: Collection.Element) -> Collection.Element? {
+    func configure(item: T.Element, in count: Int) {
+        fatalError("Not implemented")
+    }
+    
+    override func remove(token: T.Element) -> T.Element? {
         collection.remove(token)
     }
     
@@ -78,15 +83,16 @@ open class CollectionSpace<Collection: TokenCollection>: Space<Collection.Elemen
     
     private var subscriptions = Set<AnyCancellable>()
     
-    private func arrange(item: Collection.Element, at index: Int, in count: Int) {
+    private func arrange(item: T.Element, at index: Int, in count: Int) {
         item.layout = TokenLayout(
             index: index,
             zIndex: count - index,
-            arrangementOffset: layout.arrangementOffset(forIndex: index, in: count)
+            arrangementOffset: layout.arrangementOffset(forIndex: index, in: count),
+            rotation: layout.rotation(forIndex: index, in: count)
         )
     }
     
-    private func stylize(item: Collection.Element, in count: Int) {
+    private func stylize(item: T.Element, in count: Int) {
         guard let styling = styling else {
             return
         }
@@ -105,10 +111,6 @@ open class StackSpace<T: Token>: CollectionSpace<Stack<T>> {
         super.init(collection: Stack<T>(), layout: layout, styling: styling)
     }
     
-    public override func peek() -> T? {
-        collection.peek()
-    }
-    
     public override func canInteract(with token: T) -> Bool {
         collection.peek()?.canInteract(with: token) == true
     }
@@ -122,6 +124,12 @@ open class StackSpace<T: Token>: CollectionSpace<Stack<T>> {
     override func add(_ token: T) {
         collection.push(token)
     }
+    
+    override func configure(item: T, in count: Int) {
+        item.configure {
+            $0.isLocked = $0.layout.index != 0
+        }
+    }
 }
 
 open class QueueSpace<T: Token>: CollectionSpace<Queue<T>> {
@@ -130,10 +138,6 @@ open class QueueSpace<T: Token>: CollectionSpace<Queue<T>> {
     
     public init(layout: SpaceLayout<T>, styling: SpaceStyling<T>? = nil) {
         super.init(collection: Queue<T>(), layout: layout, styling: styling)
-    }
-    
-    public override func peek() -> T? {
-        collection.peek()
     }
     
     public override func canInteract(with token: T) -> Bool {
@@ -148,5 +152,28 @@ open class QueueSpace<T: Token>: CollectionSpace<Queue<T>> {
     
     override func add(_ token: T) {
         collection.add(token)
+    }
+    
+    override func configure(item: T, in count: Int) {
+        item.configure {
+            $0.isLocked = $0.layout.index != 0
+        }
+    }
+}
+
+open class HandSpace<T: Token>: CollectionSpace<Array<T>> {
+    
+    public init(layout: SpaceLayout<T>) {
+        super.init(collection: Array<T>(), layout: layout, styling: nil)
+    }
+    
+    open override func canInteract(with token: T) -> Bool {
+        collection.firstIndex { $0.canInteract(with: token) } != nil
+    }
+    
+    open override func interact(with token: T) {
+        collection
+            .filter { $0.canInteract(with: token) }
+            .forEach { $0.interact(with: token) }
     }
 }

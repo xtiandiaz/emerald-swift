@@ -36,18 +36,18 @@ open class Board<TokenModel: Token, SpaceModel: Space<TokenModel>>: Identifiable
         
         spaces.forEach { space in
             space.onPicked = { [unowned self] in
-                handlePick(of: $0, in: space)
+                handlePick(of: $0, from: space)
             }
             space.onDropped = { [unowned self] token, offset in
-                handleDrop(of: token, in: space, withOffset: offset)
+                handleDrop(of: token, from: space, withOffset: offset)
             }
         }
         
-        Publishers.MergeMany(spaces.map { $0.objectWillChange })
-            .sink { [unowned self] _ in
-                objectWillChange.send()
-            }
-            .store(in: &subscriptions)
+//        Publishers.MergeMany(spaces.map { $0.objectWillChange })
+//            .sink { [unowned self] _ in
+//                objectWillChange.send()
+//            }
+//            .store(in: &subscriptions)
     }
     
     // MARK: - Internal
@@ -70,17 +70,17 @@ open class Board<TokenModel: Token, SpaceModel: Space<TokenModel>>: Identifiable
     
     private var subscriptions = Set<AnyCancellable>()
     
-    private func handlePick(of token: TokenModel, in space: SpaceModel) {
-        space.sortingIndex = spaces.count + 1
+    private func handlePick(of token: TokenModel, from space: SpaceModel) {
+        space.isSelected = true
         
         setSpacesHighlighted(true) {
             $0.id != space.id
         }
     }
     
-    private func handleDrop(of token: TokenModel, in space: SpaceModel, withOffset offset: CGSize) {
+    private func handleDrop(of token: TokenModel, from space: SpaceModel, withOffset offset: CGSize) {
         defer {
-            space.sortingIndex = 0
+            space.isSelected = false
             setSpacesHighlighted(false)
         }
         

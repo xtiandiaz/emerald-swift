@@ -32,6 +32,7 @@ public struct TokenView<Model: Token, Content: View>: View {
             .id(token.id)
             .zIndex(token.layout.zIndex + zIndexOffset)
             .offset(token.layout.arrangementOffset + dragOffset)
+            .rotationEffect(token.layout.rotation)
             .brightness(token.styling.brightness)
             .allowsHitTesting(!token.isLocked)
             .gesture(drag)
@@ -44,6 +45,7 @@ public struct TokenView<Model: Token, Content: View>: View {
                 dragOffset = .zero
             }
             .animation(.easeOut(duration: 0.1), value: token.layout.arrangementOffset)
+            .animation(.easeOut(duration: 0.1), value: token.layout.rotation)
             .animation(.easeOut(duration: 0.1), value: dragOffset)
     }
     

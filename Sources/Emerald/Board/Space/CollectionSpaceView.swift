@@ -42,7 +42,6 @@ public struct CollectionSpaceView<
             placeholder
         } highlight: {
             highlight
-                .transition(.opacity)
         }
     }
     

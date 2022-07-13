@@ -6,13 +6,15 @@
 //
 
 import Beryllium
+import Combine
 import Foundation
 import SwiftUI
 
 open class Space<T: Token>: ObservableObject, Identifiable, Equatable, Configurable {
     
-    @Published public internal(set) var sortingIndex = 0
+    @Published public var isSelected = false
     @Published public var isHighlighted = false
+    @Published var layout: SpaceLayout<T>
     
     open func canInteract(with token: T) -> Bool {
         fatalError("Not implemented")
@@ -55,17 +57,12 @@ open class Space<T: Token>: ObservableObject, Identifiable, Equatable, Configura
         lhs.id == rhs.id
     }
     
-    public func peek() -> T? {
-        fatalError("Not implemented")
-    }
-    
     public func place(token: T) {
         fatalError("Not implemented")
     }
     
     // MARK: - Internal
     
-    let layout: SpaceLayout<T>
     let styling: SpaceStyling<T>?
     
     var onPicked: ((T) -> Void)?
