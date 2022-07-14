@@ -17,9 +17,9 @@ public struct SpaceView<
     Highlight: View
 > : View {
     
-    @ObservedObject public private(set) var space: Model
-    
     public typealias ItemBuilder = (Collection.Element) -> Item
+    
+    @ObservedObject public private(set) var space: Model
     
     public init(
         space: Model,
@@ -48,8 +48,14 @@ public struct SpaceView<
             }
         }
         .aspectRatio(space.layout.tokenAspect, contentMode: .fit)
-        .zIndex(space.isSelected ? .max : 0)
         .anchorPreference(id: space.id, value: .bounds)
+        .backgroundPreferenceValue(AnchorPreferenceKey.self) { prefs in
+            GeometryReader { proxy -> Color in
+                space.bounds = proxy[prefs.first!.anchor]
+                return Color.clear
+            }
+        }
+        .zIndex(space.isSelected ? 100 : 0)
     }
     
     // MARK: - Private

@@ -10,29 +10,20 @@ import Combine
 import Foundation
 import SwiftUI
 
-struct SpaceFrame {
-    
-    let id: UUID
-    let rect: CGRect
-}
-
 open class Board: Identifiable, ObservableObject {
     
-    @Published public private(set) var spaces = [UUID: AnySpace]()
+    @Published public private(set) var spaces = [AnySpace]()
     
     public func dropToken(_ token: Token, at localPosition: CGPoint) {
-        guard
-            let frame = (spaceFrames.values.first { $0.rect.contains(localPosition) }),
-            let space = spaces[frame.id]
-        else {
-            return
+        if let space = firstSpace(containing: localPosition) {
+            space.place(token: token)
         }
-        
-        space.place(token: token)
     }
     
     public init(spaces: [AnySpace]) {
-        self.spaces = .init(uniqueKeysWithValues: spaces.map { ($0.id, $0) })
+        self.spaces = spaces
+        
+        spaceIndex = .init(uniqueKeysWithValues: spaces.map { ($0.id, $0) })
         
         spaces.forEach { space in
             space.onPicked = { [unowned self] in
@@ -46,22 +37,21 @@ open class Board: Identifiable, ObservableObject {
     
     // MARK: - Internal
     
+    var spaceFrames = [UUID: CGRect]()
+    
     func setSpacesHighlighted(_ highlighted: Bool) {
         setSpacesHighlighted(highlighted) { _ in true }
     }
     
     func setSpacesHighlighted(_ highlighted: Bool, where predicate: (AnySpace) -> Bool) {
         spaces.forEach {
-            $0.value.isHighlighted = highlighted && predicate($0.value)
+            $0.isHighlighted = highlighted && predicate($0)
         }
     }
     
-    // MARK: - Fileprivate
-    
-    fileprivate var spaceFrames = [UUID: SpaceFrame]()
-    
     // MARK: - Private
     
+    private let spaceIndex: [UUID: AnySpace]
     private var subscriptions = Set<AnyCancellable>()
     
     private func handlePick(of token: Token, from space: AnySpace) {
@@ -79,9 +69,9 @@ open class Board: Identifiable, ObservableObject {
         }
         
         guard
-            let dropPosition = spaceFrames[space.id]?.rect.center.offset(by: offset),
-            let destination = self.space(forToken: token, at: dropPosition),
-            let destinationRect = spaceFrames[destination.id]?.rect,
+            let dropPosition = spaceFrames[space.id]?.center.offset(by: offset),
+            let destination = firstSpace(containing: dropPosition),
+            let destinationRect = spaceFrames[destination.id],
             let token = space.remove(token: token)
         else {
             return
@@ -93,29 +83,21 @@ open class Board: Identifiable, ObservableObject {
     }
     
     private func space(forToken token: Token, at localPosition: CGPoint) -> AnySpace? {
-        guard
-            let id = (spaceFrames.values.first { $0.rect.contains(localPosition) })?.id,
-            let space = spaces[id],
+        if
+            let space = firstSpace(containing: localPosition),
             space.canPlace(token: token)
-        else {
-            return nil
+        {
+            return space
         }
         
-        return space
+        return nil
     }
-}
-
-extension View {
     
-    func resolveLayout(for board: Board) -> some View {
-        self.backgroundPreferenceValue(AnchorPreferenceKey.self) { prefs in
-            GeometryReader { proxy -> Color in
-                prefs.compactMap { $0 }.forEach {
-                    board.spaceFrames[$0.id] = SpaceFrame(id: $0.id, rect: proxy[$0.anchor])
-                }
-                return Color.clear
-            }
+    private func firstSpace(containing localPoint: CGPoint) -> AnySpace? {
+        if let id = (spaceFrames.first { $0.value.contains(localPoint) })?.key {
+            return spaceIndex[id]
         }
+        
+        return nil
     }
 }
-

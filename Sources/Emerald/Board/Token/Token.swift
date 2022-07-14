@@ -42,6 +42,7 @@ open class Token: ObservableObject, Identifiable, Equatable, Configurable {
     // MARK: - Public
     
     public let id = UUID()
+    public var name: String?
     
     public internal(set) var onPicked: (() -> Void)?
     public internal(set) var onDropped: ((CGSize) -> Void)?

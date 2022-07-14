@@ -15,6 +15,7 @@ open class AnySpace: ObservableObject, Identifiable, Equatable, Configurable {
     @Published public var isHighlighted = false
     
     public let id = UUID()
+    public var name: String?
     
     public var tokenCapacity: Int {
         fatalError("Not implemented")
@@ -36,6 +37,12 @@ open class AnySpace: ObservableObject, Identifiable, Equatable, Configurable {
     
     var onPicked: ((Token) -> Void)?
     var onDropped: ((Token, CGSize) -> Void)?
+    
+    var bounds: CGRect = .zero {
+        didSet {
+//            print("\(name ?? id) \(bounds)")
+        }
+    }
     
     func canInteract(with token: Token) -> Bool {
         fatalError("Not implemented")

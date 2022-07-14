@@ -26,10 +26,15 @@ public struct BoardView<Model: Board, Content: View> : View {
     }
     
     public var body: some View {
-        contentBuilder(Array(board.spaces.values))
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .contentShape(Rectangle())
-            .resolveLayout(for: board)
+        contentBuilder(board.spaces)
+            .backgroundPreferenceValue(AnchorPreferenceKey.self) { prefs in
+                GeometryReader { proxy -> Color in
+                    prefs.compactMap { $0 }.forEach {
+                        board.spaceFrames[$0.id] = proxy[$0.anchor]
+                    }
+                    return Color.clear
+                }
+            }
     }
     
     // MARK: - Private
