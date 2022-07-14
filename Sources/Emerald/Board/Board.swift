@@ -71,6 +71,7 @@ open class Board: Identifiable, ObservableObject {
         guard
             let dropPosition = spaceFrames[space.id]?.center.offset(by: offset),
             let destination = firstSpace(containing: dropPosition),
+            destination.canPlace(token: token),
             let destinationRect = spaceFrames[destination.id],
             let token = space.remove(token: token)
         else {

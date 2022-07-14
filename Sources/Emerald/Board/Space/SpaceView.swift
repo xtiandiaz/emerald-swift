@@ -19,7 +19,7 @@ public struct SpaceView<
     
     public typealias ItemBuilder = (Collection.Element) -> Item
     
-    @ObservedObject public private(set) var space: Model
+    @ObservedObject private var space: Model
     
     public init(
         space: Model,
