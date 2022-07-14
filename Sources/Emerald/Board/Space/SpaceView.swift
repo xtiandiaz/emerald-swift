@@ -10,22 +10,25 @@ import Foundation
 import SwiftUI
 
 public struct SpaceView<
-    TokenModel: Token,
-    Model: Space<TokenModel>,
-    Content: View, Highlight: View,
-    Placeholder: View
+    Collection: TokenCollection,
+    Model: Space<Collection>,
+    Item: View,
+    Placeholder: View,
+    Highlight: View
 > : View {
     
-    @ObservedObject private(set) var space: Model
+    @ObservedObject public private(set) var space: Model
+    
+    public typealias ItemBuilder = (Collection.Element) -> Item
     
     public init(
         space: Model,
-        @ViewBuilder content contentBuilder: () -> Content,
+        @ViewBuilder itemBuilder: @escaping ItemBuilder,
         @ViewBuilder placeholder placeholderBuilder: () -> Placeholder,
         @ViewBuilder highlight highlightBuilder: () -> Highlight
     ) {
         self.space = space
-        content = contentBuilder()
+        self.itemBuilder = itemBuilder
         placeholder = placeholderBuilder()
         highlight = highlightBuilder()
     }
@@ -35,20 +38,23 @@ public struct SpaceView<
             placeholder
                 .zIndex(-1)
             
-            content
+            ForEach(space.tokens) {
+                itemBuilder($0)
+            }
             
             if space.isHighlighted {
                 highlight
                     .zIndex(space.tokenCount)
             }
         }
+        .aspectRatio(space.layout.tokenAspect, contentMode: .fit)
         .zIndex(space.isSelected ? .max : 0)
         .anchorPreference(id: space.id, value: .bounds)
     }
     
     // MARK: - Private
     
-    private let content: Content
+    private let itemBuilder: ItemBuilder
     private let placeholder: Placeholder
     private let highlight: Highlight
 }

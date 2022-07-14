@@ -10,6 +10,6 @@ import SwiftUI
 
 public protocol FlatTokenFace: Identifiable {
     
-    var side: FlipSide { get }
+    var side: FlatTokenSide { get }
     var value: Int { get }
 }

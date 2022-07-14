@@ -24,18 +24,18 @@ public struct FlatTokenView<Model: FlatToken, FrontView: View, BackView: View>: 
         TokenView(token: token) {
             ZStack {
                 front
-                    .rotation3DEffect(.degrees(token.side == .front ? 0 : 90), axis: (x: 0, y: 1, z: 0))
-                    .animation(
-                        .easeInOut(duration: 0.1).delay(token.side == .front ? 0.1 : 0),
-                        value: token.side
-                    )
+//                    .rotation3DEffect(.degrees(token.side == .front ? 0 : 90), axis: (x: 0, y: 1, z: 0))
+//                    .animation(
+//                        .easeInOut(duration: 0.1).delay(token.side == .front ? 0.1 : 0),
+//                        value: token.side
+//                    )
                 
                 back
-                    .rotation3DEffect(.degrees(token.side == .back ? 0 : -90), axis: (x: 0, y: 1, z: 0))
-                    .animation(
-                        .easeInOut(duration: 0.1).delay(token.side == .back ? 0.1 : 0),
-                        value: token.side
-                    )
+//                    .rotation3DEffect(.degrees(token.side == .back ? 0 : -90), axis: (x: 0, y: 1, z: 0))
+//                    .animation(
+//                        .easeInOut(duration: 0.1).delay(token.side == .back ? 0.1 : 0),
+//                        value: token.side
+//                    )
             }
         }
     }

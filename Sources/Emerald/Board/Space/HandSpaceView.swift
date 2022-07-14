@@ -1,25 +1,25 @@
 //
-//  CollectionSpaceView.swift
+//  HandSpaceView.swift
 //  Emerald
 //
-//  Created by Cristian Diaz on 7.7.2022.
+//  Created by Cristian Diaz on 13.7.2022.
 //
 
 import Beryllium
 import Foundation
 import SwiftUI
 
-public struct CollectionSpaceView<
-    Collection: TokenCollection,
-    Model: CollectionSpace<Collection>,
+public struct HandSpaceView<
+    TokenModel: Token,
+    Model: HandSpace<TokenModel>,
     Item: View,
     Placeholder: View,
     Highlight: View
-> : View {
+>: View {
     
-    @ObservedObject public private(set) var space: Model
+    public typealias ItemBuilder = (TokenModel) -> Item
     
-    public typealias ItemBuilder = (Collection.Element) -> Item
+    @ObservedObject private var space: Model
     
     public init(
         space: Model,
@@ -35,13 +35,15 @@ public struct CollectionSpaceView<
     
     public var body: some View {
         SpaceView(space: space) {
-            ForEach(space.collection) {
-                itemBuilder($0)
-            }
+            itemBuilder($0)
         } placeholder: {
             placeholder
         } highlight: {
             highlight
+        }
+        .anchorPreference(id: space.id, value: .bounds)
+        .onPreferenceChange(AnchorPreferenceKey.self) {
+            print($0)
         }
     }
     

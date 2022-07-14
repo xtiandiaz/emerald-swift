@@ -24,11 +24,11 @@ open class AnyBoard: Node {
         isUserInteractionEnabled = true
     }
     
-    public func add(spaces: [AnySpace]) {
+    public func add(spaces: [SKAnySpace]) {
         spaces.forEach(add)
     }
     
-    public func add(space: AnySpace) {
+    public func add(space: SKAnySpace) {
         spaces.append(space)
         addChild(space)
     }
@@ -42,7 +42,7 @@ open class AnyBoard: Node {
     
     // MARK: - Internal
     
-    typealias Pick = (token: AnyToken, offset: CGPoint, space: AnySpace)
+    typealias Pick = (token: SKAnyToken, offset: CGPoint, space: SKAnySpace)
     
     private(set) var pick: Pick?
     private(set) var bridgedBoards = [Weak<AnyBoard>]()
@@ -115,7 +115,7 @@ open class AnyBoard: Node {
     private let _frame: CGRect
     private let disposer = TokenDisposer()
     
-    private var spaces = [AnySpace]()
+    private var spaces = [SKAnySpace]()
     
     private var debugFrameNode: SKShapeNode?
 }
@@ -126,7 +126,7 @@ extension AnyBoard {
         spaces.allSatisfy { $0.isEmpty }
     }
     
-    public func space(at location: CGPoint) -> AnySpace? {
+    public func space(at location: CGPoint) -> SKAnySpace? {
         spaces.first { $0.contains(location) }
     }
     
@@ -149,9 +149,9 @@ extension AnyBoard {
     
     // MARK: - Internal
     
-    typealias TokenDestination = (space: AnySpace, board: AnyBoard)
+    typealias TokenDestination = (space: SKAnySpace, board: AnyBoard)
     
-    func destination(forToken token: AnyToken, at localPosition: CGPoint) -> TokenDestination? {
+    func destination(forToken token: SKAnyToken, at localPosition: CGPoint) -> TokenDestination? {
         if let space = space(forToken: token, at: localPosition) {
             return (space, self)
         } else if let bridged = bridgedDestination(forToken: token, at: localPosition) {
@@ -161,7 +161,7 @@ extension AnyBoard {
         return nil
     }
     
-    func bridgedDestination(forToken token: AnyToken, at localPosition: CGPoint) -> TokenDestination? {
+    func bridgedDestination(forToken token: SKAnyToken, at localPosition: CGPoint) -> TokenDestination? {
         bridgedBoards.values
             .lazy
             .compactMap {
@@ -173,7 +173,7 @@ extension AnyBoard {
             .first
     }
     
-    func space(forToken token: AnyToken, at localPosition: CGPoint) -> AnySpace? {
+    func space(forToken token: SKAnyToken, at localPosition: CGPoint) -> SKAnySpace? {
         if
             let space = space(at: localPosition),
             space.acceptsAny(token: token, at: convert(localPosition, to: space))
@@ -184,7 +184,7 @@ extension AnyBoard {
         return nil
     }
     
-    func purge(space: AnySpace) {
+    func purge(space: SKAnySpace) {
         space.purge().forEach(disposer.disposeOf)
     }
     
@@ -192,13 +192,13 @@ extension AnyBoard {
         setSpacesHighlighted { _ in highlighted }
     }
     
-    func setSpacesHighlighted(forToken token: AnyToken) {
+    func setSpacesHighlighted(forToken token: SKAnyToken) {
         setSpacesHighlighted {
             $0.acceptsAny(token: token)
         }
     }
     
-    func setSpacesHighlighted(where predicate: (AnySpace) -> Bool) {
+    func setSpacesHighlighted(where predicate: (SKAnySpace) -> Bool) {
         spaces.forEach {
             $0.setHighlighted(predicate($0))
         }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol SKToken: AnyToken {
+public protocol SKToken: SKAnyToken {
     
     func canInteractWith(other: Self) -> Bool
     func interactWith(other: Self)

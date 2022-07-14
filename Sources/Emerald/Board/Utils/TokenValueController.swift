@@ -30,19 +30,19 @@ public class TokenValueController {
         }
     }
     
-    public func valueFor(side: FlipSide) -> Int {
+    public func valueFor(side: FlatTokenSide) -> Int {
         values[actualSide(for: side)]!
     }
     
-    public func setValue(_ value: Int, forSide side: FlipSide) {
+    public func setValue(_ value: Int, forSide side: FlatTokenSide) {
         values[actualSide(for: side)] = value.sanitized()
     }
     
     // MARK: - Private
     
-    private var values = [FlipSide: Int]()
+    private var values = [FlatTokenSide: Int]()
     
-    private func actualSide(for side: FlipSide) -> FlipSide {
+    private func actualSide(for side: FlatTokenSide) -> FlatTokenSide {
         switch originalValue {
         case .single: return .front
         case .dual: return side
@@ -52,12 +52,12 @@ public class TokenValueController {
 
 extension TokenValueController {
     
-    public func stringValueFor(side: FlipSide) -> String {
+    public func stringValueFor(side: FlatTokenSide) -> String {
         "\(valueFor(side: side))"
     }
     
     public func attributedValueFor(
-        side: FlipSide,
+        side: FlatTokenSide,
         withSize size: CGFloat,
         color: UIColor
     ) -> NSAttributedString {

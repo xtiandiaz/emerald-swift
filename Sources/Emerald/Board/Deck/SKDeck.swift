@@ -38,7 +38,7 @@ open class SKDeck<T: SKCard> {
     
     public static func deal(
         card: T,
-        facing side: FlipSide,
+        facing side: FlatTokenSide,
         into space: SKSpace<T>,
         fromOrigin origin: Anchor
     ) {
@@ -52,7 +52,7 @@ open class SKDeck<T: SKCard> {
     
     public static func deal(
         card: T,
-        facing side: FlipSide,
+        facing side: FlatTokenSide,
         into space: SKSpace<T>,
         fromPosition position: CGPoint
     ) {
@@ -70,7 +70,7 @@ open class SKDeck<T: SKCard> {
     @MainActor
     public func deal(
         count: Int?,
-        facing side: FlipSide,
+        facing side: FlatTokenSide,
         into spaces: [SKSpace<T>],
         withOrigin origin: Anchor,
         mode: DealMode = .clustered

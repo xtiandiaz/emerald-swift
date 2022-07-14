@@ -9,11 +9,11 @@ import Combine
 import Foundation
 import SwiftUI
 
-class SpaceGroup<T: Token, U: Space<T>>: ObservableObject {
+public final class SpaceGroup: ObservableObject {
     
     @Published private(set) var zIndex = 0
     
-    init(spaces: [U]) {
+    init(spaces: [AnySpace]) {
         subscription = Publishers.MergeMany(spaces.map { $0.$isSelected })
             .removeDuplicates()
             .map { $0 ? .max : 0 }

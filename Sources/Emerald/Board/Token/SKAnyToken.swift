@@ -1,5 +1,5 @@
 //
-//  AnyToken.swift
+//  SKAnyToken.swift
 //  Emerald
 //
 //  Created by Cristian Diaz on 14.5.2022.
@@ -9,7 +9,7 @@ import Beryllium
 import Foundation
 import SpriteKit
 
-open class AnyToken: Node {
+open class SKAnyToken: Node {
     
     open var isLocked = false
     
@@ -17,15 +17,15 @@ open class AnyToken: Node {
         false
     }
     
-    open func canInteractWithAny(other: AnyToken) -> Bool {
+    open func canInteractWithAny(other: SKAnyToken) -> Bool {
         fatalError("Not implemented")
     }
     
-    open func interactWithAny(other: AnyToken) {
+    open func interactWithAny(other: SKAnyToken) {
         fatalError("Not implemented")
     }
     
-    open func canSwapWithAny(other: AnyToken) -> Bool {
+    open func canSwapWithAny(other: SKAnyToken) -> Bool {
         fatalError("Not implemented")
     }
     
@@ -50,7 +50,7 @@ open class AnyToken: Node {
     }
 }
 
-extension AnyToken {
+extension SKAnyToken {
     
     public func runIfValid(_ action: SKAction, withKey key: String) {
         if !isInvalidated {

@@ -16,11 +16,11 @@ struct SpaceFrame {
     let rect: CGRect
 }
 
-open class Board<TokenModel: Token, SpaceModel: Space<TokenModel>>: Identifiable, ObservableObject {
+open class Board: Identifiable, ObservableObject {
     
-    @Published public private(set) var spaces = [UUID: SpaceModel]()
+    @Published public private(set) var spaces = [UUID: AnySpace]()
     
-    public func dropToken(_ token: TokenModel, at localPosition: CGPoint) {
+    public func dropToken(_ token: Token, at localPosition: CGPoint) {
         guard
             let frame = (spaceFrames.values.first { $0.rect.contains(localPosition) }),
             let space = spaces[frame.id]
@@ -31,7 +31,7 @@ open class Board<TokenModel: Token, SpaceModel: Space<TokenModel>>: Identifiable
         space.place(token: token)
     }
     
-    public init(spaces: [SpaceModel]) {
+    public init(spaces: [AnySpace]) {
         self.spaces = .init(uniqueKeysWithValues: spaces.map { ($0.id, $0) })
         
         spaces.forEach { space in
@@ -42,12 +42,6 @@ open class Board<TokenModel: Token, SpaceModel: Space<TokenModel>>: Identifiable
                 handleDrop(of: token, from: space, withOffset: offset)
             }
         }
-        
-//        Publishers.MergeMany(spaces.map { $0.objectWillChange })
-//            .sink { [unowned self] _ in
-//                objectWillChange.send()
-//            }
-//            .store(in: &subscriptions)
     }
     
     // MARK: - Internal
@@ -56,7 +50,7 @@ open class Board<TokenModel: Token, SpaceModel: Space<TokenModel>>: Identifiable
         setSpacesHighlighted(highlighted) { _ in true }
     }
     
-    func setSpacesHighlighted(_ highlighted: Bool, where predicate: (SpaceModel) -> Bool) {
+    func setSpacesHighlighted(_ highlighted: Bool, where predicate: (AnySpace) -> Bool) {
         spaces.forEach {
             $0.value.isHighlighted = highlighted && predicate($0.value)
         }
@@ -70,7 +64,7 @@ open class Board<TokenModel: Token, SpaceModel: Space<TokenModel>>: Identifiable
     
     private var subscriptions = Set<AnyCancellable>()
     
-    private func handlePick(of token: TokenModel, from space: SpaceModel) {
+    private func handlePick(of token: Token, from space: AnySpace) {
         space.isSelected = true
         
         setSpacesHighlighted(true) {
@@ -78,7 +72,7 @@ open class Board<TokenModel: Token, SpaceModel: Space<TokenModel>>: Identifiable
         }
     }
     
-    private func handleDrop(of token: TokenModel, from space: SpaceModel, withOffset offset: CGSize) {
+    private func handleDrop(of token: Token, from space: AnySpace, withOffset offset: CGSize) {
         defer {
             space.isSelected = false
             setSpacesHighlighted(false)
@@ -98,7 +92,7 @@ open class Board<TokenModel: Token, SpaceModel: Space<TokenModel>>: Identifiable
         })
     }
     
-    private func space(forToken token: TokenModel, at localPosition: CGPoint) -> SpaceModel? {
+    private func space(forToken token: Token, at localPosition: CGPoint) -> AnySpace? {
         guard
             let id = (spaceFrames.values.first { $0.rect.contains(localPosition) })?.id,
             let space = spaces[id],
@@ -113,7 +107,7 @@ open class Board<TokenModel: Token, SpaceModel: Space<TokenModel>>: Identifiable
 
 extension View {
     
-    func resolveLayout<T: Token, S: Space<T>>(for board: Board<T, S>) -> some View {
+    func resolveLayout(for board: Board) -> some View {
         self.backgroundPreferenceValue(AnchorPreferenceKey.self) { prefs in
             GeometryReader { proxy -> Color in
                 prefs.compactMap { $0 }.forEach {

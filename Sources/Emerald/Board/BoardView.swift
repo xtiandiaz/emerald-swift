@@ -9,14 +9,9 @@ import Beryllium
 import Foundation
 import SwiftUI
 
-public struct BoardView<
-    TokenModel: Token,
-    SpaceModel: Space<TokenModel>,
-    Model: Board<TokenModel, SpaceModel>,
-    Content: View
-> : View {
+public struct BoardView<Model: Board, Content: View> : View {
     
-    public typealias ContentBuilder = ([SpaceModel]) -> Content
+    public typealias ContentBuilder = ([AnySpace]) -> Content
     
     @ObservedObject public private(set) var board: Model
     

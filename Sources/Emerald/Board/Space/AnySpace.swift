@@ -2,105 +2,58 @@
 //  AnySpace.swift
 //  Emerald
 //
-//  Created by Cristian Diaz on 14.5.2022.
+//  Created by Cristian Diaz on 14.7.2022.
 //
 
 import Beryllium
 import Foundation
-import SpriteKit
+import SwiftUI
 
-open class AnySpace: Node, Highlightable {
+open class AnySpace: ObservableObject, Identifiable, Equatable, Configurable {
     
-    open var tokenCount: Int {
+    @Published public var isSelected = false
+    @Published public var isHighlighted = false
+    
+    public let id = UUID()
+    
+    public var tokenCapacity: Int {
         fatalError("Not implemented")
     }
     
-    open var tokenCapacity: Int {
+    public var tokenCount: Int {
         fatalError("Not implemented")
     }
     
-    open var isEmpty: Bool {
-        true
-    }
-    
-    open var isLocked: Bool {
-        false
-    }
-    
-    open func shouldForwardAny(token: AnyToken) -> Bool {
+    public var isEmpty: Bool {
         fatalError("Not implemented")
     }
     
-    open func canInteractWithAny(token: AnyToken) -> Bool {
-        fatalError("Not implemented")
-    }
-    
-    open func canInteractWithAny(token: AnyToken, at localPosition: CGPoint) -> Bool {
-        fatalError("Not implemented")
-    }
-    
-    open func interactWithAny(token: AnyToken) {
-        fatalError("Not implemented")
-    }
-    
-    open func interactWithAny(token: AnyToken, at localPosition: CGPoint) {
-        fatalError("Not implemented")
-    }
-    
-    open func canSwapWithAny(token: AnyToken, at localPosition: CGPoint) -> Bool {
-        fatalError("Not implemented")
-    }
-    
-    open func canSwapWithAny(token: AnyToken) -> Bool {
-        fatalError("Not implemented")
-    }
-    
-    open func canPlaceAny(token: AnyToken) -> Bool {
-        fatalError("Not implemented")
-    }
-    
-    open func placeAny(token: AnyToken) {
-        fatalError("Not implemented")
-    }
-    
-    open func arrange() {
-        fatalError("Not implemented")
-    }
-    
-    open func purge() -> [AnyToken] {
-        fatalError("Not implemented")
-    }
-    
-    open func setHighlighted(_ highlighted: Bool) {
-        fatalError("Not implemented")
+    public static func == (lhs: AnySpace, rhs: AnySpace) -> Bool {
+        lhs.id == rhs.id
     }
     
     // MARK: - Internal
     
-    func peekAny(at localPosition: CGPoint) -> AnyToken? {
+    var onPicked: ((Token) -> Void)?
+    var onDropped: ((Token, CGSize) -> Void)?
+    
+    func canInteract(with token: Token) -> Bool {
         fatalError("Not implemented")
     }
     
-    func restoreAny(token: AnyToken) {
+    func interact(with token: Token) {
         fatalError("Not implemented")
     }
     
-    func takeAny(at localPosition: CGPoint) -> AnyToken? {
+    func canPlace(token: Token) -> Bool {
         fatalError("Not implemented")
     }
-}
-
-extension AnySpace {
     
-    func acceptsAny(token: AnyToken, at localPosition: CGPoint) -> Bool {
-        canPlaceAny(token: token) ||
-        canInteractWithAny(token: token, at: localPosition) ||
-        canSwapWithAny(token: token, at: localPosition)
+    func place(token: Token) {
+        fatalError("Not implemented")
     }
     
-    func acceptsAny(token: AnyToken) -> Bool {
-        canPlaceAny(token: token) ||
-        canInteractWithAny(token: token) ||
-        canSwapWithAny(token: token)
+    func remove(token: Token) -> Token? {
+        fatalError("Not implemented")
     }
 }

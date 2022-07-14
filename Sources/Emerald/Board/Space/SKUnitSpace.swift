@@ -70,7 +70,7 @@ open class SKUnitSpace<T: SKToken>: SKSpace<T> {
         unit?.canSwapWith(other: token) == true
     }
     
-    public override func purge() -> [AnyToken] {
+    public override func purge() -> [SKAnyToken] {
         if let unit = unit, unit.isInvalidated {
             self.unit = nil
             return [unit]

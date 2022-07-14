@@ -9,17 +9,13 @@ import Combine
 import Foundation
 import SwiftUI
 
-public struct SpaceGroupView<
-    TokenModel: Token,
-    SpaceModel: Space<TokenModel>,
-    Content: View
-> : View {
+public struct SpaceGroupView<Model: SpaceGroup, Content: View> : View {
     
-    @ObservedObject private var group: SpaceGroup<TokenModel, SpaceModel>
+    @ObservedObject private var group: SpaceGroup
     
     public init(
-        spaces: [SpaceModel],
-        @ViewBuilder content contentBuilder: ([SpaceModel]) -> Content
+        spaces: [AnySpace],
+        @ViewBuilder content contentBuilder: ([AnySpace]) -> Content
     ) {
         group = .init(spaces: spaces)
         content = contentBuilder(spaces)

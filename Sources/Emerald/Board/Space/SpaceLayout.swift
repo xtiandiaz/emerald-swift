@@ -20,14 +20,18 @@ public class SpaceLayout<T: Token>: ObservableObject {
     public typealias RotationCalculator = (TokenLayoutInfo) -> Angle
     
     public init(
-        tokenArrangementOffset: @escaping TokenArrangementOffsetCalculator,
-        rotation: RotationCalculator? = nil
+        tokenAspect: CGSize,
+        tokenOffset: @escaping TokenArrangementOffsetCalculator,
+        tokenRotation: RotationCalculator? = nil
     ) {
-        tokenArrangementOffsetCalculator = tokenArrangementOffset
-        rotationCalculator = rotation
+        self.tokenAspect = tokenAspect
+        tokenArrangementOffsetCalculator = tokenOffset
+        rotationCalculator = tokenRotation
     }
     
     // MARK: - Internal
+    
+    let tokenAspect: CGSize
     
     func arrangementOffset(forIndex index: Int, in count: Int) -> CGSize {
         tokenArrangementOffsetCalculator(.init(index: index, count: count))

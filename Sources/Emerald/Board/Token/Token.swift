@@ -16,7 +16,7 @@ public protocol FlatToken: Token {
     var front: FaceType { get }
     var back: FaceType? { get }
     
-    var side: FlipSide { get set }
+    var side: FlatTokenSide { get set }
 }
 
 open class Token: ObservableObject, Identifiable, Equatable, Configurable {

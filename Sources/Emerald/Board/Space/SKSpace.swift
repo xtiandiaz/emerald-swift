@@ -9,13 +9,13 @@ import Beryllium
 import Foundation
 import SpriteKit
 
-open class SKSpace<T: SKToken>: AnySpace {
+open class SKSpace<T: SKToken>: SKAnySpace {
     
-    open override func canInteractWithAny(token: AnyToken) -> Bool {
+    open override func canInteractWithAny(token: SKAnyToken) -> Bool {
         with(token as? T) { canInteractWith(token: $0) } without: { false }
     }
     
-    open override func canInteractWithAny(token: AnyToken, at localPosition: CGPoint) -> Bool {
+    open override func canInteractWithAny(token: SKAnyToken, at localPosition: CGPoint) -> Bool {
         with(token as? T) { canInteractWith(token: $0, at: localPosition) } without: { false }
     }
     
@@ -27,11 +27,11 @@ open class SKSpace<T: SKToken>: AnySpace {
         peek(at: localPosition)?.canInteractWith(other: token) == true
     }
     
-    open override func interactWithAny(token: AnyToken) {
+    open override func interactWithAny(token: SKAnyToken) {
         with(token as? T) { interactWith(token: $0) }
     }
     
-    open override func interactWithAny(token: AnyToken, at localPosition: CGPoint) {
+    open override func interactWithAny(token: SKAnyToken, at localPosition: CGPoint) {
         with(token as? T) { interactWith(token: $0, at: localPosition) }
     }
     
@@ -43,15 +43,15 @@ open class SKSpace<T: SKToken>: AnySpace {
         peek(at: localPosition)?.interactWith(other: token)
     }
     
-    open override func canSwapWithAny(token: AnyToken) -> Bool {
+    open override func canSwapWithAny(token: SKAnyToken) -> Bool {
         with(token as? T) { canSwapWith(token: $0) } without: { false }
     }
     
-    open override func canSwapWithAny(token: AnyToken, at localPosition: CGPoint) -> Bool {
+    open override func canSwapWithAny(token: SKAnyToken, at localPosition: CGPoint) -> Bool {
         with(token as? T) { canSwapWith(token: $0, at: localPosition) } without: { false }
     }
     
-    open override func canPlaceAny(token: AnyToken) -> Bool {
+    open override func canPlaceAny(token: SKAnyToken) -> Bool {
         with(token as? T) { canPlace(token: $0) } without: { false }
     }
     
@@ -59,7 +59,7 @@ open class SKSpace<T: SKToken>: AnySpace {
         fatalError("Not implemented")
     }
     
-    open override func placeAny(token: AnyToken) {
+    open override func placeAny(token: SKAnyToken) {
         with(token as? T) { place(token: $0) }
     }
     
@@ -91,11 +91,11 @@ open class SKSpace<T: SKToken>: AnySpace {
     
     // MARK: - Internal
     
-    override func peekAny(at localPosition: CGPoint) -> AnyToken? {
+    override func peekAny(at localPosition: CGPoint) -> SKAnyToken? {
         peek(at: localPosition)
     }
     
-    override func takeAny(at localPosition: CGPoint) -> AnyToken? {
+    override func takeAny(at localPosition: CGPoint) -> SKAnyToken? {
         take(at: localPosition)
     }
     
@@ -110,7 +110,7 @@ open class SKSpace<T: SKToken>: AnySpace {
         arrange()
     }
     
-    override func restoreAny(token: AnyToken) {
+    override func restoreAny(token: SKAnyToken) {
         with(token as? T) { restore(token: $0) }
     }
     

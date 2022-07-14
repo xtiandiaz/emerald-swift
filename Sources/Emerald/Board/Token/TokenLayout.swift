@@ -12,7 +12,7 @@ public struct TokenLayout: Equatable {
     
     public let index: Int
     public let zIndex: Int
-    public let arrangementOffset: CGSize
+    public let offset: CGSize
     public let rotation: Angle
     
     // MARK: - Internal
@@ -20,7 +20,7 @@ public struct TokenLayout: Equatable {
     static let `default` = TokenLayout(
         index: 0,
         zIndex: 0,
-        arrangementOffset: .zero,
+        offset: .zero,
         rotation: .zero
     )
 }

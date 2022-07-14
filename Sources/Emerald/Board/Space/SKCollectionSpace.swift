@@ -50,7 +50,7 @@ open class SKCollectionSpace<T: SKTokenCollection>: SKSpace<T.Element> {
         }
     }
     
-    public override func purge() -> [AnyToken] {
+    public override func purge() -> [SKAnyToken] {
         let allInvalidated = collection.filter { $0.isInvalidated }
         collection.removeAll { $0.isInvalidated }
         
