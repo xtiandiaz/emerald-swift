@@ -30,7 +30,7 @@ public struct BoardView<Model: Board, Content: View> : View {
             .backgroundPreferenceValue(AnchorPreferenceKey.self) { prefs in
                 GeometryReader { proxy -> Color in
                     prefs.compactMap { $0 }.forEach {
-                        board.spaceFrames[$0.id] = proxy[$0.anchor]
+                        board.updateSpaceFrame(proxy[$0.anchor], forId: $0.id)
                     }
                     return Color.clear
                 }

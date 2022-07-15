@@ -37,8 +37,6 @@ open class Board: Identifiable, ObservableObject {
     
     // MARK: - Internal
     
-    var spaceFrames = [UUID: CGRect]()
-    
     func setSpacesHighlighted(_ highlighted: Bool) {
         setSpacesHighlighted(highlighted) { _ in true }
     }
@@ -49,9 +47,19 @@ open class Board: Identifiable, ObservableObject {
         }
     }
     
+    func updateSpaceFrame(_ frame: CGRect, forId id: UUID) {
+        if let space = spaceIndex[id] {
+            spaceFrames[id] = frame
+            space.bounds = CGRect(size: frame.size)
+        } else {
+            assertionFailure("Missing Space (\(id)) to set the frame for")
+        }
+    }
+    
     // MARK: - Private
     
     private let spaceIndex: [UUID: AnySpace]
+    private var spaceFrames = [UUID: CGRect]()
     private var subscriptions = Set<AnyCancellable>()
     
     private func handlePick(of token: Token, from space: AnySpace) {

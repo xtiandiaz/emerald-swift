@@ -40,7 +40,7 @@ open class AnySpace: ObservableObject, Identifiable, Equatable, Configurable {
     
     var bounds: CGRect = .zero {
         didSet {
-//            print("\(name ?? id) \(bounds)")
+//            print("\(name ?? id.uuidString) \(bounds)")
         }
     }
     

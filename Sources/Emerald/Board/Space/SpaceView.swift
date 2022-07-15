@@ -49,13 +49,7 @@ public struct SpaceView<
         }
         .aspectRatio(space.layout.tokenAspect, contentMode: .fit)
         .anchorPreference(id: space.id, value: .bounds)
-        .backgroundPreferenceValue(AnchorPreferenceKey.self) { prefs in
-            GeometryReader { proxy -> Color in
-                space.bounds = proxy[prefs.first!.anchor]
-                return Color.clear
-            }
-        }
-        .zIndex(space.isSelected ? 100 : 0)
+        .zIndex(space.isSelected ? .max : 0)
     }
     
     // MARK: - Private
