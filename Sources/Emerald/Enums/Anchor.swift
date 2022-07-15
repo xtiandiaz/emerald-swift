@@ -54,4 +54,18 @@ public enum Anchor {
         case .left: return CGPoint(x: rect.maxX, y: rect.center.y)
         }
     }
+    
+    public func uiPoint(in rect: CGRect) -> CGPoint {
+        switch self {
+        case .center: return rect.center
+        case .top: return CGPoint(x: rect.center.x, y: rect.minY)
+        case .topLeft: return CGPoint(x: rect.minX, y: rect.minY)
+        case .topRight: return CGPoint(x: rect.maxX, y: rect.minY)
+        case .right: return CGPoint(x: rect.minX, y: rect.center.y)
+        case .bottom: return CGPoint(x: rect.center.x, y: rect.maxY)
+        case .bottomLeft: return CGPoint(x: rect.minX, y: rect.maxY)
+        case .bottomRight: return CGPoint(x: rect.maxX, y: rect.maxY)
+        case .left: return CGPoint(x: rect.maxX, y: rect.center.y)
+        }
+    }
 }

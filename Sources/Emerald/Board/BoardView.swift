@@ -26,15 +26,20 @@ public struct BoardView<Model: Board, Content: View> : View {
     }
     
     public var body: some View {
-        contentBuilder(board.spaces)
-            .backgroundPreferenceValue(AnchorPreferenceKey.self) { prefs in
-                GeometryReader { proxy -> Color in
-                    prefs.compactMap { $0 }.forEach {
-                        board.updateSpaceFrame(proxy[$0.anchor], forId: $0.id)
-                    }
-                    return Color.clear
+        GeometryReader { proxy in
+            ZStack {
+                Color.clear
+                    .allowsHitTesting(false)
+                    .anchorPreference(id: board.id, value: .bounds)
+                
+                contentBuilder(board.spaces)
+            }
+            .onPreferenceChange(AnchorPreferenceKey.self) { prefs in
+                prefs.compactMap { $0 }.forEach {
+                    board.updateFrame(proxy[$0.anchor], forId: $0.id)
                 }
             }
+        }
     }
     
     // MARK: - Private

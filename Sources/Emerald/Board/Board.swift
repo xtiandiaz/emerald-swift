@@ -14,16 +14,19 @@ open class Board: Identifiable, ObservableObject {
     
     @Published public private(set) var spaces = [AnySpace]()
     
+    public let id = UUID()
+    public var name: String?
+    
     public func dropToken(_ token: Token, at localPosition: CGPoint) {
         if let space = firstSpace(containing: localPosition) {
-            space.place(token: token)
+            space.place(token: token.configure {
+                $0.dragOffset = space.frame.center.offset(to: Anchor.top.uiPoint(in: frame))
+            })
         }
     }
     
     public init(spaces: [AnySpace]) {
         self.spaces = spaces
-        
-        spaceIndex = .init(uniqueKeysWithValues: spaces.map { ($0.id, $0) })
         
         spaces.forEach { space in
             space.onPicked = { [unowned self] in
@@ -37,6 +40,8 @@ open class Board: Identifiable, ObservableObject {
     
     // MARK: - Internal
     
+    var frame: CGRect = .zero
+    
     func setSpacesHighlighted(_ highlighted: Bool) {
         setSpacesHighlighted(highlighted) { _ in true }
     }
@@ -47,10 +52,12 @@ open class Board: Identifiable, ObservableObject {
         }
     }
     
-    func updateSpaceFrame(_ frame: CGRect, forId id: UUID) {
-        if let space = spaceIndex[id] {
-            spaceFrames[id] = frame
-            space.bounds = CGRect(size: frame.size)
+    func updateFrame(_ frame: CGRect, forId id: UUID) {
+        if id == self.id {
+            self.frame = frame
+            print(frame)
+        } else if let space = (spaces.first { $0.id == id }) {
+            space.frame = frame
         } else {
             assertionFailure("Missing Space (\(id)) to set the frame for")
         }
@@ -58,8 +65,6 @@ open class Board: Identifiable, ObservableObject {
     
     // MARK: - Private
     
-    private let spaceIndex: [UUID: AnySpace]
-    private var spaceFrames = [UUID: CGRect]()
     private var subscriptions = Set<AnyCancellable>()
     
     private func handlePick(of token: Token, from space: AnySpace) {
@@ -76,18 +81,18 @@ open class Board: Identifiable, ObservableObject {
             setSpacesHighlighted(false)
         }
         
+        let dropPosition = space.frame.center.offset(by: offset)
+        
         guard
-            let dropPosition = spaceFrames[space.id]?.center.offset(by: offset),
             let destination = firstSpace(containing: dropPosition),
             destination.canPlace(token: token),
-            let destinationRect = spaceFrames[destination.id],
             let token = space.remove(token: token)
         else {
             return
         }
         
         destination.place(token: token.configure {
-            $0.dragOffset = destinationRect.center.offset(to: dropPosition)
+            $0.dragOffset = destination.frame.center.offset(to: dropPosition)
         })
     }
     
@@ -103,8 +108,8 @@ open class Board: Identifiable, ObservableObject {
     }
     
     private func firstSpace(containing localPoint: CGPoint) -> AnySpace? {
-        if let id = (spaceFrames.first { $0.value.contains(localPoint) })?.key {
-            return spaceIndex[id]
+        if let space = (spaces.first { $0.frame.contains(localPoint) }) {
+            return space
         }
         
         return nil

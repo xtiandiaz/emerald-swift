@@ -44,9 +44,9 @@ public struct TokenView<Model: Token, Content: View>: View {
             .onAppear {
                 dragOffset = .zero
             }
+            .animation(.easeOut(duration: 0.1), value: dragOffset)
             .animation(.easeOut(duration: 0.1), value: token.layout.offset)
             .animation(.easeOut(duration: 0.1), value: token.layout.rotation)
-            .animation(.easeOut(duration: 0.1), value: dragOffset)
     }
     
     // MARK: - Private

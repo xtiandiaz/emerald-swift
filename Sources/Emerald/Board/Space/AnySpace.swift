@@ -38,10 +38,10 @@ open class AnySpace: ObservableObject, Identifiable, Equatable, Configurable {
     var onPicked: ((Token) -> Void)?
     var onDropped: ((Token, CGSize) -> Void)?
     
-    var bounds: CGRect = .zero {
-        didSet {
-//            print("\(name ?? id.uuidString) \(bounds)")
-        }
+    var frame = CGRect()
+    
+    var bounds: CGRect {
+        CGRect(size: frame.size)
     }
     
     func canInteract(with token: Token) -> Bool {
