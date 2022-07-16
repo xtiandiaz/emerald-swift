@@ -5,64 +5,80 @@
 //  Created by Cristian Diaz on 10.7.2022.
 //
 
+import Beryllium
 import Foundation
 import SwiftUI
 
 public struct TokenView<Model: Token, Content: View>: View {
     
-    @ObservedObject private(set) var token: Model
+    @ObservedObject private var token: Model
     
-    @GestureState private var isDragging = false
-    @GestureState private var zIndexOffset = 0
-    @State private var dragOffset: CGSize
+    @StateObject private var dragMonitor = DragMonitor()
+    
+    @State private var placementOffset: CGSize
+    @State private var zIndexOffset: Double = 0
     
     public init(
         token: Model,
         @ViewBuilder content contentBuilder: () -> Content
     ) {
         self.token = token
-        _dragOffset = .init(initialValue: token.dragOffset)
         content = contentBuilder()
         
-        print(token, token.dragOffset)
+        _placementOffset = .init(initialValue: token.placementOffset)
     }
     
     public var body: some View {
         content
             .id(token.id)
-            .zIndex(token.layout.zIndex + zIndexOffset)
-            .offset(token.layout.offset + dragOffset)
+            .zIndex(Double(token.layout.zIndex) + zIndexOffset)
             .rotationEffect(token.layout.rotation)
             .brightness(token.styling.brightness)
+            .offset(placementOffset + token.layout.offset + dragMonitor.accumulatedTranslation)
             .allowsHitTesting(!token.isLocked)
-            .gesture(drag)
-            .onChange(of: isDragging) {
-                if $0 {
-                    token.onPicked?()
-                }
-            }
+            .gesture(dragMonitor.gesture())
             .onAppear {
-                dragOffset = .zero
+                placementOffset = .zero
+                configureDragMonitor()
             }
-            .animation(.easeOut(duration: 0.1), value: dragOffset)
-            .animation(.easeOut(duration: 0.1), value: token.layout.offset)
-            .animation(.easeOut(duration: 0.1), value: token.layout.rotation)
+            .animation(animation, value: token.layout.rotation)
+            .animation(animation, value: token.layout.offset)
+            .animation(animation, value: placementOffset)
+            .animation(animation, value: dragMonitor.accumulatedTranslation)
     }
     
     // MARK: - Private
     
     private let content: Content
     
-    private var drag: some Gesture {
-        DragGesture(minimumDistance: 0).onChanged {
-            dragOffset = $0.translation
-        }.onEnded {
-            token.onDropped?($0.translation)
-            dragOffset = .zero
-        }.updating($isDragging) { _, state, _ in
-            state = true
-        }.updating($zIndexOffset) { _, state, _ in
-            state = 1000
+    private var animation: Animation {
+        .easeOut(duration: 0.1)
+    }
+    
+    private func configureDragMonitor() {
+        dragMonitor.configure {
+            $0.shouldPublishTranslation = token.isDraggable
+            
+            $0.onStarted = { [unowned token] in
+                token.onPicked?()
+                zIndexOffset = 1000
+            }
+            $0.onEnded = { [unowned token] in
+                token.onDropped?($0)
+                zIndexOffset = 0
+            }
+        }
+        
+        switch token.controlMode {
+        case .swipe:
+            dragMonitor.configure {
+                $0.onSwipe = { [unowned token] in
+                    token.onPushed?($0)
+                }
+            }
+        default:
+            break
+            
         }
     }
 }

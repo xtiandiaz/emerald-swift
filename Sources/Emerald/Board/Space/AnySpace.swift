@@ -37,6 +37,7 @@ open class AnySpace: ObservableObject, Identifiable, Equatable, Configurable {
     
     var onPicked: ((Token) -> Void)?
     var onDropped: ((Token, CGSize) -> Void)?
+    var onPushed: ((Token, Direction) -> Void)?
     
     var frame = CGRect()
     

@@ -12,15 +12,19 @@ import SwiftUI
 
 open class Board: Identifiable, ObservableObject {
     
+    public enum UserInteractionMode {
+        case drag, swipe
+    }
+    
     @Published public private(set) var spaces = [AnySpace]()
     
     public let id = UUID()
     public var name: String?
     
-    public func dropToken(_ token: Token, at localPosition: CGPoint) {
+    public func deal(_ token: Token, at localPosition: CGPoint, from anchor: Anchor = .top) {
         if let space = firstSpace(containing: localPosition) {
             space.place(token: token.configure {
-                $0.dragOffset = space.frame.center.offset(to: Anchor.top.uiPoint(in: frame))
+                $0.placementOffset = space.frame.center.offset(to: anchor.uiPoint(in: frame))
             })
         }
     }
@@ -55,7 +59,6 @@ open class Board: Identifiable, ObservableObject {
     func updateFrame(_ frame: CGRect, forId id: UUID) {
         if id == self.id {
             self.frame = frame
-            print(frame)
         } else if let space = (spaces.first { $0.id == id }) {
             space.frame = frame
         } else {
@@ -92,7 +95,7 @@ open class Board: Identifiable, ObservableObject {
         }
         
         destination.place(token: token.configure {
-            $0.dragOffset = destination.frame.center.offset(to: dropPosition)
+            $0.placementOffset = destination.frame.center.offset(to: dropPosition)
         })
     }
     
