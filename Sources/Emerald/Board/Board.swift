@@ -30,16 +30,31 @@ open class Board: Identifiable, ObservableObject {
     }
     
     public init(spaces: [AnySpace]) {
-        self.spaces = spaces
-        
-        spaces.forEach { space in
-            space.onPicked = { [unowned self] in
+        addSpaces(spaces)
+    }
+    
+    public func addSpaces(_ spaces: [AnySpace]) {
+        spaces.forEach {
+            addSpace($0)
+        }
+    }
+    
+    public func addSpace(_ space: AnySpace) {
+        spaces.append(space.configure {
+            $0.onPicked = { [unowned self, unowned space] in
                 handlePick(of: $0, from: space)
             }
-            space.onDropped = { [unowned self] token, offset in
+            $0.onDropped = { [unowned self, unowned space] token, offset in
                 handleDrop(of: token, from: space, withOffset: offset)
             }
-        }
+            $0.onPushed = { [unowned self, unowned space] token, direction, offset in
+                handlePush(of: token, from: space, toward: direction, withOffset: offset)
+            }
+        })
+    }
+    
+    open func nextSpace(for token: Token, from space: AnySpace, toward direction: Direction) -> AnySpace? {
+        nil
     }
     
     // MARK: - Internal
@@ -78,25 +93,60 @@ open class Board: Identifiable, ObservableObject {
         }
     }
     
-    private func handleDrop(of token: Token, from space: AnySpace, withOffset offset: CGSize) {
+    private func handleDrop(of token: Token, from origin: AnySpace, withOffset offset: CGSize) {
+        handleDrop(of: token, from: origin, at: origin.frame.center.offset(by: offset))
+    }
+    
+    private func handleDrop(of token: Token, from origin: AnySpace, at positionInBoard: CGPoint) {
+        handleDrop(
+            of: token,
+            from: origin,
+            at: positionInBoard,
+            to: firstSpace(containing: positionInBoard)
+        )
+    }
+    
+    private func handleDrop(
+        of token: Token,
+        from origin: AnySpace,
+        at positionInBoard: CGPoint,
+        to destination: AnySpace?
+    ) {
         defer {
-            space.isSelected = false
+            origin.isSelected = false
             setSpacesHighlighted(false)
         }
         
-        let dropPosition = space.frame.center.offset(by: offset)
-        
         guard
-            let destination = firstSpace(containing: dropPosition),
+            let destination = destination,
+            destination != origin,
             destination.canPlace(token: token),
-            let token = space.remove(token: token)
+            let token = origin.remove(token: token)
         else {
             return
         }
         
         destination.place(token: token.configure {
-            $0.placementOffset = destination.frame.center.offset(to: dropPosition)
+            $0.placementOffset = destination.frame.center.offset(to: positionInBoard)
         })
+    }
+    
+    private func handlePush(
+        of token: Token,
+        from origin: AnySpace,
+        toward direction: Direction,
+        withOffset offset: CGSize
+    ) {
+        if let destination = nextSpace(for: token, from: origin, toward: direction) {
+            handleDrop(
+                of: token,
+                from: origin,
+                at: origin.frame.center.offset(by: offset),
+                to: destination
+            )
+        } else {
+            handleDrop(of: token, from: origin, withOffset: offset)
+        }
     }
     
     private func space(forToken token: Token, at localPosition: CGPoint) -> AnySpace? {

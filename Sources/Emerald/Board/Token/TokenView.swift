@@ -13,7 +13,7 @@ public struct TokenView<Model: Token, Content: View>: View {
     
     @ObservedObject private var token: Model
     
-    @StateObject private var dragMonitor = DragMonitor()
+    @StateObject private var dragMonitor = DragAndDropMonitor()
     
     @State private var placementOffset: CGSize
     @State private var zIndexOffset: Double = 0
@@ -34,7 +34,7 @@ public struct TokenView<Model: Token, Content: View>: View {
             .zIndex(Double(token.layout.zIndex) + zIndexOffset)
             .rotationEffect(token.layout.rotation)
             .brightness(token.styling.brightness)
-            .offset(placementOffset + token.layout.offset + dragMonitor.accumulatedTranslation)
+            .offset(placementOffset + token.layout.offset + dragMonitor.dragOffset)
             .allowsHitTesting(!token.isLocked)
             .gesture(dragMonitor.gesture())
             .onAppear {
@@ -44,7 +44,7 @@ public struct TokenView<Model: Token, Content: View>: View {
             .animation(animation, value: token.layout.rotation)
             .animation(animation, value: token.layout.offset)
             .animation(animation, value: placementOffset)
-            .animation(animation, value: dragMonitor.accumulatedTranslation)
+            .animation(animation, value: dragMonitor.dragOffset)
     }
     
     // MARK: - Private
@@ -57,28 +57,17 @@ public struct TokenView<Model: Token, Content: View>: View {
     
     private func configureDragMonitor() {
         dragMonitor.configure {
-            $0.shouldPublishTranslation = token.isDraggable
-            
-            $0.onStarted = { [unowned token] in
+            $0.onPicked = { [unowned token] in
                 token.onPicked?()
                 zIndexOffset = 1000
             }
-            $0.onEnded = { [unowned token] in
+            $0.onDropped = { [unowned token] in
                 token.onDropped?($0)
                 zIndexOffset = 0
             }
-        }
-        
-        switch token.controlMode {
-        case .swipe:
-            dragMonitor.configure {
-                $0.onSwipe = { [unowned token] in
-                    token.onPushed?($0)
-                }
+            $0.onSwiped = { [unowned token] in
+                token.onPushed?($0, $1)
             }
-        default:
-            break
-            
         }
     }
 }

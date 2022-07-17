@@ -53,8 +53,8 @@ open class Space<T: TokenCollection>: AnySpace {
             $0.onDropped = { [unowned self] offset in
                 onDropped?(token, offset)
             }
-            $0.onPushed = {
-                print($0)
+            $0.onPushed = { [unowned self] direction, offset in
+                onPushed?(token, direction, offset)
             }
         })
     }

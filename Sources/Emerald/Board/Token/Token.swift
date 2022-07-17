@@ -21,16 +21,10 @@ public protocol FlatToken: Token {
 
 open class Token: ObservableObject, Identifiable, Equatable, Configurable {
     
-    public enum ControlMode {
-        
-        case swipe(dragged: Bool),
-             dragAndDrop
-    }
-    
     @Published public internal(set) var layout: TokenLayout = .default
     @Published public internal(set) var styling: TokenStyling = .default
     @Published public internal(set) var isLocked = false
-    @Published var controlMode: ControlMode = .dragAndDrop
+    @Published var isDraggable = true
     
     open func canInteract(with other: Token) -> Bool {
         fatalError("Not implemented")
@@ -61,20 +55,8 @@ open class Token: ObservableObject, Identifiable, Equatable, Configurable {
     // MARK: - Internal
     
     var onPicked: (() -> Void)?
-    var onDropped: ((CGSize) -> Void)?
-    var onPushed: ((Direction) -> Void)?
+    var onDropped: ((Offset) -> Void)?
+    var onPushed: ((Direction, Offset) -> Void)?
     
     var placementOffset: CGSize = .zero
-}
-
-extension Token {
-    
-    var isDraggable: Bool {
-        switch controlMode {
-        case .dragAndDrop:
-            return true
-        case .swipe(let isDragged):
-            return isDragged
-        }
-    }
 }
