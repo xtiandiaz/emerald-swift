@@ -15,7 +15,7 @@ public struct BoardView<Model: Board, Content: View> : View {
     
     @ObservedObject public private(set) var board: Model
     
-    @State private var spaceAnchors: [AnchorPreferenceValue] = []
+    @State private var spaceAnchors: [AnchorPreferenceValue<UUID>] = []
     
     public init(
         board: Model,

@@ -12,11 +12,13 @@ import SwiftUI
 
 open class Board: Identifiable, ObservableObject {
     
-    public enum UserInteractionMode {
-        case drag, swipe
+    @Published public private(set) var spaces = [AnySpace]()
+    
+    open func nextSpace(for token: Token, from space: AnySpace, toward direction: Direction) -> AnySpace? {
+        nil
     }
     
-    @Published public private(set) var spaces = [AnySpace]()
+    // MARK: - Public
     
     public let id = UUID()
     public var name: String?
@@ -51,10 +53,6 @@ open class Board: Identifiable, ObservableObject {
                 handlePush(of: token, from: space, toward: direction, withOffset: offset)
             }
         })
-    }
-    
-    open func nextSpace(for token: Token, from space: AnySpace, toward direction: Direction) -> AnySpace? {
-        nil
     }
     
     // MARK: - Internal

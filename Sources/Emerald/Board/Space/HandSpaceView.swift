@@ -42,7 +42,7 @@ public struct HandSpaceView<
             highlight
         }
         .anchorPreference(id: space.id, value: .bounds)
-        .onPreferenceChange(AnchorPreferenceKey.self) {
+        .onPreferenceChange(AnchorPreferenceKey<UUID>.self) {
             print($0)
         }
     }

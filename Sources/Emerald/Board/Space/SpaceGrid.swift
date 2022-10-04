@@ -10,28 +10,6 @@ import Combine
 import Foundation
 import SwiftUI
 
-private final class Row: ObservableObject {
-    
-    @Published private(set) var zIndex = 0
-    
-    init(spaces: [AnySpace]) {
-        self.spaces = spaces
-        
-        subscription = Publishers.MergeMany(spaces.map { $0.$isSelected })
-            .removeDuplicates()
-            .map { $0 ? .max : 0 }
-            .assign(to: \.zIndex, on: self)
-    }
-    
-    // MARK: - Fileprivate
-    
-    fileprivate var spaces: [AnySpace]
-    
-    // MARK: - Private
-    
-    private var subscription: AnyCancellable?
-}
-
 public struct SpaceRow<SpaceView: View>: View {
     
     public typealias ItemBuilder = (AnySpace) -> SpaceView
@@ -98,4 +76,28 @@ public struct SpaceGrid<SpaceView: View>: View {
     private let rows: Int
     private let spacing: CGSize
     private let itemBuilder: SpaceRow<SpaceView>.ItemBuilder
+}
+
+// MARK: - Private
+
+private final class Row: ObservableObject {
+    
+    @Published private(set) var zIndex = 0
+    
+    init(spaces: [AnySpace]) {
+        self.spaces = spaces
+        
+        subscription = Publishers.MergeMany(spaces.map { $0.$isSelected })
+            .removeDuplicates()
+            .map { $0 ? .max : 0 }
+            .assign(to: \.zIndex, on: self)
+    }
+    
+    // MARK: - Fileprivate
+    
+    fileprivate var spaces: [AnySpace]
+    
+    // MARK: - Private
+    
+    private var subscription: AnyCancellable?
 }
