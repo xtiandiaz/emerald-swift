@@ -25,7 +25,7 @@ public extension SKAction {
         }
     }
     
-    static func move(to localPosition: CGPoint, duration: TimeInterval, timingMode: SKActionTimingMode) -> SKAction {
+    static func moveTo(localPosition: CGPoint, duration: TimeInterval, timingMode: SKActionTimingMode) -> SKAction {
         .move(to: localPosition, duration: duration).configure {
             $0.timingMode = timingMode
         }

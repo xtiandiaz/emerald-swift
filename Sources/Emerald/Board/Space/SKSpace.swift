@@ -9,6 +9,82 @@ import Beryllium
 import Foundation
 import SpriteKit
 
+public protocol _Token: Identifiable, Equatable {
+    
+    var id: UUID { get }
+    var isInvalidated: Bool { get }
+    
+    func canInteractWith(other: Self) -> Bool
+    func interactWith(other: Self)
+    
+    func invalidate()
+    
+    func disposalAction() -> SKAction?
+}
+
+extension _Token {
+    
+    public func disposalAction() -> SKAction? {
+        .fadeOut(withDuration: 0.25)
+    }
+}
+
+public protocol _Space: Identifiable, Equatable {
+    
+    associatedtype TokenType: _Token
+    
+    var id: UUID { get }
+    var tokenCapacity: Int { get }
+    var tokenCount: Int { get }
+    
+    func canPlace(token: TokenType) -> Bool
+    func place(token: TokenType)
+    
+    func release(token: TokenType)
+    
+    func canInteractWith(other: Self) -> Bool
+    
+    func canInteractWith(token: TokenType) -> Bool
+    func canInteractWithAny(token: any _Token) -> Bool
+    
+    func setHighlighted(_ highlighted: Bool)
+}
+
+extension _Space {
+    
+    public var isEmpty: Bool {
+        tokenCount == 0
+    }
+    
+    public func canInteractWithAny(token: any _Token) -> Bool {
+        if let token = token as? TokenType  {
+            return canInteractWith(token: token)
+        }
+        
+        return false
+    }
+}
+
+public protocol _Section: Identifiable, Equatable {
+    
+    associatedtype SpaceType: _Space
+    
+    var id: UUID { get }
+    
+    func spaceAt(localPosition: CGPoint) -> SpaceType?
+}
+
+public protocol _Board: Identifiable {
+    
+    var id: UUID { get }
+    
+    func add(section: any _Section)
+    func add(space: any _Space)
+    
+    func tokenAt(location: CGPoint) -> (any _Token)?
+    func spaceAt(location: CGPoint) -> (any _Space)?
+}
+
 open class SKSpace<T: SKToken>: SKAnySpace {
     
     open override func canInteractWithAny(token: SKAnyToken) -> Bool {

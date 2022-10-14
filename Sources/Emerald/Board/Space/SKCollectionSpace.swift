@@ -23,8 +23,8 @@ open class SKCollectionSpace<T: SKTokenCollection>: SKSpace<T.Element> {
         item.zPosition = CGFloat(count - index - 1)
         
         item.runIfValid(
-            .move(
-                to: .up * CGFloat(index) * layout.offset.asPoint(),
+            .moveTo(
+                localPosition: .up * CGFloat(index) * layout.offset.point(),
                 duration: 0.1,
                 timingMode: .easeOut
             ),

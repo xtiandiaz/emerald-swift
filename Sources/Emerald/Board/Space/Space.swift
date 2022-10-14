@@ -34,7 +34,7 @@ open class Space<T: TokenCollection>: AnySpace {
     }
     
     public func canInteract(with token: T.Element) -> Bool {
-        fatalError("Not implemented")
+        fatalError("Not implemenwted")
     }
     
     public func interact(with token: T.Element) {
