@@ -65,24 +65,22 @@ extension _Space {
     }
 }
 
-public protocol _Section: Identifiable, Equatable {
+public protocol _Board: Identifiable, Equatable {
     
     associatedtype SpaceType: _Space
+    associatedtype MapType: Map where MapType.PlaceType == SpaceType
     
     var id: UUID { get }
+    var map: MapType { get }
     
-    func spaceAt(localPosition: CGPoint) -> SpaceType?
+    func spaceAt(localPosition: Position) -> SpaceType?
 }
 
-public protocol _Board: Identifiable {
+extension _Board {
     
-    var id: UUID { get }
-    
-    func add(section: any _Section)
-    func add(space: any _Space)
-    
-    func tokenAt(location: CGPoint) -> (any _Token)?
-    func spaceAt(location: CGPoint) -> (any _Space)?
+    public func spaceAt(location: Location) -> SpaceType {
+        map.placeAt(location: location)
+    }
 }
 
 open class SKSpace<T: SKToken>: SKAnySpace {

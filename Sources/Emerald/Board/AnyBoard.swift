@@ -10,34 +10,6 @@ import Combine
 import Foundation
 import SpriteKit
 
-open class _SKBoard: Node, _Board {
-    
-    public func add(space: any _Space) {
-        if !spaces.contains(space) {
-            spaces.append(space)
-        }
-    }
-    
-    public func add(section: any _Section) {
-        if !sections.contains(section) {
-            sections.append(section)
-        }
-    }
-    
-    public func spaceAt(location: CGPoint) -> (any _Space)? {
-        fatalError("Not implemented")
-    }
-    
-    open func tokenAt(location: CGPoint) -> (any _Token)? {
-        fatalError("Not implemented")
-    }
-    
-    // MARK: - Internal
-    
-    var spaces = [any _Space]()
-    var sections = [any _Section]()
-}
-
 open class AnyBoard: Node {
     
     public override var frame: CGRect {

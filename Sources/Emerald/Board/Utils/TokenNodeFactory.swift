@@ -11,5 +11,5 @@ public protocol Factory<Product> {
     
     associatedtype Product
     
-    func produceOne() -> Product
+    func produceOne(withSize size: CGSize) -> Product
 }

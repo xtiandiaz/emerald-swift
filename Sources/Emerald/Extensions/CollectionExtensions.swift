@@ -14,7 +14,7 @@ extension Collection where Element == any _Space {
     }
 }
 
-extension Collection where Element == any _Section {
+extension Collection where Element == any _Board {
     
     public func contains(_ element: Element) -> Bool {
         contains { $0.id == element.id }
