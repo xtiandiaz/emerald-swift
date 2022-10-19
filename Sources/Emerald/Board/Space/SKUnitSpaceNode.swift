@@ -22,6 +22,10 @@ open class SKUnitSpaceNode<TokenType: SKTokenNode>: SKSpaceNode {
         self.token?.canInteractWith(other: token) ?? false
     }
     
+    open func interactWith(token: TokenType) {
+        fatalError("Not implemented")
+    }
+    
     open func canPlace(token: TokenType) -> Bool {
         self.token.isNil
     }
@@ -49,10 +53,6 @@ open class SKUnitSpaceNode<TokenType: SKTokenNode>: SKSpaceNode {
         if self.token == token {
             self.token = nil
         }
-    }
-    
-    open func setHighlighted(_ highlighted: Bool) {
-        fatalError("Not implemented")
     }
     
     // MARK: - Public
