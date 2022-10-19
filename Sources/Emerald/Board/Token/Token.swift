@@ -2,61 +2,29 @@
 //  Token.swift
 //  Emerald
 //
-//  Created by Cristian Diaz on 6.7.2022.
+//  Created by Cristian Diaz on 18.10.2022.
 //
 
-import Beryllium
 import Foundation
-import SwiftUI
+import SpriteKit
 
-public protocol FlatToken: Token {
+public protocol Token: Identifiable, Equatable {
     
-    associatedtype FaceType: FlatTokenFace
+    var id: UUID { get }
+    var isInvalidated: Bool { get }
     
-    var front: FaceType { get }
-    var back: FaceType? { get }
+    func canInteractWith(other: Self) -> Bool
+    func interactWith(other: Self)
     
-    var side: FlatTokenSide { get set }
+    func invalidate()
+    
+    func disposalAction() -> SKAction?
 }
 
-open class Token: ObservableObject, Identifiable, Equatable, Configurable {
+extension Token {
     
-    @Published public internal(set) var layout: TokenLayout = .default
-    @Published public internal(set) var styling: TokenStyling = .default
-    @Published public internal(set) var isLocked = false
-    @Published var isDraggable = true
-    
-    open func canInteract(with other: Token) -> Bool {
-        fatalError("Not implemented")
+    public func disposalAction() -> SKAction? {
+        .fadeOut(withDuration: 0.2)
     }
-    
-    open func interact(with other: Token) {
-        fatalError("Not implemented")
-    }
-    
-    open func invalidate() {
-        isInvalidated = true
-    }
-    
-    // MARK: - Public
-    
-    public let id = UUID()
-    public var name: String?
-    
-    public private(set) var isInvalidated = false
-    
-    public init() {
-    }
-    
-    public static func == (lhs: Token, rhs: Token) -> Bool {
-        lhs.id == rhs.id
-    }
-    
-    // MARK: - Internal
-    
-    var onPicked: (() -> Void)?
-    var onDropped: ((Offset) -> Void)?
-    var onPushed: ((Direction, Offset) -> Void)?
-    
-    var placementOffset: CGSize = .zero
 }
+

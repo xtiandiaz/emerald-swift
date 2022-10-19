@@ -1,5 +1,5 @@
 //
-//  BoardView.swift
+//  UIBoardView.swift
 //  Emerald
 //
 //  Created by Cristian Diaz on 10.7.2022.
@@ -9,13 +9,13 @@ import Beryllium
 import Foundation
 import SwiftUI
 
-public struct BoardView<Model: Board, Content: View> : View {
+public struct UIBoardView<Model: UIBoard, Content: View> : View {
     
     public typealias ContentBuilder = ([AnySpace]) -> Content
     
     @ObservedObject public private(set) var board: Model
     
-    @State private var spaceAnchors: [AnchorPreferenceValue] = []
+    @State private var spaceAnchors: [AnchorPreferenceValue<UUID>] = []
     
     public init(
         board: Model,

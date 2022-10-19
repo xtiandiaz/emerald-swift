@@ -1,5 +1,5 @@
 //
-//  TokenView.swift
+//  UITokenView.swift
 //  Emerald
 //
 //  Created by Cristian Diaz on 10.7.2022.
@@ -9,7 +9,7 @@ import Beryllium
 import Foundation
 import SwiftUI
 
-public struct TokenView<Model: Token, Content: View>: View {
+public struct UITokenView<Model: UIFlatToken, Content: View>: View {
     
     @ObservedObject private var token: Model
     

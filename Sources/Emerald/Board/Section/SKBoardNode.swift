@@ -8,4 +8,4 @@
 import Foundation
 import SpriteKit
 
-public typealias SKBoardNode = Node & _Board
+public typealias SKBoardNode = Node & Board

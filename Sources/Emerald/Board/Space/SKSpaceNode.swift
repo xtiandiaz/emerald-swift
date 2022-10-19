@@ -7,4 +7,4 @@
 
 import Foundation
 
-public typealias SKSpaceNode = Node & _Space
+public typealias SKSpaceNode = Node & Space

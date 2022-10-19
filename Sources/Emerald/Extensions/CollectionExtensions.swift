@@ -7,14 +7,14 @@
 
 import Foundation
 
-extension Collection where Element == any _Space {
+extension Collection where Element == any Space {
     
     public func contains(_ element: Element) -> Bool {
         contains { $0.id == element.id }
     }
 }
 
-extension Collection where Element == any _Board {
+extension Collection where Element == any Board {
     
     public func contains(_ element: Element) -> Bool {
         contains { $0.id == element.id }

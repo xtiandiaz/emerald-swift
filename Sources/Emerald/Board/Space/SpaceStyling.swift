@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-public struct SpaceStyling<T: Token> {
+public struct SpaceStyling<T: UIToken> {
     
     public struct TokenStylingInfo {
         

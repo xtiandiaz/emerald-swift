@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-public class SpaceLayout<T: Token>: ObservableObject {
+public class SpaceLayout<T: UIToken>: ObservableObject {
     
     public struct TokenLayoutInfo {
         

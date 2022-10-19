@@ -7,4 +7,4 @@
 
 import Foundation
 
-public typealias SKTokenNode = Node & _Token
+public typealias SKTokenNode = Node & Token

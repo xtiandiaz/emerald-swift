@@ -1,5 +1,5 @@
 //
-//  GridMapCascade.swift
+//  SKGridBoardCascade.swift
 //  Emerald
 //
 //  Created by Cristian Diaz on 17.10.2022.
@@ -8,7 +8,7 @@
 import Beryllium
 import Foundation
 
-open class GridBoardCascade<
+open class SKGridBoardCascade<
     TokenNode: SKTokenNode,
     SpaceNode: SKUnitSpaceNode<TokenNode> & Place
 >: BoardBehavior {
@@ -21,7 +21,7 @@ open class GridBoardCascade<
         }
     }
     
-    open func produceOneToken(withSize size: CGSize) -> TokenNode {
+    open func produceToken(withSize size: CGSize) -> TokenNode {
         fatalError("Not implemented")
     }
     
@@ -66,7 +66,7 @@ open class GridBoardCascade<
             
             destination.place(token: token)
         } else {
-            let newToken = produceOneToken(withSize: board.map.placeSize).configure {
+            let newToken = produceToken(withSize: board.map.placeSize).configure {
                 $0.position.y += (board.map.rows - row + produceCount) * board.map.placeSize.height
             }
             

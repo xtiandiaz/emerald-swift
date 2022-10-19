@@ -9,7 +9,7 @@ import Foundation
 
 public protocol BoardBehavior {
     
-    associatedtype BoardType: _Board
+    associatedtype BoardType: Board
     
     typealias TokenType = BoardType.SpaceType.TokenType
     
@@ -17,6 +17,6 @@ public protocol BoardBehavior {
     
     func run()
     
-    func produceOneToken(withSize size: CGSize) -> TokenType
+    func produceToken(withSize size: CGSize) -> TokenType
     func disposeOfToken(_ token: TokenType)
 }
