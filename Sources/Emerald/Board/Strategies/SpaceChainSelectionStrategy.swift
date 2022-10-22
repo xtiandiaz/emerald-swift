@@ -1,5 +1,5 @@
 //
-//  TokenChainSelectionStrategy.swift
+//  SpaceChainSelectionStrategy.swift
 //  Emerald
 //
 //  Created by Cristian Diaz on 19.10.2022.
@@ -7,13 +7,11 @@
 
 import Foundation
 
-public class TokenChainSelectionStrategy<
-    SpaceType: Space & Place & Selectable
->: TokenSelectionStrategy {
+public class SpaceChainSelectionStrategy<SpaceType: Space & Place & Selectable>: SpaceSelectionStrategy {
     
     public var allowsDiagonals = true
     
-    public weak var delegate: (any TokenSelectionDelegate<SpaceType>)?
+    public weak var delegate: (any SpaceSelectionDelegate<SpaceType>)?
     
     public required init(map: GridMap<SpaceType>) {
         self.map = map
@@ -50,7 +48,7 @@ public class TokenChainSelectionStrategy<
     }
     
     public func finishSelecting() {
-        delegate?.didFinishSelectingInSpaces(chain.map { map.placeAt(location: $0) })
+        delegate?.didFinishSelectingSpaces(chain.map { map.placeAt(location: $0) })
         
         chain.removeAll()
         latestLocation = nil
@@ -65,7 +63,7 @@ public class TokenChainSelectionStrategy<
     private func chain(through space: SpaceType) {
         chain.append(space.location)
         
-        delegate?.didSelectSpace(space)
+        space.setSelected(true)
     }
     
     private func trimChain() {
@@ -78,8 +76,13 @@ public class TokenChainSelectionStrategy<
     }
     
     private func isNextValidSpace(_ space: SpaceType, from previousLocation: Location) -> Bool {
+        guard let delegate else {
+            return false
+        }
+        
         return isNextValidLocation(space.location, from: previousLocation)
-            && space.canInteractWith(other: map.placeAt(location: previousLocation))
+            && delegate.shouldSelectSpace(space, after: map.placeAt(location: previousLocation))
+            
     }
     
     private func isNextValidLocation(_ next: Location, from previous: Location) -> Bool {
