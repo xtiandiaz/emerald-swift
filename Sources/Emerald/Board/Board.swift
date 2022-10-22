@@ -21,7 +21,7 @@ public protocol Board: Identifiable, Equatable {
 extension Board {
     
     public func spaceAt(location: Location) -> SpaceType {
-        map.placeAt(location: location)
+        map.place(forLocation: location)
     }
 }
 

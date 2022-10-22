@@ -14,19 +14,19 @@ public protocol Map {
     
     var size: CGSize { get }
     
-    func locationAt(localPosition: Position) -> Location?
-    func nextLocationFrom(origin: Location, toward direction: ExtendedDirection) -> Location?
+    func location(forLocalPosition localPosition: Position) -> Location?
+    func nextLocation(fromOrigin origin: Location, toward direction: ExtendedDirection) -> Location?
     
-    func placeAt(location: Location) -> PlaceType
+    func place(forLocation location: Location) -> PlaceType
     
     func iterator() -> IndexingIterator<[PlaceType]>
 }
 
 extension Map {
     
-    public func placeAt(localPosition: Position) -> PlaceType? {
-        if let location = locationAt(localPosition: localPosition) {
-            return placeAt(location: location)
+    public func place(forLocalPosition localPosition: Position) -> PlaceType? {
+        if let location = location(forLocalPosition: localPosition) {
+            return place(forLocation: location)
         }
         
         return nil

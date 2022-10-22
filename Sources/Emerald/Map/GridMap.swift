@@ -31,8 +31,8 @@ public final class GridMap<PlaceType: Place>: Map {
         for row in 0..<rows {
             for col in 0..<cols {
                 places.append(placeAt(
-                    Self.locationAt(col: col, row: row, totalCols: cols),
-                    Self.positionAt(col: col, row: row, placeSize: placeSize),
+                    Self.location(atCol: col, row: row, totalCols: cols),
+                    Self.position(atCol: col, row: row, placeSize: placeSize),
                     placeSize
                 ))
             }
@@ -40,7 +40,7 @@ public final class GridMap<PlaceType: Place>: Map {
         
         self.places = places
         
-        size = Self.positionAt(col: cols - 1, row: rows - 1, placeSize: placeSize).offset() + placeSize
+        size = Self.position(atCol: cols - 1, row: rows - 1, placeSize: placeSize).offset() + placeSize
     }
     
     public subscript(index index: Int) -> PlaceType {
@@ -51,7 +51,7 @@ public final class GridMap<PlaceType: Place>: Map {
         places[row * cols + col]
     }
     
-    public func locationAt(localPosition: CGPoint) -> Location? {
+    public func location(forLocalPosition localPosition: CGPoint) -> Location? {
         let col = Int(localPosition.x / placeSize.width)
         let row = Int(localPosition.y / placeSize.height)
         
@@ -62,7 +62,14 @@ public final class GridMap<PlaceType: Place>: Map {
         return .init(x: col, y: row, index: row * cols + col)
     }
     
-    public func nextLocationFrom(origin: Location, toward direction: ExtendedDirection) -> Location? {
+    public func nextLocation(fromOrigin origin: Location, toward direction: Direction) -> Location? {
+        nextLocation(fromOrigin: origin, toward: direction.extendedDirection)
+    }
+    
+    public func nextLocation(
+        fromOrigin origin: Location,
+        toward direction: ExtendedDirection
+    ) -> Location? {
         var x = origin.x
         var y = origin.y
         
@@ -92,7 +99,7 @@ public final class GridMap<PlaceType: Place>: Map {
         return .init(x: x, y: y, index: y * cols + x)
     }
     
-    public func placeAt(location: Location) -> PlaceType {
+    public func place(forLocation location: Location) -> PlaceType {
         places[location.index]
     }
     
@@ -102,11 +109,11 @@ public final class GridMap<PlaceType: Place>: Map {
     
     // MARK: - Internal
     
-    static func locationAt(col: Int, row: Int, totalCols: Int) -> Location {
+    static func location(atCol col: Int, row: Int, totalCols: Int) -> Location {
         .init(x: col, y: row, index: row * totalCols + col)
     }
     
-    static func positionAt(col: Int, row: Int, placeSize: CGSize) -> CGPoint {
+    static func position(atCol col: Int, row: Int, placeSize: CGSize) -> CGPoint {
         .init(x: col * placeSize.width, y: row * placeSize.height)
     }
     

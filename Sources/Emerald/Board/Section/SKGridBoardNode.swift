@@ -24,6 +24,6 @@ open class SKGridBoardNode<SpaceNode: SKSpaceNode & Place>: SKBoardNode {
     }
     
     public func spaceAt(localPosition: Position) -> SpaceNode? {
-        map.placeAt(localPosition: localPosition)
+        map.place(forLocalPosition: localPosition)
     }
 }

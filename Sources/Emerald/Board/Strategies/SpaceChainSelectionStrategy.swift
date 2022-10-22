@@ -18,7 +18,7 @@ public class SpaceChainSelectionStrategy<SpaceType: Space & Place & Selectable>:
     }
     
     public func selectAt(localPosition: CGPoint) {
-        guard let space = map.placeAt(localPosition: localPosition) else {
+        guard let space = map.place(forLocalPosition: localPosition) else {
             return
         }
         
@@ -48,7 +48,7 @@ public class SpaceChainSelectionStrategy<SpaceType: Space & Place & Selectable>:
     }
     
     public func finishSelecting() {
-        delegate?.didFinishSelectingSpaces(chain.map { map.placeAt(location: $0) })
+        delegate?.didFinishSelectingSpaces(chain.map { map.place(forLocation: $0) })
         
         chain.removeAll()
         latestLocation = nil
@@ -71,7 +71,7 @@ public class SpaceChainSelectionStrategy<SpaceType: Space & Place & Selectable>:
             return
         }
         
-        map.placeAt(location: chain.removeLast())
+        map.place(forLocation: chain.removeLast())
             .setSelected(false)
     }
     
@@ -81,8 +81,7 @@ public class SpaceChainSelectionStrategy<SpaceType: Space & Place & Selectable>:
         }
         
         return isNextValidLocation(space.location, from: previousLocation)
-            && delegate.shouldSelectSpace(space, after: map.placeAt(location: previousLocation))
-            
+            && delegate.shouldSelectSpace(space, after: map.place(forLocation: previousLocation))
     }
     
     private func isNextValidLocation(_ next: Location, from previous: Location) -> Bool {

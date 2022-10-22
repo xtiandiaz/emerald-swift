@@ -9,6 +9,8 @@ import Foundation
 
 public struct Location: Equatable {
     
+    public static let zero = Location(x: 0, y: 0, index: 0)
+    
     public var x: Int
     public var y: Int
     public var index: Int
