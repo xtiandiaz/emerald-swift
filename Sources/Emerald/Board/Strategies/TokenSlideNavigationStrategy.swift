@@ -19,16 +19,18 @@ public class TokenSlideNavigationStrategy<
         self.map = map
     }
     
-    public func nextLocationForTokenAtSpace(
-        _ space: SpaceType,
-        toward direction: Direction
-    ) -> Location? {
-        guard let token = delegate?.tokenFromSpace(space) else {
-            return nil
+    public func slideToken(atLocalPosition localPosition: Position, toward direction: Direction) {
+        guard
+            let space = map.place(forLocalPosition: localPosition),
+            let token = delegate?.tokenFromSpace(space),
+            let nextSpace = nextSpaceForToken(token, fromSpace: space, towardDirection: direction),
+            nextSpace != space
+        else {
+            return
         }
         
-        return .zero
-//        return nextSpaceForToken(token, at: space.location, toward: direction)?.location
+        space.release(token: token)
+        nextSpace.place(token: token)
     }
     
     // MARK: - Private
@@ -37,9 +39,22 @@ public class TokenSlideNavigationStrategy<
     
     private func nextSpaceForToken(
         _ token: SpaceType.TokenType,
-        at origin: Location,
-        toward direction: Direction
+        fromSpace currentSpace: SpaceType,
+        towardDirection direction: Direction
     ) -> SpaceType? {
-        return nil
+        guard let delegate else {
+            return nil
+        }
+        
+        let nextSpace = map.nextPlace(fromLocation: currentSpace.location, toward: direction)
+        
+        if
+            delegate.shouldKeepSlidingToken(token, atSpace: currentSpace, intoSpace: nextSpace),
+            let nextSpace
+        {
+            return nextSpaceForToken(token, fromSpace: nextSpace, towardDirection: direction)
+        }
+        
+        return currentSpace
     }
 }

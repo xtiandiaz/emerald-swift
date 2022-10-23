@@ -55,7 +55,7 @@ public final class GridMap<PlaceType: Place>: Map {
         let col = Int(localPosition.x / placeSize.width)
         let row = Int(localPosition.y / placeSize.height)
         
-        guard col < cols, row < rows else {
+        guard col >= 0, col < cols, row >= 0, row < rows else {
             return nil
         }
         

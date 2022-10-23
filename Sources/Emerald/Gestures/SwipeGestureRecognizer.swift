@@ -11,7 +11,7 @@ import SpriteKit
 
 public class SwipeGestureRecognizer: GestureRecognizer {
     
-    public var onSwipe: ((Direction) -> Void)?
+    public var onSwipe: ((Position, Direction) -> Void)?
     
     public var timeout: TimeInterval = 0.35
     public var magnitudeThreshold: CGFloat = 20
@@ -32,14 +32,14 @@ public class SwipeGestureRecognizer: GestureRecognizer {
             self.startInfo = nil
         }
         
-        let magnitude = startInfo.location.distance(to: info.location)
+        let magnitude = startInfo.position.distance(to: info.position)
         
         guard magnitude >= magnitudeThreshold else {
             return
         }
         
-        if let direction = startInfo.location.direction(toward: info.location) {
-            onSwipe?(direction)
+        if let direction = startInfo.position.direction(toward: info.position) {
+            onSwipe?(startInfo.position, direction)
         }
     }
     
