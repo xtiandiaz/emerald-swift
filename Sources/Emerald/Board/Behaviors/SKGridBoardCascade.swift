@@ -38,7 +38,7 @@ open class SKGridBoardCascade<
     public func clear() {
         board.map.iterator().forEach {
             if let token = $0.token, token.isInvalidated {
-                $0.release(token: token)
+                $0.releaseToken(token)
                 disposeOfToken(token)
             }
         }
@@ -62,15 +62,15 @@ open class SKGridBoardCascade<
         var produce = produceCount
         
         if let source = sourceAbove(row: row, inCol: col), let token = source.token {
-            source.release(token: token)
+            source.releaseToken(token)
             
-            destination.place(token: token)
+            destination.placeToken(token)
         } else {
             let newToken = produceToken(withSize: board.map.placeSize).configure {
                 $0.position.y += (board.map.rows - row + produceCount) * board.map.placeSize.height
             }
             
-            destination.place(token: newToken)
+            destination.placeToken(newToken)
             
             produce += 1
         }

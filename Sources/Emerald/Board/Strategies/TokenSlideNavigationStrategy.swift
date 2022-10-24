@@ -19,18 +19,47 @@ public class TokenSlideNavigationStrategy<
         self.map = map
     }
     
-    public func slideToken(atLocalPosition localPosition: Position, toward direction: Direction) {
+    public func slideToken(
+        atLocalPosition localPosition: Position,
+        towardDirection direction: Direction
+    ) {
         guard
+            let delegate,
             let space = map.place(forLocalPosition: localPosition),
-            let token = delegate?.tokenFromSpace(space),
+            let token = delegate.tokenFromSpace(space),
             let nextSpace = nextSpaceForToken(token, fromSpace: space, towardDirection: direction),
             nextSpace != space
         else {
             return
         }
         
-        space.release(token: token)
-        nextSpace.place(token: token)
+        space.releaseToken(token)
+        
+        let resultToken: SpaceType.TokenType?
+        let disposing: (() -> Void)?
+        
+        if let otherToken = nextSpace.peek() {
+            nextSpace.releaseToken(otherToken)
+            
+            resultToken = delegate.resolveTokenOverlap(betweenSource: token, andTarget: otherToken)
+            disposing = {
+                if token.isInvalidated {
+                    delegate.disposeOfToken(token)
+                }
+                if otherToken.isInvalidated {
+                    delegate.disposeOfToken(otherToken)
+                }
+            }
+        } else {
+            resultToken = token
+            disposing = nil
+        }
+        
+        if let resultToken, !resultToken.isInvalidated {
+            delegate.moveToken(resultToken, intoSpace: nextSpace) {
+                disposing?()
+            }
+        }
     }
     
     // MARK: - Private
@@ -40,19 +69,29 @@ public class TokenSlideNavigationStrategy<
     private func nextSpaceForToken(
         _ token: SpaceType.TokenType,
         fromSpace currentSpace: SpaceType,
-        towardDirection direction: Direction
+        towardDirection direction: Direction,
+        steps: Int = 0
     ) -> SpaceType? {
         guard let delegate else {
             return nil
         }
         
+        if delegate.shouldLeaveToken(token, inSpace: currentSpace), steps > 0 {
+            return currentSpace
+        }
+        
         let nextSpace = map.nextPlace(fromLocation: currentSpace.location, toward: direction)
         
         if
-            delegate.shouldKeepSlidingToken(token, atSpace: currentSpace, intoSpace: nextSpace),
+            delegate.shouldSlideToken(token, intoSpace: nextSpace),
             let nextSpace
         {
-            return nextSpaceForToken(token, fromSpace: nextSpace, towardDirection: direction)
+            return nextSpaceForToken(
+                token,
+                fromSpace: nextSpace,
+                towardDirection: direction,
+                steps: steps + 1
+            )
         }
         
         return currentSpace

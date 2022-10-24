@@ -13,18 +13,27 @@ public protocol Token: Identifiable, Equatable {
     var id: UUID { get }
     var isInvalidated: Bool { get }
     
-    func canInteractWith(other: Self) -> Bool
-    func interactWith(other: Self)
+    func canInteractWithOther(_ other: Self) -> Bool
+    func interactWithOther(_ other: Self) -> Self?
     
     func invalidate()
     
-    func disposalAction() -> SKAction?
+    func moveAction(localPosition: Position, duration: TimeInterval, delay: TimeInterval) -> SKAction
+    func disposalAction(duration: TimeInterval) -> SKAction?
 }
 
 extension Token {
     
-    public func disposalAction() -> SKAction? {
-        .fadeOut(withDuration: 0.2)
+    public func moveAction(
+        localPosition: Position,
+        duration: TimeInterval = 0.1,
+        delay: TimeInterval = 0
+    ) -> SKAction {
+        .moveTo(localPosition: localPosition, duration: 0.1, timingMode: .easeIn)
+    }
+    
+    public func disposalAction(duration: TimeInterval = 0.1) -> SKAction? {
+        .fadeOut(withDuration: duration)
     }
 }
 

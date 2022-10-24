@@ -10,28 +10,29 @@ import SpriteKit
 
 open class SKUnitSpaceNode<TokenType: SKTokenNode>: SKSpaceNode {
     
-    open func canInteractWith(other: SKUnitSpaceNode<TokenType>) -> Bool {
+    open func canInteractWithOther(_ other: SKUnitSpaceNode<TokenType>) -> Bool {
         if let otherToken = other.token {
-            return canInteractWith(token: otherToken)
+            return canInteractWithToken(otherToken)
         }
         
         return false
     }
     
-    open func canInteractWith(token: TokenType) -> Bool {
-        self.token?.canInteractWith(other: token) ?? false
+    open func canInteractWithToken(_ token: TokenType) -> Bool {
+        self.token?.canInteractWithOther(token) ?? false
     }
     
-    open func interactWith(token: TokenType) {
+    open func interactWithToken(_ token: TokenType) {
         fatalError("Not implemented")
     }
     
-    open func canPlace(token: TokenType) -> Bool {
+    open func canPlaceToken(_ token: TokenType) -> Bool {
         self.token.isNil
     }
     
-    open func place(token: TokenType) {
-        guard canPlace(token: token) else {
+    open func placeToken(_ token: TokenType) {
+        guard canPlaceToken(token) else {
+            assertionFailure("Cannot place token")
             return
         }
         
@@ -42,14 +43,9 @@ open class SKUnitSpaceNode<TokenType: SKTokenNode>: SKSpaceNode {
         } else {
             token.move(toParent: self)
         }
-        
-        token.run(
-            .moveTo(localPosition: .zero, duration: 0.2, timingMode: .easeIn),
-            withKey: "move"
-        )
     }
     
-    open func release(token: TokenType) {
+    open func releaseToken(_ token: TokenType) {
         if self.token == token {
             self.token = nil
         }
@@ -65,5 +61,9 @@ open class SKUnitSpaceNode<TokenType: SKTokenNode>: SKSpaceNode {
     
     public var tokenCount: Int {
         token.isNil ? 0 : 1
+    }
+    
+    public func peek() -> TokenType? {
+        token
     }
 }

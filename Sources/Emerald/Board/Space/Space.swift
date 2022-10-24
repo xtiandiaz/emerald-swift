@@ -15,17 +15,19 @@ public protocol Space: Identifiable, Equatable {
     var tokenCapacity: Int { get }
     var tokenCount: Int { get }
     
-    func canPlace(token: TokenType) -> Bool
-    func place(token: TokenType)
+    func peek() -> TokenType?
     
-    func release(token: TokenType)
+    func canPlaceToken(_ token: TokenType) -> Bool
+    func placeToken(_ token: TokenType)
     
-    func canInteractWith(other: Self) -> Bool
+    func releaseToken(_ token: TokenType)
     
-    func canInteractWith(token: TokenType) -> Bool
-    func interactWith(token: TokenType)
-    func canInteractWithAny(token: any Token) -> Bool    
-    func interactWithAny(token: any Token)
+    func canInteractWithOther(_ other: Self) -> Bool
+    
+    func canInteractWithToken(_ token: TokenType) -> Bool
+    func interactWithToken(_ token: TokenType)
+    func canInteractWithAnyToken(_ token: any Token) -> Bool    
+    func interactWithAnyToken(_ token: any Token)
 }
 
 extension Space {
@@ -34,17 +36,17 @@ extension Space {
         tokenCount == 0
     }
     
-    public func canInteractWithAny(token: any Token) -> Bool {
+    public func canInteractWithAnyToken(_ token: any Token) -> Bool {
         if let token = token as? TokenType  {
-            return canInteractWith(token: token)
+            return canInteractWithToken(token)
         }
         
         return false
     }
     
-    public func interactWithAny(token: any Token) {
+    public func interactWithAnyToken(_ token: any Token) {
         if let token = token as? TokenType {
-            return interactWith(token: token)
+            return interactWithToken(token)
         }
     }
 }

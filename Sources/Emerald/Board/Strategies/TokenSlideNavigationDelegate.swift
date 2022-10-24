@@ -7,15 +7,8 @@
 
 import Foundation
 
-public protocol TokenSlideNavigationDelegate<SpaceType>: AnyObject {
+public protocol TokenSlideNavigationDelegate<SpaceType>: TokenNavigationDelegate {
     
-    associatedtype SpaceType: Space & Place
-    
-    func tokenFromSpace(_ space: SpaceType) -> SpaceType.TokenType?
-    
-    func shouldKeepSlidingToken(
-        _ token: SpaceType.TokenType,
-        atSpace currentSpace: SpaceType,
-        intoSpace nextSpace: SpaceType?
-    ) -> Bool
+    func shouldSlideToken(_ token: SpaceType.TokenType, intoSpace nextSpace: SpaceType?) -> Bool
+    func shouldLeaveToken(_ token: SpaceType.TokenType, inSpace currentSpace: SpaceType) -> Bool
 }
