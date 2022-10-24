@@ -12,9 +12,6 @@ public protocol TokenNavigationStrategy: Configurable {
     
     associatedtype SpaceType: Space & Place
     associatedtype MapType: Map where MapType.PlaceType == SpaceType
-    associatedtype Delegate: TokenSlideNavigationDelegate where Delegate.SpaceType == SpaceType
-    
-    var delegate: Delegate? { get set }
     
     init(map: MapType)
 }

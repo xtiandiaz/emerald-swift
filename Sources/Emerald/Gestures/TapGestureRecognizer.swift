@@ -1,20 +1,20 @@
 //
-//  SwipeGestureRecognizer.swift
+//  TapGestureRecognizer.swift
 //  Emerald
 //
-//  Created by Cristian Diaz on 22.10.2022.
+//  Created by Cristian Diaz on 24.10.2022.
 //
 
 import Beryllium
 import Foundation
 import SpriteKit
 
-public class SwipeGestureRecognizer: GestureRecognizer {
+public class TapGestureRecognizer: GestureRecognizer {
     
-    public var onSwipe: ((Position, Direction) -> Void)?
+    public var onTap: ((Position) -> Void)?
     
     public var timeout: TimeInterval = 0.35
-    public var magnitudeThreshold: CGFloat = 20
+    public var validRangeMagnitude: CGFloat = 5
     
     public init() {
     }
@@ -37,16 +37,15 @@ public class SwipeGestureRecognizer: GestureRecognizer {
         
         let magnitude = startInfo.position.distance(to: info.position)
         
-        guard magnitude > magnitudeThreshold else {
+        guard magnitude < validRangeMagnitude else {
             return
         }
         
-        if let direction = startInfo.position.direction(toward: info.position) {
-            onSwipe?(startInfo.position, direction)
-        }
+        onTap?(startInfo.position)
     }
     
     // MARK: - Private
     
+    private weak var node: Node?
     private var startInfo: TouchInfo?
 }
