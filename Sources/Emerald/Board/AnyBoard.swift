@@ -113,7 +113,7 @@ open class AnyBoard: Node {
     // MARK: - Private
     
     private let _frame: CGRect
-    private let disposer = TokenDisposer()
+    private let disposer = TokenNodeDisposer()
     
     private var spaces = [SKAnySpace]()
     
@@ -185,7 +185,7 @@ extension AnyBoard {
     }
     
     func purge(space: SKAnySpace) {
-        space.purge().forEach(disposer.disposeOf)
+//        space.purge().forEach(disposer.disposeOf)
     }
     
     func setSpacesHighlighted(_ highlighted: Bool) {

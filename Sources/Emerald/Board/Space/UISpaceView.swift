@@ -1,5 +1,5 @@
 //
-//  SpaceView.swift
+//  UISpaceView.swift
 //  Emerald
 //
 //  Created by Cristian Diaz on 7.7.2022.
@@ -9,9 +9,9 @@ import Beryllium
 import Foundation
 import SwiftUI
 
-public struct SpaceView<
+public struct UISpaceView<
     Collection: TokenCollection,
-    Model: Space<Collection>,
+    Model: UISpace<Collection>,
     Item: View,
     Placeholder: View,
     Highlight: View

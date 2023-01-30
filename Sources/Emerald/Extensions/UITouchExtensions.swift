@@ -10,7 +10,7 @@ import SpriteKit
 
 public struct TouchInfo {
     
-    public let location: CGPoint
+    public let position: Position
     public let timestamp: TimeInterval
     public let phase: UITouch.Phase
 }
@@ -18,6 +18,6 @@ public struct TouchInfo {
 extension UITouch {
     
     public func info(forNode node: SKNode) -> TouchInfo {
-        TouchInfo(location: location(in: node), timestamp: timestamp, phase: phase)
+        TouchInfo(position: location(in: node), timestamp: timestamp, phase: phase)
     }
 }

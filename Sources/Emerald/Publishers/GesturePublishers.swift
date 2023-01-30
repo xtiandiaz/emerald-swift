@@ -36,8 +36,8 @@ extension Node {
         )
             .filter { [unowned self] in
                 ($1.timestamp - $0.timestamp) < tapTimeout &&
-                $0.location.distance(to: $1.location) < maxOffset &&
-                contains($1.location)
+                $0.position.distance(to: $1.position) < maxOffset &&
+                contains($1.position)
             }
             .map { $0.0 }
             .eraseToAnyPublisher()
@@ -51,8 +51,8 @@ extension Node {
             .filter { [swipeTimeout] in ($1.timestamp - $0.timestamp) < swipeTimeout }
             .compactMap {
                 SwipeInfo(
-                    direction: $0.location.direction(toward: $1.location),
-                    magnitude: $0.location.distance(to: $1.location)
+                    direction: $0.position.direction(toward: $1.position),
+                    magnitude: $0.position.distance(to: $1.position)
                 )
             }
             .filter { [swipeDistanceThreshold] in $0.magnitude > swipeDistanceThreshold }
@@ -76,7 +76,7 @@ extension Node {
                 }
             }
             .filter { [unowned self] in
-                $0.location.distance(to: $1.location(in: self)) < maxOffset
+                $0.position.distance(to: $1.location(in: self)) < maxOffset
             }
             .map { $0.0 }
             .eraseToAnyPublisher()

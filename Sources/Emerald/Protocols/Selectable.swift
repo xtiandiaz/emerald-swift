@@ -7,7 +7,9 @@
 
 import Foundation
 
-public protocol Selectable: Node {
+public protocol Selectable {
+    
+    var isSelected: Bool { get }
     
     func setSelected(_ selected: Bool)
 }

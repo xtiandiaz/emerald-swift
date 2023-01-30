@@ -1,5 +1,5 @@
 //
-//  FlatTokenView.swift
+//  UIFlatTokenView.swift
 //  Emerald
 //
 //  Created by Cristian Diaz on 8.7.2022.
@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-public struct FlatTokenView<Model: FlatToken, FrontView: View, BackView: View>: View {
+public struct UIFlatTokenView<Model: UIFlatToken, FrontView: View, BackView: View>: View {
     
     public init(
         token: Model,
@@ -21,7 +21,7 @@ public struct FlatTokenView<Model: FlatToken, FrontView: View, BackView: View>: 
     }
     
     public var body: some View {
-        TokenView(token: token) {
+        UITokenView(token: token) {
             ZStack {
                 front
 //                    .rotation3DEffect(.degrees(token.side == .front ? 0 : 90), axis: (x: 0, y: 1, z: 0))

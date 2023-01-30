@@ -1,5 +1,5 @@
 //
-//  HandSpaceView.swift
+//  UIHandSpaceView.swift
 //  Emerald
 //
 //  Created by Cristian Diaz on 13.7.2022.
@@ -9,9 +9,9 @@ import Beryllium
 import Foundation
 import SwiftUI
 
-public struct HandSpaceView<
-    TokenModel: Token,
-    Model: HandSpace<TokenModel>,
+public struct UIHandSpaceView<
+    TokenModel: UIToken,
+    Model: UIHandSpace<TokenModel>,
     Item: View,
     Placeholder: View,
     Highlight: View
@@ -34,7 +34,7 @@ public struct HandSpaceView<
     }
     
     public var body: some View {
-        SpaceView(space: space) {
+        UISpaceView(space: space) {
             itemBuilder($0)
         } placeholder: {
             placeholder

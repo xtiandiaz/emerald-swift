@@ -35,9 +35,9 @@ open class AnySpace: ObservableObject, Identifiable, Equatable, Configurable {
     
     // MARK: - Internal
     
-    var onPicked: ((Token) -> Void)?
-    var onDropped: ((Token, Offset) -> Void)?
-    var onPushed: ((Token, Direction, Offset) -> Void)?
+    var onPicked: ((UIToken) -> Void)?
+    var onDropped: ((UIToken, Offset) -> Void)?
+    var onPushed: ((UIToken, Direction, Offset) -> Void)?
     
     var frame = CGRect()
     
@@ -45,23 +45,23 @@ open class AnySpace: ObservableObject, Identifiable, Equatable, Configurable {
         CGRect(size: frame.size)
     }
     
-    func canInteract(with token: Token) -> Bool {
+    func canInteract(with token: UIToken) -> Bool {
         fatalError("Not implemented")
     }
     
-    func interact(with token: Token) {
+    func interact(with token: UIToken) {
         fatalError("Not implemented")
     }
     
-    func canPlace(token: Token) -> Bool {
+    func canPlace(token: UIToken) -> Bool {
         fatalError("Not implemented")
     }
     
-    func place(token: Token) {
+    func place(token: UIToken) {
         fatalError("Not implemented")
     }
     
-    func remove(token: Token) -> Token? {
+    func remove(token: UIToken) -> UIToken? {
         fatalError("Not implemented")
     }
 }

@@ -1,5 +1,5 @@
 //
-//  SpaceGrid.swift
+//  UISpaceGrid.swift
 //  Emerald
 //
 //  Created by Cristian Diaz on 14.7.2022.
@@ -10,7 +10,7 @@ import Combine
 import Foundation
 import SwiftUI
 
-public struct SpaceRow<SpaceView: View>: View {
+public struct UISpaceRow<SpaceView: View>: View {
     
     public typealias ItemBuilder = (AnySpace) -> SpaceView
     
@@ -41,13 +41,13 @@ public struct SpaceRow<SpaceView: View>: View {
     private let itemBuilder: ItemBuilder
 }
 
-public struct SpaceGrid<SpaceView: View>: View {
+public struct UISpaceGrid<SpaceView: View>: View {
     
     public init(
         spaces: [AnySpace],
         cols: Int,
         spacing: CGSize = CGSize(length: .s),
-        @ViewBuilder itemBuilder: @escaping SpaceRow<SpaceView>.ItemBuilder
+        @ViewBuilder itemBuilder: @escaping UISpaceRow<SpaceView>.ItemBuilder
     ) {
         self.cols = cols
         rows = spaces.count / cols
@@ -59,7 +59,7 @@ public struct SpaceGrid<SpaceView: View>: View {
     public var body: some View {
         VStack(spacing: spacing.height) {
             ForEach(0..<rows, id: \.self) { row in
-                SpaceRow(
+                UISpaceRow(
                     spaces: Array(spaces[row * cols..<min(spaces.count, (row + 1) * cols)]),
                     spacing: spacing.width
                 ) {
@@ -75,7 +75,7 @@ public struct SpaceGrid<SpaceView: View>: View {
     private let cols: Int
     private let rows: Int
     private let spacing: CGSize
-    private let itemBuilder: SpaceRow<SpaceView>.ItemBuilder
+    private let itemBuilder: UISpaceRow<SpaceView>.ItemBuilder
 }
 
 // MARK: - Private
