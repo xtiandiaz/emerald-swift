@@ -24,7 +24,7 @@ open class SKCollectionSpace<T: TokenCollection>: SKSpace<T.Element> {
         
         item.runIfValid(
             .move(
-                to: .up * CGFloat(index) * layout.offset.asPoint(),
+                to: .up * CGFloat(index) * layout.offset.point(),
                 duration: 0.1,
                 timingMode: .easeOut
             ),

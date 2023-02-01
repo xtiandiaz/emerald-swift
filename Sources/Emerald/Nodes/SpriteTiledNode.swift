@@ -5,6 +5,7 @@
 //  Created by Cristian Díaz on 26.8.2021.
 //
 
+import Beryllium
 import SpriteKit
 
 open class SpriteTiledNode: SKSpriteNode {
