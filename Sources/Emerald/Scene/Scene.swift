@@ -15,8 +15,6 @@ open class Scene: SKScene, Identifiable {
     open override func didMove(to view: SKView) {
         super.didMove(to: view)
         
-        installDependencies()
-        
         start()
     }
     
@@ -35,7 +33,6 @@ open class Scene: SKScene, Identifiable {
     
     open func stop() {
         unsubscribe()
-        removeDependencies()
     }
     
     open func removeDependencies() {
@@ -47,19 +44,22 @@ open class Scene: SKScene, Identifiable {
     
     public private(set) lazy var gestures  = SceneGestureRecognizerManager(scene: self)
     
-    public override init() {
-        super.init()
-    }
-    
     public override init(size: CGSize) {
         super.init(size: size)
         
+        installDependencies()
         addChildren()
     }
     
     @available(*, unavailable)
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - Internal
+    
+    deinit {
+        removeDependencies()
     }
     
     // MARK: - Private
